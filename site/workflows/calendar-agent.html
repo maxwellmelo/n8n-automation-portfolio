@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Calendar AI Agent | MX3 Dev</title>
+    <meta name="description" content="AI agent for complete Google Calendar management. Create, edit, list and delete events using natural language. By MX3 Dev.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .workflow-hero {
+            padding: 140px 0 80px;
+            background: linear-gradient(180deg, rgba(74,144,226,0.1) 0%, transparent 50%);
+        }
+
+        .workflow-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .workflow-icon-large {
+            width: 100px;
+            height: 100px;
+            background: rgba(74,144,226,0.15);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #4A90E2;
+            flex-shrink: 0;
+        }
+
+        .workflow-meta {
+            flex: 1;
+        }
+
+        .workflow-title-large {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .workflow-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+        }
+
+        .workflow-badges-large {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .badge-large {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .detail-section {
+            padding: 60px 0;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+        }
+
+        .detail-main h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-main h2 i {
+            color: var(--accent-coral);
+        }
+
+        .detail-main p, .detail-main li {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .detail-main ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .detail-main li {
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .detail-main li::before {
+            content: '\2713';
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        .architecture-diagram {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+
+        .diagram-code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        .diagram-code .highlight {
+            color: var(--accent-coral);
+        }
+
+        .diagram-code .node {
+            color: var(--accent-blue);
+        }
+
+        .diagram-code .arrow {
+            color: var(--accent-green);
+        }
+
+        .sidebar-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-card h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-card h3 i {
+            color: var(--accent-coral);
+        }
+
+        .stats-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-item .label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .stat-item .value {
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        .tech-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tech-item {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: var(--transition-base);
+        }
+
+        .feature-card:hover {
+            border-color: rgba(74,144,226,0.3);
+            transform: translateY(-3px);
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(74,144,226,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: #4A90E2;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .cta-section {
+            background: var(--gradient-primary);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .cta-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--bg-primary);
+        }
+
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb a {
+            color: var(--text-muted);
+            transition: var(--transition-fast);
+        }
+
+        .breadcrumb a:hover {
+            color: var(--accent-coral);
+        }
+
+        .breadcrumb span {
+            color: var(--text-muted);
+        }
+
+        .breadcrumb .current {
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 968px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .workflow-header {
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+            }
+
+            .workflow-badges-large {
+                justify-content: center;
+            }
+
+            .workflow-title-large {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-logo">
+                <span class="logo-icon"><i class="fas fa-bolt"></i></span>
+                <span class="logo-text">MX3<span class="logo-highlight">Dev</span></span>
+            </a>
+            <div class="nav-menu" id="navMenu">
+                <a href="../index.html#home" class="nav-link">Home</a>
+                <a href="../index.html#workflows" class="nav-link active">Workflows</a>
+                <a href="../index.html#technologies" class="nav-link">Technologies</a>
+                <a href="../index.html#contact" class="nav-link">Contact</a>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Workflow Hero -->
+    <section class="workflow-hero">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="../index.html"><i class="fas fa-home"></i> Home</a>
+                <span>/</span>
+                <a href="../index.html#workflows">Workflows</a>
+                <span>/</span>
+                <span class="current">Google Calendar AI Agent</span>
+            </div>
+
+            <div class="workflow-header">
+                <div class="workflow-icon-large">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="workflow-meta">
+                    <h1 class="workflow-title-large">Google Calendar AI Agent</h1>
+                    <p class="workflow-subtitle">AI agent for complete Google Calendar management. Create, edit, list and delete events using natural language.</p>
+                    <div class="workflow-badges-large">
+                        <span class="badge-large badge-ai"><i class="fas fa-robot"></i> AI Agent</span>
+                        <span class="badge-large badge-nodes">30+ nodes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detail Section -->
+    <section class="detail-section">
+        <div class="container">
+            <div class="detail-grid">
+                <!-- Main Content -->
+                <div class="detail-main">
+                    <h2><i class="fas fa-info-circle"></i> Overview</h2>
+                    <p>
+                        The Google Calendar AI Agent is an intelligent solution that transforms how you manage your schedule.
+                        Using GPT-4 and LangChain, this workflow understands natural language commands and automatically
+                        executes calendar operations, from creating events to managing your daily schedule.
+                    </p>
+
+                    <h2><i class="fas fa-star"></i> Key Features</h2>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-calendar-plus"></i></div>
+                            <h4>Create Events Naturally</h4>
+                            <p>Just say "schedule a meeting tomorrow at 2pm" and the AI handles the rest.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-edit"></i></div>
+                            <h4>Edit Existing Events</h4>
+                            <p>Modify dates, times, and event details using simple commands.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-list"></i></div>
+                            <h4>List Upcoming Events</h4>
+                            <p>Ask "what's on my schedule today?" and get instant responses.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-trash-alt"></i></div>
+                            <h4>Delete Events</h4>
+                            <p>Remove events quickly with natural language commands.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                            <h4>Smart Scheduling</h4>
+                            <p>AI understands context and suggests optimal event times.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                            <h4>Conflict Detection</h4>
+                            <p>Automatically identifies and alerts about scheduling conflicts.</p>
+                        </div>
+                    </div>
+
+                    <h2><i class="fas fa-project-diagram"></i> Workflow Architecture</h2>
+                    <div class="architecture-diagram">
+                        <pre class="diagram-code">
+<span class="highlight">+-----------------------------------------------------------------------------+</span>
+<span class="highlight">|</span>                     <span class="node">GOOGLE CALENDAR AI AGENT</span>                            <span class="highlight">|</span>
+<span class="highlight">+-----------------------------------------------------------------------------+</span>
+
+<span class="node">+--------------+</span>     <span class="node">+--------------+</span>     <span class="node">+----------------------+</span>
+<span class="node">|    Input     |</span><span class="arrow">----></span><span class="node">|  NLP Parser  |</span><span class="arrow">----></span><span class="node">|   Intent Classifier  |</span>
+<span class="node">|   (Webhook)  |</span>     <span class="node">|   (GPT-4)    |</span>     <span class="node">|   (LangChain Agent)  |</span>
+<span class="node">+--------------+</span>     <span class="node">+--------------+</span>     <span class="node">+----------------------+</span>
+                                                      <span class="arrow">|</span>
+                    <span class="arrow">+---------------------------------+---------------------+</span>
+                    <span class="arrow">v</span>                                 <span class="arrow">v</span>                     <span class="arrow">v</span>
+            <span class="node">+--------------+</span>             <span class="node">+--------------+</span>     <span class="node">+--------------+</span>
+            <span class="node">|   Create     |</span>             <span class="node">|     Edit     |</span>     <span class="node">|    List      |</span>
+            <span class="node">|   Event      |</span>             <span class="node">|    Event     |</span>     <span class="node">|   Events     |</span>
+            <span class="node">+--------------+</span>             <span class="node">+--------------+</span>     <span class="node">+--------------+</span>
+                    <span class="arrow">|</span>                                 <span class="arrow">|</span>                     <span class="arrow">|</span>
+                    <span class="arrow">+---------------------------------+---------------------+</span>
+                                                      <span class="arrow">|</span>
+                                                      <span class="arrow">v</span>
+                                        <span class="node">+----------------------+</span>
+                                        <span class="node">|  Date/Time Parser    |</span>
+                                        <span class="node">|  (Natural Language)  |</span>
+                                        <span class="node">+----------------------+</span>
+                                                      <span class="arrow">|</span>
+                                                      <span class="arrow">v</span>
+<span class="highlight">+-----------------------------------------------------------------------------+</span>
+<span class="highlight">|</span>                        <span class="node">CALENDAR OPERATIONS</span>                                <span class="highlight">|</span>
+<span class="highlight">|</span>  <span class="arrow">+-------------------------------------------------------------------+</span>  <span class="highlight">|</span>
+<span class="highlight">|</span>  <span class="arrow">|</span>  <span class="node">Google Calendar API Actions:</span>                                   <span class="arrow">|</span>  <span class="highlight">|</span>
+<span class="highlight">|</span>  <span class="arrow">|</span>  - Create Event (with attendees, location, reminders)          <span class="arrow">|</span>  <span class="highlight">|</span>
+<span class="highlight">|</span>  <span class="arrow">|</span>  - Update Event (modify any field)                              <span class="arrow">|</span>  <span class="highlight">|</span>
+<span class="highlight">|</span>  <span class="arrow">|</span>  - List Events (by date range, keywords)                        <span class="arrow">|</span>  <span class="highlight">|</span>
+<span class="highlight">|</span>  <span class="arrow">|</span>  - Delete Event (by ID or description)                          <span class="arrow">|</span>  <span class="highlight">|</span>
+<span class="highlight">|</span>  <span class="arrow">|</span>  - Check Availability (conflict detection)                      <span class="arrow">|</span>  <span class="highlight">|</span>
+<span class="highlight">|</span>  <span class="arrow">+-------------------------------------------------------------------+</span>  <span class="highlight">|</span>
+<span class="highlight">+-----------------------------------------------------------------------------+</span>
+                                                      <span class="arrow">|</span>
+                                                      <span class="arrow">v</span>
+                                        <span class="node">+----------------------+</span>
+                                        <span class="node">|  Conflict Checker    |</span>
+                                        <span class="node">|  (Smart Validation)  |</span>
+                                        <span class="node">+----------------------+</span>
+                                                      <span class="arrow">|</span>
+                                                      <span class="arrow">v</span>
+                                        <span class="node">+----------------------+</span>
+                                        <span class="node">|  Response Generator  |</span>
+                                        <span class="node">|  (Confirmation MSG)  |</span>
+                                        <span class="node">+----------------------+</span>
+                        </pre>
+                    </div>
+
+                    <h2><i class="fas fa-cogs"></i> Technical Requirements</h2>
+                    <ul>
+                        <li>Self-hosted n8n instance</li>
+                        <li>OpenAI account with GPT-4 access</li>
+                        <li>Google Cloud account with Calendar API enabled</li>
+                        <li>OAuth2 credentials for Google Calendar</li>
+                        <li>LangChain integration configured in n8n</li>
+                    </ul>
+
+                    <h2><i class="fas fa-play-circle"></i> How to Use</h2>
+                    <ul>
+                        <li>Import the workflow in n8n (Settings - Import)</li>
+                        <li>Configure Google Calendar OAuth2 credentials</li>
+                        <li>Add your OpenAI API key</li>
+                        <li>Configure the webhook URL or integration method</li>
+                        <li>Test with commands like "schedule a meeting tomorrow at 3pm"</li>
+                        <li>Customize the AI agent prompts for your specific needs</li>
+                    </ul>
+
+                    <div class="cta-section">
+                        <h3>Want to implement this workflow?</h3>
+                        <p>Get in touch for a custom implementation for your business.</p>
+                        <div class="cta-buttons">
+                            <a href="https://mx3dev.com/#contact" class="btn btn-white" target="_blank">
+                                <i class="fas fa-envelope"></i> Contact Me
+                            </a>
+                            <a href="https://github.com/maxwellmelo" class="btn btn-secondary" target="_blank">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="detail-sidebar">
+                    <div class="sidebar-card">
+                        <h3><i class="fas fa-chart-bar"></i> Statistics</h3>
+                        <div class="stats-list">
+                            <div class="stat-item">
+                                <span class="label">Nodes</span>
+                                <span class="value">30+</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Connections</span>
+                                <span class="value">35+</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">API Calls</span>
+                                <span class="value">5+</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Complexity</span>
+                                <span class="value">Medium</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <h3><i class="fas fa-code"></i> Technologies</h3>
+                        <div class="tech-list">
+                            <span class="tech-item">Google Calendar API</span>
+                            <span class="tech-item">OpenAI GPT-4</span>
+                            <span class="tech-item">LangChain</span>
+                            <span class="tech-item">n8n</span>
+                            <span class="tech-item">OAuth2</span>
+                            <span class="tech-item">NLP</span>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <h3><i class="fas fa-tag"></i> Category</h3>
+                        <div class="tech-list">
+                            <span class="tech-item">AI Agent</span>
+                            <span class="tech-item">Productivity</span>
+                            <span class="tech-item">Calendar</span>
+                            <span class="tech-item">Automation</span>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <h3><i class="fas fa-user"></i> Developer</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                            <strong>MX3 Dev</strong><br>
+                            n8n automation specialist
+                        </p>
+                        <a href="https://mx3dev.com/#contact" class="btn btn-primary" style="width: 100%; justify-content: center;" target="_blank">
+                            <i class="fas fa-envelope"></i> Contact
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon"><i class="fas fa-bolt"></i></span>
+                    <span class="logo-text">MX3<span class="logo-highlight">Dev</span></span>
+                </div>
+                <p class="footer-text">
+                    Intelligent automations to transform your business.
+                </p>
+                <div class="footer-social">
+                    <a href="https://mx3dev.com/#contact" target="_blank"><i class="fas fa-envelope"></i></a>
+                    <a href="https://github.com/maxwellmelo" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/maxwellmelo/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 MX3 Dev. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>

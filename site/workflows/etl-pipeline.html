@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL to PostgreSQL ETL Pipeline | MX3 Dev</title>
+    <meta name="description" content="Enterprise-grade ETL pipeline for SQL Server to PostgreSQL/Supabase migration with incremental sync and data quality monitoring. By MX3 Dev.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .workflow-hero {
+            padding: 140px 0 80px;
+            background: linear-gradient(180deg, rgba(65,105,225,0.1) 0%, transparent 50%);
+        }
+
+        .workflow-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .workflow-icon-large {
+            width: 100px;
+            height: 100px;
+            background: rgba(65,105,225,0.15);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #4169E1;
+            flex-shrink: 0;
+        }
+
+        .workflow-meta {
+            flex: 1;
+        }
+
+        .workflow-title-large {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .workflow-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+        }
+
+        .workflow-badges-large {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .badge-large {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .detail-section {
+            padding: 60px 0;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+        }
+
+        .detail-main h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-main h2 i {
+            color: var(--accent-coral);
+        }
+
+        .detail-main p, .detail-main li {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .detail-main ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .detail-main li {
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .detail-main li::before {
+            content: '\2713';
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        .architecture-diagram {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+
+        .diagram-code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        .diagram-code .highlight {
+            color: var(--accent-coral);
+        }
+
+        .diagram-code .node {
+            color: var(--accent-blue);
+        }
+
+        .diagram-code .arrow {
+            color: var(--accent-green);
+        }
+
+        .sidebar-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-card h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-card h3 i {
+            color: var(--accent-coral);
+        }
+
+        .stats-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-item .label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .stat-item .value {
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        .tech-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tech-item {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: var(--transition-base);
+        }
+
+        .feature-card:hover {
+            border-color: rgba(255,109,90,0.3);
+            transform: translateY(-3px);
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,109,90,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--accent-coral);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .cta-section {
+            background: var(--gradient-primary);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .cta-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--bg-primary);
+        }
+
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb a {
+            color: var(--text-muted);
+            transition: var(--transition-fast);
+        }
+
+        .breadcrumb a:hover {
+            color: var(--accent-coral);
+        }
+
+        .breadcrumb span {
+            color: var(--text-muted);
+        }
+
+        .breadcrumb .current {
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 968px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .workflow-header {
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+            }
+
+            .workflow-badges-large {
+                justify-content: center;
+            }
+
+            .workflow-title-large {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-logo">
+                <span class="logo-icon"><i class="fas fa-bolt"></i></span>
+                <span class="logo-text">MX3<span class="logo-highlight">Dev</span></span>
+            </a>
+            <div class="nav-menu" id="navMenu">
+                <a href="../index.html#home" class="nav-link">Home</a>
+                <a href="../index.html#workflows" class="nav-link active">Workflows</a>
+                <a href="../index.html#technologies" class="nav-link">Technologies</a>
+                <a href="../index.html#contact" class="nav-link">Contact</a>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Workflow Hero -->
+    <section class="workflow-hero">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="../index.html"><i class="fas fa-home"></i> Home</a>
+                <span>/</span>
+                <a href="../index.html#workflows">Workflows</a>
+                <span>/</span>
+                <span class="current">SQL to PostgreSQL ETL Pipeline</span>
+            </div>
+
+            <div class="workflow-header">
+                <div class="workflow-icon-large">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div class="workflow-meta">
+                    <h1 class="workflow-title-large">SQL to PostgreSQL ETL Pipeline</h1>
+                    <p class="workflow-subtitle">Enterprise-grade ETL pipeline for automated data migration from SQL Server to PostgreSQL/Supabase with incremental sync and data quality monitoring.</p>
+                    <div class="workflow-badges-large">
+                        <span class="badge-large badge-automation"><i class="fas fa-sync"></i> Real-time Sync</span>
+                        <span class="badge-large badge-automation"><i class="fas fa-chart-line"></i> Data Quality</span>
+                        <span class="badge-large badge-integration"><i class="fas fa-database"></i> Multi-DB</span>
+                        <span class="badge-large badge-nodes">25+ nodes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detail Section -->
+    <section class="detail-section">
+        <div class="container">
+            <div class="detail-grid">
+                <!-- Main Content -->
+                <div class="detail-main">
+                    <h2><i class="fas fa-info-circle"></i> Overview</h2>
+                    <p>
+                        The SQL to PostgreSQL ETL Pipeline is a robust, production-ready solution for migrating and
+                        synchronizing data between SQL Server databases and PostgreSQL/Supabase. Built on n8n's workflow
+                        automation platform, this pipeline handles complex data transformations, incremental updates,
+                        and ensures data integrity throughout the migration process.
+                    </p>
+                    <p>
+                        Designed for enterprises and teams looking to modernize their database infrastructure, this
+                        workflow automates the entire ETL (Extract, Transform, Load) process while maintaining full
+                        control over business rules and data validation. Whether you're migrating legacy systems or
+                        setting up real-time data synchronization, this pipeline provides the reliability and
+                        flexibility you need.
+                    </p>
+
+                    <h2><i class="fas fa-star"></i> Key Features</h2>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-download"></i></div>
+                            <h4>Smart Data Extraction</h4>
+                            <p>Efficiently extracts data from SQL Server with support for multiple tables, views, and custom queries with batch processing.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-exchange-alt"></i></div>
+                            <h4>Advanced Transformation</h4>
+                            <p>Apply complex business rules, data type conversions, field mapping, and custom JavaScript transformations.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-upload"></i></div>
+                            <h4>Reliable Loading</h4>
+                            <p>Loads data into PostgreSQL/Supabase with automatic retry, error handling, and transaction management.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-sync-alt"></i></div>
+                            <h4>Incremental Sync</h4>
+                            <p>Detects and syncs only changed records using timestamps, checksums, or custom change detection logic.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                            <h4>Data Quality Monitoring</h4>
+                            <p>Built-in validation rules, data quality checks, duplicate detection, and comprehensive error logging.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-bell"></i></div>
+                            <h4>Alerts & Notifications</h4>
+                            <p>Real-time notifications via email, Slack, or webhooks when errors occur or thresholds are exceeded.</p>
+                        </div>
+                    </div>
+
+                    <h2><i class="fas fa-project-diagram"></i> Workflow Architecture</h2>
+                    <div class="architecture-diagram">
+                        <pre class="diagram-code">
+<span class="highlight">+-----------------------------------------------------------------------------+</span>
+<span class="highlight">|</span>                    <span class="node">SQL TO POSTGRESQL ETL PIPELINE</span>                         <span class="highlight">|</span>
+<span class="highlight">+-----------------------------------------------------------------------------+</span>
+
+<span class="node">+-----------------+</span>     <span class="node">+---------------------+</span>     <span class="node">+-------------------+</span>
+<span class="node">|   Scheduler     |</span><span class="arrow">----></span><span class="node">|  Configuration      |</span><span class="arrow">----></span><span class="node">|  Source Query     |</span>
+<span class="node">| (Cron/Webhook)  |</span>     <span class="node">|  Loader             |</span>     <span class="node">|  Builder          |</span>
+<span class="node">+-----------------+</span>     <span class="node">+---------------------+</span>     <span class="node">+-------------------+</span>
+                                                                   <span class="arrow">|</span>
+                                                                   <span class="arrow">v</span>
+<span class="highlight">+-----------------------------------------------------------------------------+</span>
+<span class="highlight">|</span>                          <span class="node">EXTRACTION LAYER</span>                                  <span class="highlight">|</span>
+<span class="highlight">+-----------------------------------------------------------------------------+</span>
+                    <span class="node">+-----------------+</span>     <span class="node">+---------------------+</span>
+                    <span class="node">|  SQL Server     |</span>     <span class="node">|  Incremental        |</span>
+                    <span class="node">|  Connector      |</span><span class="arrow">----></span><span class="node">|  Change Detection   |</span>
+                    <span class="node">+-----------------+</span>     <span class="node">+---------------------+</span>
+                                                   <span class="arrow">|</span>
+                                                   <span class="arrow">v</span>
+                              <span class="node">+--------------------------------+</span>
+                              <span class="node">|     Batch Processing           |</span>
+                              <span class="node">|  (Configurable chunk size)     |</span>
+                              <span class="node">+--------------------------------+</span>
+                                                   <span class="arrow">|</span>
+                                                   <span class="arrow">v</span>
+<span class="highlight">+-----------------------------------------------------------------------------+</span>
+<span class="highlight">|</span>                       <span class="node">TRANSFORMATION LAYER</span>                               <span class="highlight">|</span>
+<span class="highlight">+-----------------------------------------------------------------------------+</span>
+        <span class="node">+------------------+</span>     <span class="node">+------------------+</span>     <span class="node">+------------------+</span>
+        <span class="node">|  Data Type       |</span>     <span class="node">|  Field Mapping   |</span>     <span class="node">|  Business Rules  |</span>
+        <span class="node">|  Conversion      |</span><span class="arrow">----></span><span class="node">|  & Renaming      |</span><span class="arrow">----></span><span class="node">|  Application     |</span>
+        <span class="node">+------------------+</span>     <span class="node">+------------------+</span>     <span class="node">+------------------+</span>
+                                                   <span class="arrow">|</span>
+                                                   <span class="arrow">v</span>
+                              <span class="node">+--------------------------------+</span>
+                              <span class="node">|     Data Validation            |</span>
+                              <span class="node">|  (Quality checks & rules)      |</span>
+                              <span class="node">+--------------------------------+</span>
+                                    <span class="arrow">|</span>                     <span class="arrow">|</span>
+                         <span class="arrow">Valid</span> <span class="arrow">|</span>                     <span class="arrow">|</span> <span class="arrow">Invalid</span>
+                                    <span class="arrow">v</span>                     <span class="arrow">v</span>
+<span class="highlight">+-----------------------------------------------------------------------------+</span>
+<span class="highlight">|</span>                          <span class="node">LOADING LAYER</span>                                    <span class="highlight">|</span>
+<span class="highlight">+-----------------------------------------------------------------------------+</span>
+    <span class="node">+------------------+</span>                          <span class="node">+---------------------+</span>
+    <span class="node">|  PostgreSQL      |</span>                          <span class="node">|  Error Handler      |</span>
+    <span class="node">|  Loader          |</span>                          <span class="node">|  & Dead Letter      |</span>
+    <span class="node">| (Upsert/Insert)  |</span>                          <span class="node">|  Queue              |</span>
+    <span class="node">+------------------+</span>                          <span class="node">+---------------------+</span>
+             <span class="arrow">|</span>                                            <span class="arrow">|</span>
+             <span class="arrow">v</span>                                            <span class="arrow">v</span>
+    <span class="node">+------------------+</span>                          <span class="node">+---------------------+</span>
+    <span class="node">|  Success Log     |</span>                          <span class="node">|  Alert System       |</span>
+    <span class="node">|  & Metrics       |</span>                          <span class="node">| (Email/Slack/Teams) |</span>
+    <span class="node">+------------------+</span>                          <span class="node">+---------------------+</span>
+                        </pre>
+                    </div>
+
+                    <h2><i class="fas fa-cogs"></i> Technical Requirements</h2>
+                    <ul>
+                        <li>Self-hosted n8n instance (version 1.0+ recommended)</li>
+                        <li>SQL Server database with read access credentials</li>
+                        <li>PostgreSQL or Supabase database with write permissions</li>
+                        <li>Network connectivity between n8n and both databases</li>
+                        <li>Recommended: Redis or PostgreSQL for n8n execution data storage</li>
+                        <li>Optional: Monitoring system (Prometheus/Grafana) for metrics</li>
+                    </ul>
+
+                    <h2><i class="fas fa-play-circle"></i> How to Use</h2>
+                    <ul>
+                        <li>Import the workflow JSON file into your n8n instance</li>
+                        <li>Configure SQL Server credentials in n8n Credentials Manager</li>
+                        <li>Configure PostgreSQL/Supabase credentials</li>
+                        <li>Update the workflow configuration node with your table mappings</li>
+                        <li>Set up field mapping and transformation rules as needed</li>
+                        <li>Configure notification channels (email, Slack, etc.)</li>
+                        <li>Test the workflow with a small dataset first</li>
+                        <li>Set up the scheduler (cron expression) for automated runs</li>
+                        <li>Monitor initial executions and adjust batch sizes if needed</li>
+                        <li>Enable incremental sync after full initial load completes</li>
+                    </ul>
+
+                    <div class="cta-section">
+                        <h3>Need a custom ETL solution?</h3>
+                        <p>Get in touch for a tailored implementation designed for your specific data migration needs.</p>
+                        <div class="cta-buttons">
+                            <a href="https://mx3dev.com/#contact" class="btn btn-white">
+                                <i class="fas fa-envelope"></i> Contact Me
+                            </a>
+                            <a href="https://github.com/maxwellmelo" class="btn btn-secondary" target="_blank">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="detail-sidebar">
+                    <div class="sidebar-card">
+                        <h3><i class="fas fa-chart-bar"></i> Statistics</h3>
+                        <div class="stats-list">
+                            <div class="stat-item">
+                                <span class="label">Nodes</span>
+                                <span class="value">25+</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Connections</span>
+                                <span class="value">30+</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Data Sources</span>
+                                <span class="value">Multi-DB</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Complexity</span>
+                                <span class="value">Advanced</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <h3><i class="fas fa-code"></i> Technologies</h3>
+                        <div class="tech-list">
+                            <span class="tech-item">SQL Server</span>
+                            <span class="tech-item">PostgreSQL</span>
+                            <span class="tech-item">Supabase</span>
+                            <span class="tech-item">n8n</span>
+                            <span class="tech-item">JavaScript</span>
+                            <span class="tech-item">Cron</span>
+                            <span class="tech-item">REST API</span>
+                            <span class="tech-item">Webhooks</span>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <h3><i class="fas fa-tag"></i> Category</h3>
+                        <div class="tech-list">
+                            <span class="tech-item">ETL Pipeline</span>
+                            <span class="tech-item">Data Migration</span>
+                            <span class="tech-item">Database Sync</span>
+                            <span class="tech-item">Enterprise</span>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <h3><i class="fas fa-user"></i> Developer</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                            <strong>MX3 Dev</strong><br>
+                            n8n automation specialist
+                        </p>
+                        <a href="https://mx3dev.com/#contact" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                            <i class="fas fa-envelope"></i> Contact
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon"><i class="fas fa-bolt"></i></span>
+                    <span class="logo-text">MX3<span class="logo-highlight">Dev</span></span>
+                </div>
+                <p class="footer-text">
+                    Intelligent automations to transform your business.
+                </p>
+                <div class="footer-social">
+                    <a href="https://mx3dev.com/#contact"><i class="fas fa-envelope"></i></a>
+                    <a href="https://github.com/maxwellmelo" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/maxwellmelo/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 MX3 Dev. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>
