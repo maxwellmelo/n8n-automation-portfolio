@@ -1,0 +1,3323 @@
+{
+  "name": "[DEMO] Chatbot WhatsApp com IA",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## WORKFLOW DE DEMONSTRAÇÃO\n\n**Desenvolvido por:** Maxwell Melo\n**Versão:** Demonstração\n\n### Sobre este Workflow\n\nEste é um exemplo de chatbot WhatsApp integrado com IA, demonstrando:\n\n- Integração com APIs de mensageria (Z-API/Evolution)\n- Processamento de linguagem natural com OpenAI\n- Gerenciamento de estado com Redis\n- Processamento de múltiplos tipos de mídia\n- Detecção de intervenção humana\n- Sistema de analytics e auditoria\n\n### Funcionalidades Demonstradas\n\n1. Recebimento de mensagens via Webhook\n2. Processamento de texto, áudio e imagens\n3. IA conversacional com memória de contexto\n4. Sistema de botões interativos\n5. Detecção e pausa para atendimento humano\n6. Logging em Google Sheets\n\n### Limitações da Versão Demo\n\n- Credenciais removidas (substitua pelos seus)\n- URLs de exemplo (configure suas próprias)\n- Prompts simplificados (personalize para seu negócio)\n\n### Para Usar\n\n1. Configure suas credenciais no n8n\n2. Substitua os placeholders DEMO_* pelos valores reais\n3. Ajuste os prompts para seu caso de uso\n4. Configure seu webhook no provedor de WhatsApp\n\n---\n**IMPORTANTE:** Este workflow é para fins de demonstração.\nPara implementação completa, entre em contato.\n\nMaxwell de Melo\n+5586994093040",
+        "height": 1024,
+        "width": 500,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -7312,
+        128
+      ],
+      "id": "865ce7c4-9e07-4149-a626-b92322e2c0b4",
+      "name": "DEMO - Leia Primeiro"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "[ASSISTENTE]",
+        "options": {}
+      },
+      "id": "c3c8ff21-6b71-4475-acf3-9abfd9833d70",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -7264,
+        1184
+      ],
+      "webhookId": "DEMO_WEBHOOK_MAIN_ID"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8c49a9be-f027-4ca6-8a8c-856fa46ee664",
+              "name": "TIMEOUT",
+              "value": 20,
+              "type": "number"
+            },
+            {
+              "id": "24d3b8c3-c8c4-4bee-9876-db1f82cb5dfb",
+              "name": "EVOLUTION-API-KEY",
+              "value": "DEMO_EVOLUTION_API_KEY",
+              "type": "string"
+            },
+            {
+              "id": "2925f61f-175c-4f67-b38f-581d23cd5684",
+              "name": "FROM-ME-WINDOW",
+              "value": 4320,
+              "type": "number"
+            },
+            {
+              "id": "4c777567-176a-4a87-98cf-5e883a37270d",
+              "name": "TIME-PER-CHAR",
+              "value": 15,
+              "type": "number"
+            },
+            {
+              "id": "max-retries",
+              "name": "MAX-RETRIES",
+              "value": 3,
+              "type": "number"
+            },
+            {
+              "id": "error-threshold",
+              "name": "ERROR-THRESHOLD",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "abandonment-time",
+              "name": "ABANDONMENT-TIME",
+              "value": 4320,
+              "type": "number"
+            },
+            {
+              "id": "conversation-ttl",
+              "name": "CONVERSATION-TTL",
+              "value": 86400,
+              "type": "number"
+            },
+            {
+              "id": "human-intervention-window",
+              "name": "HUMAN-INTERVENTION-WINDOW",
+              "value": 4320,
+              "type": "number"
+            },
+            {
+              "id": "human-pause-time",
+              "name": "HUMAN-PAUSE-TIME",
+              "value": 60,
+              "type": "number"
+            },
+            {
+              "id": "human-takeover-keywords",
+              "name": "HUMAN-TAKEOVER-KEYWORDS",
+              "value": "={{ ['aguarde um consultor', 'vou transferir', 'momento por favor', 'já te atendo', 'vou verificar', 'deixa eu ver'] }}",
+              "type": "json"
+            },
+            {
+              "id": "debug-mode",
+              "name": "DEBUG-MODE",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -6608,
+        1088
+      ],
+      "id": "95fe2fb2-64c6-4b04-a2ec-b6f480429922",
+      "name": "ALTERE ISSO"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "966fb997-6381-4d3e-9ef9-3853fafc01ed",
+              "leftValue": "={{ $json.body.type }}",
+              "rightValue": "DeliveryCallback",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -7040,
+        1184
+      ],
+      "id": "2b58018e-91a6-4868-b779-8fd245c011d2",
+      "name": "DeliveryCallback"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "facdee7d-f8a5-481e-aa84-22bf7e4fed35",
+              "leftValue": "={{ $('Webhook').item.json.body.isGroup }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "62edab67-1772-480b-b74b-0a339a2218a4",
+              "leftValue": "={{ $json.body.status }}",
+              "rightValue": "SENT",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -6832,
+        1184
+      ],
+      "id": "f72dbcef-e11b-4c9a-8be8-5f727aa91006",
+      "name": "Se Grupo"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4d29f1b4-c344-41a3-87de-2e572d101d74",
+              "leftValue": "={{ $('Webhook').item.json.body.fromMe }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "99df64d7-2aaa-4f46-987d-5b2f61cafd1b",
+              "leftValue": "={{ $('Webhook').item.json.body.fromApi }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -6384,
+        1088
+      ],
+      "id": "17931b3c-3ea2-402c-8ed9-20e5ef81c474",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "=Timeout.{{ $('Webhook').item.json.body.phone }}",
+        "value": "={{ $now.plus($('ALTERE ISSO').item.json['FROM-ME-WINDOW']*60*1000).toISO() }}"
+      },
+      "name": "STOP AND SET TIMEOUT",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -6160,
+        992
+      ],
+      "id": "4f250d13-dc4a-4f5c-baf8-b54bd2c5c1f4",
+      "credentials": {
+        "redis": {
+          "id": "WnwFd2IKE5xh10qb",
+          "name": "Redis Maxwell"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "keys",
+        "keyPattern": "=Timeout.{{ $('Webhook').item.json.body.phone }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -6160,
+        1280
+      ],
+      "id": "ec3c02f9-8f8b-465d-a789-ddd8eaa24337",
+      "name": "GET TIMEOUT1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "redis": {
+          "id": "WnwFd2IKE5xh10qb",
+          "name": "Redis Maxwell"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e3b6ff31-61cb-40c2-92d3-7f3f6ea2b4b4",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -5952,
+        1280
+      ],
+      "id": "2bb9bf2d-095d-4910-96a6-b639f198c3ec",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5c24b57c-246d-4815-97d8-b0c9d7a335ad",
+              "leftValue": "={{ $now }}",
+              "rightValue": "={{ $json.values()[0]?.toDateTime() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -5728,
+        1360
+      ],
+      "id": "6025af38-18c2-43d2-9dca-e1029a08ee3e",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "=Timeout.{{ $('Webhook').item.json.body.phone }}",
+        "value": "={{ $now.plus($('ALTERE ISSO').item.json.TIMEOUT*1000).toISO() }}"
+      },
+      "name": "STORE TIMEOUT",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -5504,
+        1280
+      ],
+      "id": "970551f5-507e-4e95-90f5-ac0240fc0824",
+      "credentials": {
+        "redis": {
+          "id": "WnwFd2IKE5xh10qb",
+          "name": "Redis Maxwell"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Webhook').item.json.body.text.message }}",
+                    "rightValue": "conversation",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "77127e9d-1c36-4644-b1f4-3f78ebedf18f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "86e7e773-8586-458f-a1fb-2890f2030230",
+                    "leftValue": "={{ $('Webhook').item.json.body.referenceMessageId }}",
+                    "rightValue": "extendedTextMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Reply"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "7f108034-a1be-4e90-b42e-e4f8a719e311",
+                    "leftValue": "={{ $('Webhook').item.json.body.isEdit }}",
+                    "rightValue": "editedMessage",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Edited"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "256e7cf8-be54-4c41-ba80-2d9eb0a07563",
+                    "leftValue": "={{ $('Webhook').item.json.body.audio.audioUrl }}",
+                    "rightValue": "audioMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "da03e413-3422-419c-af1a-71ff87c307e2",
+                    "leftValue": "={{ $('Webhook').item.json.body.image.imageUrl }}",
+                    "rightValue": "imageMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5b05defc-6da8-4b93-8d7a-c20a08e05a27",
+      "name": "Tipo da Mensagem",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        -5280,
+        1248
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "={{ $('Webhook').item.json.body.text.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e3ecb18e-b062-49f1-83c6-33e4799fa028",
+      "name": "SET DEFAULT MESSAGE",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4624,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "=Resposta:{{ $('Webhook').item.json.body.buttonsResponseMessage.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "126cad3f-15c1-4d14-8ab2-64212c0b49f8",
+      "name": "SET REPLIED MESSAGE",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4624,
+        1088
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "={{ $('Webhook').item.json.body.data.message.editedMessage.message.protocolMessage.editedMessage.conversation+'*' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "90a10af9-6642-4e3f-83d5-fe1a18e33c9b",
+      "name": "SET EDITED MESSAGE",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4624,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Webhook').item.json.body.audio.audioUrl }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -5072,
+        1488
+      ],
+      "id": "e900efc8-96a2-4ae3-9676-5ac336c179e7",
+      "name": "Get Audio"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "id": "0f87d109-7523-4095-9165-f9f5febc0c34",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.7,
+      "position": [
+        -4848,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "=Transcrição do Áudio enviado pelo usuário: {{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "25a2965f-840a-40d5-9366-188d43546eb9",
+      "name": "SET AUDIO MESSAGE",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4624,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "Descreva essa imagem",
+        "imageUrls": "={{ $('Webhook').item.json.body.image.imageUrl }}",
+        "options": {}
+      },
+      "id": "ff4ec892-b617-43d4-ab80-5ff7473401b2",
+      "name": "OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.7,
+      "position": [
+        -5072,
+        1680
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Processar resultado da análise de imagem\nconst analysis = $json.content || '';\n\n// Detectar receita com mais precisão\nconst receiptKeywords = [\n  'RECEITA', 'MÉDICA', 'OFTALMOLOGISTA', 'OPTOMETRISTA',\n  'OD:', 'OE:', 'ESF', 'CIL', 'EIXO', 'DNP', 'DP',\n  'MIOPIA', 'HIPERMETROPIA', 'ASTIGMATISMO', 'PRESBIOPIA',\n  'GRAU', 'DIOPTRIA', 'ADD', 'ADIÇÃO'\n];\n\nconst isReceipt = receiptKeywords.some(keyword => \n  analysis.toUpperCase().includes(keyword)\n);\n\n// Adicionar contexto do estado do fluxo\nconst conversationState = {\n  isReceipt,\n  messageType: isReceipt ? \"medical_receipt\" : \"image\",\n  needsPhotosensitiveQuestion: isReceipt,\n  timestamp: new Date().toISOString()\n};\n\nlet processedMessage;\nif (isReceipt) {\n  processedMessage = `RECEITA DETECTADA: ${analysis}`;\n} else {\n  processedMessage = `Descrição da imagem enviada: ${analysis}`;\n}\n\nreturn {\n  ...conversationState,\n  processedMessage,\n  originalAnalysis: analysis\n};"
+      },
+      "id": "18f8945e-891a-4066-a9a2-53b609ca1671",
+      "name": "🎨 Process Image",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4848,
+        1680
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "={{ $json.processedMessage }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ea240b15-9465-48fe-83e9-9ddb3c9283e7",
+      "name": "SET IMAGE MESSAGE",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4624,
+        1680
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "=Messages.{{ $('Webhook').item.json.body.phone }}",
+        "messageData": "={{ $json.MESSAGE }}",
+        "tail": true
+      },
+      "name": "STORE MESSAGE",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -4400,
+        1280
+      ],
+      "id": "82069f8f-62ce-4f5a-88c7-4738307c6893",
+      "credentials": {
+        "redis": {
+          "id": "WnwFd2IKE5xh10qb",
+          "name": "Redis Maxwell"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Armazenar estado da conversa com detecção de intervenção humana\nconst phone = $('Webhook').item.json.body.phone;\nconst message = $json.MESSAGE || '';\nconst fromMe = $('Webhook').item.json.body.fromMe;\nconst fromApi = $('Webhook').item.json.body.fromApi;\n\n// Detectar se é mensagem humana\nconst isHumanMessage = fromMe === true && fromApi === false;\n\n// Detectar fluxo baseado na mensagem\nlet currentFlow = null;\nlet currentStep = null;\n\n// Palavras-chave para detecção de fluxo\nconst glassesKeywords = ['óculos', 'grau', 'receita', 'miopia', 'hipermetropia', 'astigmatismo'];\nconst contactsKeywords = ['lentes de contato', 'lentes coloridas'];\nconst storeKeywords = ['endereço', 'loja física', 'onde fica', 'localização'];\n\n// Só detecta fluxo se não for mensagem humana\nif (!isHumanMessage) {\n  if (glassesKeywords.some(kw => message.toLowerCase().includes(kw))) {\n    currentFlow = 'glasses';\n    currentStep = 'asking_receipt';\n  } else if (contactsKeywords.some(kw => message.toLowerCase().includes(kw))) {\n    currentFlow = 'contacts';\n    currentStep = 'asking_type';\n  } else if (storeKeywords.some(kw => message.toLowerCase().includes(kw))) {\n    currentFlow = 'store_info';\n    currentStep = 'provided_info';\n  }\n}\n\n// Detectar se é receita\nconst hasReceipt = message.includes('RECEITA DETECTADA');\n\n// Construir estado com informação de intervenção humana\nconst state = {\n  currentFlow,\n  currentStep,\n  hasReceipt,\n  wantsPhotosensitive: null,\n  lastInteraction: new Date().toISOString(),\n  messageCount: 1,\n  phone,\n  hasHumanIntervention: isHumanMessage,\n  lastHumanInteraction: isHumanMessage ? new Date().toISOString() : null,\n  humanInterventionEnd: isHumanMessage ? new Date(Date.now() + $('ALTERE ISSO').item.json['HUMAN-INTERVENTION-WINDOW'] * 60 * 1000).toISOString() : null\n};\n\nreturn { state, shouldStore: true, isHumanMessage };"
+      },
+      "id": "a95d8f17-6172-4d16-89a1-c7cde8e0cd06",
+      "name": "PREPARE CONVERSATION STATE",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4192,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "=State.{{ $json.state.phone }}",
+        "value": "={{ JSON.stringify($json.state) }}"
+      },
+      "name": "STORE CONVERSATION STATE",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -3968,
+        1280
+      ],
+      "id": "f31744b6-a83d-41d2-ad2b-72cd7024f8e6",
+      "credentials": {
+        "redis": {
+          "id": "WnwFd2IKE5xh10qb",
+          "name": "Redis Maxwell"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "key": "=State.{{ $('Webhook').item.json.body.phone }}",
+        "options": {}
+      },
+      "name": "GET CONVERSATION STATE",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -3744,
+        1280
+      ],
+      "id": "9d885e26-3ab6-4342-8517-239868b4b3d8",
+      "alwaysOutputData": true,
+      "credentials": {
+        "redis": {
+          "id": "WnwFd2IKE5xh10qb",
+          "name": "Redis Maxwell"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "keys",
+        "keyPattern": "=Messages.{{ $('Webhook').item.json.body.phone }}"
+      },
+      "name": "RETRIEVE LAST MESSAGES",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -3520,
+        1280
+      ],
+      "id": "c9520a33-6ce9-4f01-b87a-19329ebfe9fb",
+      "credentials": {
+        "redis": {
+          "id": "WnwFd2IKE5xh10qb",
+          "name": "Redis Maxwell"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// DETECT HUMAN INTERVENTION AND ABANDONMENT\n// Este node detecta intervenção humana e abandono de conversa\n\nconst phone = $('Webhook').item.json.body.phone;\nconst fromMe = $('Webhook').item.json.body.fromMe;\nconst fromApi = $('Webhook').item.json.body.fromApi;\nconst stateData = $('GET CONVERSATION STATE').item.json;\nconst message = $json.MESSAGE || '';\n\n// Configurações\nconst abandonmentTime = $('ALTERE ISSO').item.json['ABANDONMENT-TIME'] || 30;\nconst humanWindowTime = $('ALTERE ISSO').item.json['HUMAN-INTERVENTION-WINDOW'] || 4320;\nconst takeoverKeywords = $('ALTERE ISSO').item.json['HUMAN-TAKEOVER-KEYWORDS'] || [];\n\nlet state;\ntry {\n  state = stateData.value ? JSON.parse(stateData.value) : null;\n} catch (e) {\n  state = null;\n}\n\n// 1. DETECTAR MENSAGEM HUMANA ATUAL\nconst isCurrentMessageHuman = fromMe === true && fromApi === false;\n\n// 2. VERIFICAR TIMEOUT HUMANO ATIVO\nlet hasActiveHumanTimeout = false;\nlet humanTimeoutRemaining = 0;\n\nif (state && state.humanInterventionEnd) {\n  const humanEnd = new Date(state.humanInterventionEnd);\n  const now = new Date();\n  \n  if (humanEnd > now) {\n    hasActiveHumanTimeout = true;\n    humanTimeoutRemaining = Math.round((humanEnd - now) / 1000 / 60); // em minutos\n  }\n}\n\n// 3. ATUALIZAR ESTADO SE NECESSÁRIO\nif (isCurrentMessageHuman && state) {\n  // Marcar início da intervenção humana\n  state.hasHumanIntervention = true;\n  state.humanInterventionStart = new Date().toISOString();\n  state.humanInterventionEnd = new Date(Date.now() + humanWindowTime * 60 * 1000).toISOString();\n  state.lastHumanMessage = message;\n  \n  // Retornar com flag para pausar bot\n  return {\n    shouldReset: false,\n    shouldPauseBot: true,\n    isHumanIntervention: true,\n    humanTimeoutMinutes: humanWindowTime,\n    message: \"Intervenção humana detectada - Bot pausado\",\n    state\n  };\n}\n\n// 4. SE HÁ TIMEOUT HUMANO ATIVO, NÃO FAZER NADA\nif (hasActiveHumanTimeout) {\n  return {\n    shouldReset: false,\n    shouldPauseBot: true,\n    hasActiveHumanTimeout: true,\n    humanTimeoutRemaining,\n    message: `Bot pausado - Consultor humano ativo (${humanTimeoutRemaining} minutos restantes)`,\n    state\n  };\n}\n\n// 5. VERIFICAR ABANDONO NORMAL (só se não há intervenção humana)\nif (!state) {\n  return { \n    shouldReset: false, \n    state: null,\n    message: \"Sem estado anterior - Nova conversa\"\n  };\n}\n\nconst lastMessageTime = new Date(state.lastInteraction);\nconst now = new Date();\nconst minutesSinceLastMessage = (now - lastMessageTime) / 1000 / 60;\n\n// 6. DETECTAR PALAVRAS DE TAKEOVER\nconst hasTakeoverKeyword = takeoverKeywords.some(keyword => \n  message.toLowerCase().includes(keyword.toLowerCase())\n);\n\nif (hasTakeoverKeyword) {\n  // Configurar timeout humano\n  state.hasHumanIntervention = true;\n  state.humanInterventionStart = new Date().toISOString();\n  state.humanInterventionEnd = new Date(Date.now() + humanWindowTime * 60 * 1000).toISOString();\n  \n  return {\n    shouldReset: false,\n    shouldPauseBot: true,\n    detectedTakeover: true,\n    message: \"Palavras de transferência detectadas - Bot pausado\",\n    state\n  };\n}\n\n// 7. VERIFICAR ABANDONO\nif (minutesSinceLastMessage > abandonmentTime) {\n  // Verificar se houve intervenção humana recente\n  if (state.humanInterventionEnd) {\n    const humanEndTime = new Date(state.humanInterventionEnd);\n    const timeSinceHumanIntervention = (now - humanEndTime) / 1000 / 60;\n    \n    // Se a intervenção humana terminou há pouco tempo, dar mais tempo\n    if (timeSinceHumanIntervention < 60) { // 1 hora após fim da intervenção\n      return {\n        shouldReset: false,\n        recentHumanIntervention: true,\n        timeSinceHumanIntervention,\n        message: \"Intervenção humana recente - Estendendo timeout\",\n        state\n      };\n    }\n  }\n  \n  // Resetar conversa\n  return {\n    shouldReset: true,\n    abandonmentDetected: true,\n    minutesSinceLastMessage,\n    message: \"Oi! Vi que você ficou um tempinho sem responder. Vamos começar de novo? 😊\",\n    state\n  };\n}\n\n// 8. CONTINUAR NORMALMENTE\nreturn { \n  shouldReset: false,\n  shouldPauseBot: false,\n  state,\n  minutesSinceLastMessage,\n  message: \"Conversa ativa - Bot continua\"\n};"
+      },
+      "id": "21f6e436-5b3c-4766-bd5f-c6abff98051a",
+      "name": "DETECT HUMAN INTERVENTION & ABANDONMENT",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3312,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "should-reset",
+              "leftValue": "={{ $json.shouldReset }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3088,
+        1280
+      ],
+      "id": "b15979b5-243d-4466-965d-9da36cea2bfc",
+      "name": "If Abandonment"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "should-pause-bot",
+              "leftValue": "={{ $json.shouldPauseBot }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2864,
+        1392
+      ],
+      "id": "19b5de13-a718-4f50-8602-f3f8c06f9b30",
+      "name": "If Pause Bot"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "=Messages.{{ $('Webhook').item.json.body.phone }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -2864,
+        1088
+      ],
+      "id": "f1328e08-4b18-4cd5-b575-29310d63fc47",
+      "name": "RESET MESSAGES",
+      "credentials": {
+        "redis": {
+          "id": "WnwFd2IKE5xh10qb",
+          "name": "Redis Maxwell"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "=State.{{ $('Webhook').item.json.body.phone }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -2640,
+        1088
+      ],
+      "id": "ab1890eb-5a73-42d3-872c-4977f11e038f",
+      "name": "RESET STATE",
+      "credentials": {
+        "redis": {
+          "id": "WnwFd2IKE5xh10qb",
+          "name": "Redis Maxwell"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "human-intervention-log",
+              "name": "humanInterventionLog",
+              "value": "={{ JSON.stringify($json) }}",
+              "type": "string"
+            },
+            {
+              "id": "timestamp",
+              "name": "timestamp",
+              "value": "={{ $now.format('dd-MM-yyyy HH:mm:ss') }}",
+              "type": "string"
+            },
+            {
+              "id": "phone",
+              "name": "phone",
+              "value": "={{ $('Webhook').item.json.body.phone }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7e07ee09-5254-413a-9f39-4659ccc0db1e",
+      "name": "LOG HUMAN INTERVENTION",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2640,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "amount": "={{ $('ALTERE ISSO').item.json.TIMEOUT }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2640,
+        1280
+      ],
+      "id": "e6f232bf-80d2-4e54-a3f3-cfa03bde9662",
+      "name": "TIMEOUT",
+      "webhookId": "DEMO_WEBHOOK_TIMEOUT_ID"
+    },
+    {
+      "parameters": {
+        "operation": "keys",
+        "keyPattern": "=Timeout.{{ $('Webhook').item.json.body.phone }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -2432,
+        1280
+      ],
+      "id": "4f4769a9-7415-4c94-ba29-5169ac78f540",
+      "name": "GET TIMEOUT",
+      "credentials": {
+        "redis": {
+          "id": "WnwFd2IKE5xh10qb",
+          "name": "Redis Maxwell"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2539a6bb-4bc5-419b-85d6-a2a456b14cca",
+              "leftValue": "={{ $now }}",
+              "rightValue": "={{ $json.values()[0].toDateTime() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2208,
+        1280
+      ],
+      "id": "afb7bbf3-8303-4a48-a912-2d8528d98912",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('RETRIEVE LAST MESSAGES').item.json.values().flat().join(`\\n`) }}",
+        "options": {
+          "systemMessage": "=# PROMPT [ASSISTENTE] - ASSISTENTE VIRTUAL [SUA EMPRESA]"
+        }
+      },
+      "id": "887347f7-477f-4e55-b162-5ae2c8467c70",
+      "name": "[ASSISTENTE]",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1952,
+        1296
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {
+          "topP": 0.5
+        }
+      },
+      "id": "a4cabbd3-3fb9-463b-a76e-21c091a9e93c",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -1984,
+        1504
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=Messages.{{ $json?.id || 'test' }}.{{ $('Webhook').item.json.body.phone }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
+      "typeVersion": 1.4,
+      "position": [
+        -1872,
+        1504
+      ],
+      "id": "85bf00cd-e45d-45db-8fcc-09d39824a455",
+      "name": "Redis Chat Memory",
+      "credentials": {
+        "redis": {
+          "id": "WnwFd2IKE5xh10qb",
+          "name": "Redis Maxwell"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        -1744,
+        1504
+      ],
+      "id": "9dc2eac5-84f2-4ea0-9d58-062e919c526c",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validar resposta do Agent\nconst response = $json.output || '';\nconst validMarkers = [\n  '[BOTÕES:APRESENTAÇÃO]',\n  '[BOTÕES:TEM_RECEITA]',\n  '[BOTÕES:FOTOSSENSÍVEIS]',\n  '[BOTÕES:TIPO_LENTE]',\n  '[BOTÕES:COR_LENTE]',\n  '[BOTÕES:SIM_NAO]'\n];\n\n// Verificar se há marcadores válidos\nconst hasValidMarker = validMarkers.some(marker => \n  response.includes(marker)\n);\n\n// Verificar se a resposta está vazia ou muito longa\nconst isValidLength = response.length > 10 && response.length < 1000;\n\n// Se inválido, usar resposta padrão\nif (!isValidLength) {\n  return {\n    output: \"Desculpe, tive um problema. Um consultor vai te ajudar! 💙\",\n    isValid: false\n  };\n}\n\nreturn {\n  output: response,\n  isValid: true,\n  hasButtons: hasValidMarker\n};"
+      },
+      "id": "7687ce67-366d-4360-99b5-87248955fc3e",
+      "name": "VALIDATE RESPONSE",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1552,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "key": "=Errors.{{ $('Webhook').item.json.body.phone }}",
+        "options": {}
+      },
+      "name": "GET ERROR COUNT",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -1104,
+        1184
+      ],
+      "id": "75e79198-e26e-4c04-a8cd-3262d158be45",
+      "alwaysOutputData": true,
+      "credentials": {
+        "redis": {
+          "id": "WnwFd2IKE5xh10qb",
+          "name": "Redis Maxwell"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "valid-response",
+              "leftValue": "={{ $json.isValid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1328,
+        1280
+      ],
+      "id": "171d0d91-6b07-4cce-b11c-1ddb050f171b",
+      "name": "If Invalid Response"
+    },
+    {
+      "parameters": {
+        "operation": "incr",
+        "key": "=Errors.{{ $('Webhook').item.json.body.phone }}"
+      },
+      "name": "INCREMENT ERROR COUNT",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -880,
+        1184
+      ],
+      "id": "02d76152-9de1-4470-ac58-4518f3d12981",
+      "credentials": {
+        "redis": {
+          "id": "WnwFd2IKE5xh10qb",
+          "name": "Redis Maxwell"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Rastrear analytics\nconst startTime = Date.now();\nconst phone = $('Webhook').item.json.body.phone;\nconst state = $('DETECT HUMAN INTERVENTION & ABANDONMENT').item.json.state;\nconst response = $json;\nconst humanInterventionStatus = $('DETECT HUMAN INTERVENTION & ABANDONMENT').item.json;\n\nconst analyticsData = {\n  phone,\n  timestamp: new Date().toISOString(),\n  flowType: state?.currentFlow || 'unknown',\n  stepReached: state?.currentStep || 'initial',\n  hasButtons: response.hasButtons || false,\n  responseTime: Date.now() - startTime,\n  isSuccessful: response.isValid || false,\n  responseLength: response.output?.length || 0,\n  abandonmentRisk: false,\n  errorCount: parseInt($('GET ERROR COUNT').item.json.value || '0'),\n  hasHumanIntervention: humanInterventionStatus.shouldPauseBot || false,\n  humanInterventionType: humanInterventionStatus.isHumanIntervention ? 'direct' : \n                         humanInterventionStatus.detectedTakeover ? 'keyword' : \n                         humanInterventionStatus.hasActiveHumanTimeout ? 'active' : 'none'\n};\n\n// Preparar para salvar em planilha\nreturn analyticsData;"
+      },
+      "id": "4c259dd4-8690-443b-ad12-25831272b435",
+      "name": "TRACK ANALYTICS",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -672,
+        1184
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ai-response-final",
+              "name": "aiResponse",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "processing-complete",
+              "name": "processingComplete",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "52d7f223-8b63-40ae-83f2-0650bf49bd38",
+      "name": "📤 Prepare Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1104,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "split-messages",
+              "name": "messages",
+              "value": "={{ $json.aiResponse.split('\\n\\n').filter(msg => msg.trim() !== '') }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1025d7b4-e84b-4b64-a0d8-81a5013df216",
+      "name": "✂️ Split Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -880,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "messages",
+        "options": {}
+      },
+      "id": "792c5619-ec65-4c0a-8cba-a77f2006c50a",
+      "name": "📋 Split Out Messages",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1761f79c-a9da-4c9d-9607-869618fbeeb7",
+              "leftValue": "={{ $json.messages }}",
+              "rightValue": "Em que posso te ajudar hoje?",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -448,
+        1488
+      ],
+      "id": "6cfda6e6-7901-4d0e-975e-140588c34c73",
+      "name": "If6"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f9306cc9-ed95-47d5-959d-b3aa3126ceb7",
+      "name": "🔄 Loop Messages",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -224,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "has-image-url",
+                    "leftValue": "={{ String($json.messages).match(/https:\\/\\/[^\\s]+\\.(jpeg|jpg|png|webp|gif)/gi) !== null }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "has-video-url",
+                    "leftValue": "={{ String($json.messages).match(/https:\\/\\/[^\\s]+\\.(mp4|mov|avi|wmv|mkv)/gi) !== null }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Video"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "has-audio-url",
+                    "leftValue": "={{ String($json.messages).match(/https:\\/\\/[^\\s]+\\.mp3/gi) !== null }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "has-botoes-fotossensiveis",
+                    "leftValue": "={{ String($json.messages) }}",
+                    "rightValue": "[BOTÕES:FOTOSSENSÍVEIS]",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Botoes_Fotossensiveis"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "has-botoes-tipo-lente",
+                    "leftValue": "={{ String($json.messages) }}",
+                    "rightValue": "[BOTÕES:TIPO_LENTE]",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Botoes_Tipo_Lente"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "has-botoes-cor-lente",
+                    "leftValue": "={{ String($json.messages) }}",
+                    "rightValue": "[BOTÕES:COR_LENTE]",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Botoes_Cor_Lente"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "has-botoes-tem-receita",
+                    "leftValue": "={{ String($json.messages) }}",
+                    "rightValue": "[BOTÕES:TEM_RECEITA]",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Botoes_Tem_Receita"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "has-botoes-sim-nao",
+                    "leftValue": "={{ String($json.messages) }}",
+                    "rightValue": "[BOTÕES:SIM_NAO]",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Botoes_Sim_Nao"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "has-botoes-apresentacao",
+                    "leftValue": "={{ String($json.messages) }}",
+                    "rightValue": "[BOTÕES:APRESENTAÇÃO]",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Botoes_Apresentacao"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "contains-presentation",
+                    "leftValue": "={{ String($json.messages) }}",
+                    "rightValue": "eu sou a [ASSISTENTE], assistente virtual",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Presentation"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "is-text",
+                    "leftValue": "={{ String($json.messages).trim() !== '' && !String($json.messages).includes('[BOTÕES:') }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bdf529cb-4265-49d5-a4cd-a72d8d2e496b",
+      "name": "🔍 Detect Response Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        0,
+        1088
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "82d60de9-3664-45f9-8ebf-4bc429ec853c",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "=Messages.{{ $('Webhook').item.json.body.phone }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "e719e4ea-d83f-4e81-9f87-4dbebd55798b",
+      "name": "DELETE HISTORY",
+      "credentials": {
+        "redis": {
+          "id": "WnwFd2IKE5xh10qb",
+          "name": "Redis Maxwell"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "c9dc6649-39c1-4dfd-a189-08f43229c2c6",
+      "name": "✅ Success",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        432,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "61027142-1340-40e3-854a-ec2bf1169ce9",
+              "name": "numCliente",
+              "value": "={{ $('Webhook').item.json.body.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "d5091273-d5b2-4253-b604-a5d17205fb8d",
+              "name": "msgRecebida",
+              "value": "={{ $('RETRIEVE LAST MESSAGES').item.json.values().flat().join(`\\n`) }}",
+              "type": "string"
+            },
+            {
+              "id": "c17d6193-c626-41cc-9b27-4e249085ef86",
+              "name": "msgEnviada",
+              "value": "={{ $('🔄 Loop Messages').item.json.messages }}",
+              "type": "string"
+            },
+            {
+              "id": "c746e7f6-da9d-408e-a129-38f11b62ecc9",
+              "name": "dataMensagem",
+              "value": "={{ $now.format('dd-MM-yyyy HH:MM') }}",
+              "type": "string"
+            },
+            {
+              "id": "human-intervention",
+              "name": "intervencaoHumana",
+              "value": "={{ $('DETECT HUMAN INTERVENTION & ABANDONMENT').item.json.shouldPauseBot ? 'Sim' : 'Não' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        656,
+        1168
+      ],
+      "id": "d6b38a02-adf0-4fdd-a20a-4a96b6d0fb36",
+      "name": "Audit Messages",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "DEMO_GOOGLE_SHEETS_ID",
+          "mode": "list",
+          "cachedResultName": "audit_DEMO",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/DEMO_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "messages",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/DEMO_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "numCliente",
+              "displayName": "numCliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "msgRecebida",
+              "displayName": "msgRecebida",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "msgEnviada",
+              "displayName": "msgEnviada",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "error",
+              "displayName": "error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "pairedItem",
+              "displayName": "pairedItem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "dataMensagem",
+              "displayName": "dataMensagem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "intervencaoHumana",
+              "displayName": "intervencaoHumana",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        880,
+        1168
+      ],
+      "id": "0262786c-57e6-40db-8fac-037754237527",
+      "name": "Google Sheets"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        1168
+      ],
+      "id": "7f01bb54-d56a-436b-9827-a1e1d4ed1527",
+      "name": "No Operation, do nothing2"
+    },
+    {
+      "parameters": {},
+      "id": "3b8351de-8714-424e-ac01-2953ee0ed6a1",
+      "name": "💬 Send Text",
+      "type": "n8n-nodes-zapi.zapi",
+      "typeVersion": 1,
+      "position": [
+        208,
+        2208
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/DEMO_ZAPI_INSTANCE_ID/token/DEMO_ZAPI_TOKEN/send-button-list",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "client-token",
+              "value": "DEMO_ZAPI_CLIENT_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $('Webhook').item.json.body.phone }}\",\n  \"message\": \"{{ String($json.messages).split('[BOTÕES:')[0].trim().replace(/\\n/g, ' ') }}\",\n  \"buttonList\": {\n    \"buttons\": [\n      {\n        \"id\": \"1\",\n        \"label\": \"Óculos de Grau 🤓\"\n      },\n      {\n        \"id\": \"2\",\n        \"label\": \"Óculos de Sol 😎\"\n      },\n      {\n        \"id\": \"3\",\n        \"label\": \"Lentes de contato\"\n      },\n      {\n        \"id\": \"4\",\n        \"label\": \"Outro Assunto\"\n      }\n    ]\n  }\n}",
+        "options": {}
+      },
+      "id": "548777ba-99e2-4694-9da1-445fee62a843",
+      "name": "🎯 Botões Apresentação",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        1808
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/DEMO_ZAPI_INSTANCE_ID/token/DEMO_ZAPI_TOKEN/send-button-list",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "client-token",
+              "value": "DEMO_ZAPI_CLIENT_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $('Webhook').item.json.body.phone }}\",\n  \"message\": \"{{ String($json.messages).split('[BOTÕES:')[0].trim().replace(/\\n/g, ' ') }}\",\n  \"buttonList\": {\n    \"buttons\": [\n      {\n        \"id\": \"1\",\n        \"label\": \"Sim ✅\"\n      },\n      {\n        \"id\": \"2\",\n        \"label\": \"Não ❌\"\n      }\n    ]\n  }\n}",
+        "options": {}
+      },
+      "id": "859ba8fb-5cbe-4679-93ec-66c02d98b30e",
+      "name": "✅ Botões Sim/Não",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        1616
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/DEMO_ZAPI_INSTANCE_ID/token/DEMO_ZAPI_TOKEN/send-button-list",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "client-token",
+              "value": "DEMO_ZAPI_CLIENT_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $('Webhook').item.json.body.phone }}\",\n  \"message\": \"{{ String($json.messages).split('[BOTÕES:')[0].trim().replace(/\\n/g, ' ') }}\",\n  \"buttonList\": {\n    \"buttons\": [\n      {\n        \"id\": \"1\",\n        \"label\": \"Sim, tenho receita 📋\"\n      },\n      {\n        \"id\": \"2\",\n        \"label\": \"Não tenho receita ❌\"\n      }\n    ]\n  }\n}",
+        "options": {}
+      },
+      "id": "d41dca91-2b4c-4ba9-ae4e-89f9b0742bdf",
+      "name": "📋 Botões Tem Receita",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        1408
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/DEMO_ZAPI_INSTANCE_ID/token/DEMO_ZAPI_TOKEN/send-button-list",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "client-token",
+              "value": "DEMO_ZAPI_CLIENT_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $('Webhook').item.json.body.phone }}\",\n  \"message\": \"{{ String($json.messages).split('[BOTÕES:')[0].trim().replace(/\\n/g, ' ') }}\",\n  \"buttonList\": {\n    \"buttons\": [\n      {\n        \"id\": \"1\",\n        \"label\": \"Coloridas 🌈\"\n      },\n      {\n        \"id\": \"2\",\n        \"label\": \"Incolores (transparentes) 💎\"\n      }\n    ]\n  }\n}",
+        "options": {}
+      },
+      "id": "b22ae787-d6a8-46fd-bfb3-c186e625a7c1",
+      "name": "🌈 Botões Cor Lente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        1216
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/DEMO_ZAPI_INSTANCE_ID/token/DEMO_ZAPI_TOKEN/send-button-list",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "client-token",
+              "value": "DEMO_ZAPI_CLIENT_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $('Webhook').item.json.body.phone }}\",\n  \"message\": \"{{ String($json.messages).split('[BOTÕES:')[0].trim().replace(/\\n/g, ' ') }}\",\n  \"buttonList\": {\n    \"buttons\": [\n      {\n        \"id\": \"1\",\n        \"label\": \"Com grau 🤓\"\n      },\n      {\n        \"id\": \"2\",\n        \"label\": \"Sem grau (estéticas) ✨\"\n      }\n    ]\n  }\n}",
+        "options": {}
+      },
+      "id": "46e873e8-95fe-4f65-8049-fc77d000bec4",
+      "name": "👁️ Botões Tipo Lente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        1008
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/DEMO_ZAPI_INSTANCE_ID/token/DEMO_ZAPI_TOKEN/send-button-list",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "client-token",
+              "value": "DEMO_ZAPI_CLIENT_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $('Webhook').item.json.body.phone }}\",\n  \"message\": \"{{ String($json.messages).split('[BOTÕES:')[0].trim().replace(/\\n/g, ' ') }}\",\n  \"buttonList\": {\n    \"buttons\": [\n      {\n        \"id\": \"1\",\n        \"label\": \"Sim, fotossensíveis 🕶️\"\n      },\n      {\n        \"id\": \"2\",\n        \"label\": \"Não, normais 👓\"\n      }\n    ]\n  }\n}",
+        "options": {}
+      },
+      "id": "5948e92c-b329-45f3-b865-89ce578f0a47",
+      "name": "🕶️ Botões Fotossensíveis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        816
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/DEMO_ZAPI_INSTANCE_ID/token/DEMO_ZAPI_TOKEN/send-button-list",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "client-token",
+              "value": "DEMO_ZAPI_CLIENT_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $('Webhook').item.json.body.phone }}\",\n  \"message\": \"{{ String($json.messages).split('[BOTÕES:')[0].trim().replace(/\\n/g, ' ') }}\",\n  \"buttonList\": {\n    \"buttons\": [\n      {\n        \"id\": \"1\",\n        \"label\": \"Óculos de Grau 🤓\"\n      },\n      {\n        \"id\": \"2\",\n        \"label\": \"Óculos de Sol 😎\"\n      },\n      {\n        \"id\": \"3\",\n        \"label\": \"Lentes de contato\"\n      },\n      {\n        \"id\": \"4\",\n        \"label\": \"Outro Assunto\"\n      }\n    ]\n  }\n}",
+        "options": {}
+      },
+      "id": "b06abca7-083d-47e7-bf29-2b634b1cee9b",
+      "name": "🎯 Send Presentation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        2016
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {},
+      "id": "5ff53b16-ad29-492e-8637-02b39bafa9fb",
+      "name": "🎵 Send Audio",
+      "type": "n8n-nodes-zapi.zapi",
+      "typeVersion": 1,
+      "position": [
+        208,
+        608
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://api.sua-empresa.com.br/message/sendMedia/{{ $('Webhook').item.json.body.instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('ALTERE ISSO').item.json.EVOLUTION_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $('Webhook').item.json.body.phone }}\",\n  \"mediatype\": \"video\",\n  \"media\": \"{{ String($json.messages).match(/https:\\/\\/[^\\s]+\\.(mp4|mov|avi|wmv|mkv)/gi)?.[0] || '' }}\"\n}",
+        "options": {}
+      },
+      "id": "fae91ccb-d514-43bc-9713-73d7d81148b5",
+      "name": "🎬 Send Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        416
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://api.sua-empresa.com.br/message/sendMedia/{{ $('Webhook').item.json.body.instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('ALTERE ISSO').item.json.EVOLUTION_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $('Webhook').item.json.body.phone }}\",\n  \"mediatype\": \"image\",\n  \"media\": \"{{ String($json.messages).match(/https:\\/\\/[^\\s]+\\.(jpeg|jpg|png|webp|gif)/gi)?.[0] || '' }}\"\n}",
+        "options": {}
+      },
+      "id": "f21ffab0-ea27-41d8-93cd-1e0787499300",
+      "name": "🖼️ Send Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        208
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {},
+      "id": "36637e9b-4943-48cd-8a36-b5d62862be4c",
+      "name": "➡️ Continue Loop",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        432,
+        1216
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b767a2ab-f10d-40cd-b222-41a8124f0069",
+              "leftValue": "={{ $('🔄 Loop Messages').item.json.messages }}",
+              "rightValue": "https://www.sua-empresa.com.br",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "993e3e22-0774-4e0e-8a7b-33edeea9e029",
+              "leftValue": "={{ $('🔄 Loop Messages').item.json.messages }}",
+              "rightValue": "te passo os horários disponíveis!!!",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "9cba4158-1037-4214-b700-24b039306f47",
+              "leftValue": "={{ $('🔄 Loop Messages').item.json.messages }}",
+              "rightValue": "consultor",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "57f6f49b-7a5d-481d-89ae-996773027570",
+              "leftValue": "={{ $('🔄 Loop Messages').item.json.messages }}",
+              "rightValue": "Entendi",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "6c36d123-fced-4724-884f-2c27f8b18473",
+              "leftValue": "={{ $('🔄 Loop Messages').item.json.messages }}",
+              "rightValue": "horários disponíveis",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "8ac3cc2c-5347-4c47-9a11-df90e2c27648",
+              "leftValue": "={{ $('🔄 Loop Messages').item.json.messages }}",
+              "rightValue": "entendi",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        656,
+        2304
+      ],
+      "id": "d34e51ea-c630-4d6c-866e-dd4c3657a015",
+      "name": "If5"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "=Timeout.{{ $('Webhook').item.json.body.phone }}",
+        "value": "={{ $now.plus($('ALTERE ISSO').item.json['FROM-ME-WINDOW']*60*1000).toISO() }}"
+      },
+      "name": "STOP AND SET TIMEOUT1",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        880,
+        2384
+      ],
+      "id": "a951bd0e-447d-4fcd-b20a-10026caf7c5e",
+      "credentials": {
+        "redis": {
+          "id": "WnwFd2IKE5xh10qb",
+          "name": "Redis Maxwell"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        2384
+      ],
+      "id": "e63929f9-a8b3-4eb8-b511-e7d7494e6ff5",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -5952,
+        992
+      ],
+      "id": "f997f417-6b11-464d-b414-a8c8e5d37811",
+      "name": "No Operation, do nothing3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -6608,
+        1280
+      ],
+      "id": "8b5c5d2b-8b30-4e63-9c2c-aa2459c16555",
+      "name": "No Operation, do nothing7"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2432,
+        1488
+      ],
+      "id": "84875fee-c98b-4c0c-8578-26d5e0dceb17",
+      "name": "Bot Paused - Do Nothing"
+    },
+    {
+      "parameters": {
+        "content": "## WORKFLOW OTIMIZADO - VERSÃO DEMO\n\n### Funcionalidades Implementadas:\n\n1. **Detecção de Intervenção Humana**\n   - Detecta mensagens diretas do operador\n   - Detecta palavras-chave de transferência\n   - Timeout especial para atendimento humano\n\n2. **Sistema de Abandono Inteligente**\n   - Verifica intervenção antes de resetar\n   - Mensagem amigável de retorno\n\n3. **Configurações Principais**\n   - TIMEOUT, FROM-ME-WINDOW\n   - HUMAN-INTERVENTION-WINDOW\n   - HUMAN-TAKEOVER-KEYWORDS\n\n4. **Monitoramento**\n   - Registro em planilhas\n   - Analytics de conversas\n   - Estado salvo em cache\n\n---\n**Versão para portfólio - Credenciais removidas**",
+        "height": 700,
+        "width": 700,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3680,
+        544
+      ],
+      "id": "97328135-2a82-48b2-ac7d-686675b5d041",
+      "name": "Sticky Note - Final"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -7280,
+        1536
+      ],
+      "id": "e2be993b-1c38-44ef-b039-609bb7a22b4b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://api.z-api.io/instances/DEMO_ZAPI_INSTANCE_ID/token/DEMO_ZAPI_TOKEN/status",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "client-token",
+              "value": "DEMO_ZAPI_CLIENT_TOKEN"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -7072,
+        1536
+      ],
+      "id": "890a414b-d32c-45e8-b794-aa7cb364b13d",
+      "name": "Consulta Status"
+    },
+    {
+      "parameters": {
+        "sendTo": "seu-email@exemplo.com",
+        "subject": "Sessão [ASSISTENTE] Desconectada",
+        "emailType": "text",
+        "message": "A sessão Z-API da [ASSISTENTE] está desconectada.",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -6624,
+        1536
+      ],
+      "id": "c80017d9-bbe6-4812-b055-ce43e3c4d096",
+      "name": "Alerta Sessão Desconectada",
+      "webhookId": "DEMO_WEBHOOK_GMAIL_ID"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "118c2286-3483-452d-b301-12ec7e951708",
+              "leftValue": "={{ $json.connected }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -6848,
+        1536
+      ],
+      "id": "f9f71f4a-78ba-47b7-ab42-bcd10a4b9956",
+      "name": "Sessão Conectada?"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "DeliveryCallback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ALTERE ISSO": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeliveryCallback": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Se Grupo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se Grupo": {
+      "main": [
+        [
+          {
+            "node": "ALTERE ISSO",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "STOP AND SET TIMEOUT",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GET TIMEOUT1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "STOP AND SET TIMEOUT": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET TIMEOUT1": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "STORE TIMEOUT",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "STORE TIMEOUT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "STORE TIMEOUT": {
+      "main": [
+        [
+          {
+            "node": "Tipo da Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tipo da Mensagem": {
+      "main": [
+        [
+          {
+            "node": "SET DEFAULT MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SET REPLIED MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SET EDITED MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SET DEFAULT MESSAGE": {
+      "main": [
+        [
+          {
+            "node": "STORE MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SET REPLIED MESSAGE": {
+      "main": [
+        [
+          {
+            "node": "STORE MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SET EDITED MESSAGE": {
+      "main": [
+        [
+          {
+            "node": "STORE MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Audio": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "SET AUDIO MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SET AUDIO MESSAGE": {
+      "main": [
+        [
+          {
+            "node": "STORE MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "🎨 Process Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎨 Process Image": {
+      "main": [
+        [
+          {
+            "node": "SET IMAGE MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SET IMAGE MESSAGE": {
+      "main": [
+        [
+          {
+            "node": "STORE MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "STORE MESSAGE": {
+      "main": [
+        [
+          {
+            "node": "PREPARE CONVERSATION STATE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PREPARE CONVERSATION STATE": {
+      "main": [
+        [
+          {
+            "node": "STORE CONVERSATION STATE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "STORE CONVERSATION STATE": {
+      "main": [
+        [
+          {
+            "node": "GET CONVERSATION STATE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET CONVERSATION STATE": {
+      "main": [
+        [
+          {
+            "node": "RETRIEVE LAST MESSAGES",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RETRIEVE LAST MESSAGES": {
+      "main": [
+        [
+          {
+            "node": "DETECT HUMAN INTERVENTION & ABANDONMENT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DETECT HUMAN INTERVENTION & ABANDONMENT": {
+      "main": [
+        [
+          {
+            "node": "If Abandonment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Abandonment": {
+      "main": [
+        [
+          {
+            "node": "RESET MESSAGES",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If Pause Bot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Pause Bot": {
+      "main": [
+        [
+          {
+            "node": "LOG HUMAN INTERVENTION",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TIMEOUT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RESET MESSAGES": {
+      "main": [
+        [
+          {
+            "node": "RESET STATE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LOG HUMAN INTERVENTION": {
+      "main": [
+        [
+          {
+            "node": "Bot Paused - Do Nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TIMEOUT": {
+      "main": [
+        [
+          {
+            "node": "GET TIMEOUT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET TIMEOUT": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "[ASSISTENTE]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[ASSISTENTE]": {
+      "main": [
+        [
+          {
+            "node": "VALIDATE RESPONSE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VALIDATE RESPONSE": {
+      "main": [
+        [
+          {
+            "node": "If Invalid Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Invalid Response": {
+      "main": [
+        [
+          {
+            "node": "GET ERROR COUNT",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "📤 Prepare Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET ERROR COUNT": {
+      "main": [
+        [
+          {
+            "node": "INCREMENT ERROR COUNT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "INCREMENT ERROR COUNT": {
+      "main": [
+        [
+          {
+            "node": "TRACK ANALYTICS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📤 Prepare Response": {
+      "main": [
+        [
+          {
+            "node": "✂️ Split Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✂️ Split Response": {
+      "main": [
+        [
+          {
+            "node": "📋 Split Out Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📋 Split Out Messages": {
+      "main": [
+        [
+          {
+            "node": "If6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If6": {
+      "main": [
+        [
+          {
+            "node": "🔄 Loop Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔄 Loop Messages": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🔍 Detect Response Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 Detect Response Type": {
+      "main": [
+        [
+          {
+            "node": "🖼️ Send Image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🎬 Send Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🎵 Send Audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🕶️ Botões Fotossensíveis",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "👁️ Botões Tipo Lente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🌈 Botões Cor Lente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "📋 Botões Tem Receita",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "✅ Botões Sim/Não",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🎯 Botões Apresentação",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🎯 Send Presentation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "💬 Send Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "DELETE HISTORY",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DELETE HISTORY": {
+      "main": [
+        [
+          {
+            "node": "✅ Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "💬 Send Text": {
+      "main": [
+        [
+          {
+            "node": "➡️ Continue Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎯 Botões Apresentação": {
+      "main": [
+        [
+          {
+            "node": "➡️ Continue Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✅ Botões Sim/Não": {
+      "main": [
+        [
+          {
+            "node": "➡️ Continue Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📋 Botões Tem Receita": {
+      "main": [
+        [
+          {
+            "node": "➡️ Continue Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌈 Botões Cor Lente": {
+      "main": [
+        [
+          {
+            "node": "➡️ Continue Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "👁️ Botões Tipo Lente": {
+      "main": [
+        [
+          {
+            "node": "➡️ Continue Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🕶️ Botões Fotossensíveis": {
+      "main": [
+        [
+          {
+            "node": "➡️ Continue Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎯 Send Presentation": {
+      "main": [
+        [
+          {
+            "node": "➡️ Continue Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎵 Send Audio": {
+      "main": [
+        [
+          {
+            "node": "➡️ Continue Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎬 Send Video": {
+      "main": [
+        [
+          {
+            "node": "➡️ Continue Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🖼️ Send Image": {
+      "main": [
+        [
+          {
+            "node": "➡️ Continue Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "➡️ Continue Loop": {
+      "main": [
+        [
+          {
+            "node": "If5",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Audit Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        [
+          {
+            "node": "STOP AND SET TIMEOUT1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔄 Loop Messages",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🔄 Loop Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "STOP AND SET TIMEOUT1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔄 Loop Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audit Messages": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "[ASSISTENTE]",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "[ASSISTENTE]",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "[ASSISTENTE]",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Consulta Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consulta Status": {
+      "main": [
+        [
+          {
+            "node": "Sessão Conectada?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sessão Conectada?": {
+      "main": [
+        [
+          {
+            "node": "Alerta Sessão Desconectada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3f7b7db6-5580-4f77-b139-fa08dc67121b",
+  "meta": {
+    "instanceId": "be2e85c12d6d5bc51db8ebc43985deb72a4b5b24d5cceacf44565f768e2de1fe"
+  },
+  "id": "Z3BOnwnEh9aHOXk7",
+  "tags": [
+    {
+      "name": "Detecção Humana",
+      "id": "eILPvHMcdk0OysZr",
+      "updatedAt": "2025-12-04T17:52:42.012Z",
+      "createdAt": "2025-12-04T17:52:42.012Z"
+    },
+    {
+      "name": "[EMPRESA]",
+      "id": "ugBFjpnD8ZvOePLG",
+      "updatedAt": "2025-12-04T17:52:42.018Z",
+      "createdAt": "2025-12-04T17:52:42.018Z"
+    }
+  ]
+}

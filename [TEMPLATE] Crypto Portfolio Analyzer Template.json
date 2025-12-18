@@ -1,0 +1,417 @@
+{
+  "name": "Crypto Portfolio Analyzer Template",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## n8n Template: Crypto Portfolio Analyzer Template\n\n**Criado por:** Maxwell Melo\n**Contato:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\n**Categorias:** Crypto, Portfolio, Trading, Analytics\n\n---\n\n### Sobre este Template\n\nAnalisador de portfólio de criptomoedas:\n- Conexão com exchange (API autenticada)\n- Análise de posições e P&L\n- Cálculo de risco e margem\n- Relatórios formatados via WhatsApp\n\n---\n\n### Como Configurar\n\n1. **Importe** este workflow no seu n8n\n2. **Configure** suas credenciais (substitua os placeholders)\n3. **Personalize** para seu caso de uso\n4. **Teste** antes de usar em produção\n\n### Credenciais para Configurar\n\nProcure por nodes com `DEMO_*` ou `SUA_*` e configure:\n- Suas chaves de API\n- Conexões de banco de dados\n- Credenciais de serviços\n\n---\n\n### Precisa de Ajuda?\n\n**Email:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\nOfereço serviços de:\n- Implementação personalizada\n- Customização de workflows\n- Treinamento em n8n\n- Consultoria em automação\n\n---\n*Template por Maxwell Melo*",
+        "height": 650,
+        "width": 400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8500,
+        200
+      ],
+      "id": "template-info-1764872616188",
+      "name": "Template Info - Leia Primeiro"
+    },
+    {
+      "parameters": {},
+      "id": "cdf3c84e-bd19-42dd-87c3-c39776301714",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1328,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://fapi.asterdex.com/fapi/v1/time",
+        "options": {}
+      },
+      "id": "265fcb93-a79f-46ec-855c-8d2d28562cdd",
+      "name": "Get Server Time",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1104,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get server time and prepare signature components\nconst serverTimeResponse = $input.first().json;\nconst serverTime = serverTimeResponse.serverTime;\n\n// Add small offset for network latency\nconst timestamp = serverTime + 1000;\n\n// API credentials\nconst apiKey = 'SUA_ASTER_API_KEY';\nconst apiSecret = 'SUA_ASTER_API_SECRET';\n\n// Build query string for balance endpoint\nconst recvWindow = 60000;\nconst queryString = `recvWindow=${recvWindow}&timestamp=${timestamp}`;\n\nconsole.log('Server Time:', new Date(serverTime).toISOString());\nconsole.log('Using Timestamp:', timestamp);\nconsole.log('Query String:', queryString);\n\nreturn {\n  timestamp: timestamp,\n  recvWindow: recvWindow,\n  apiKey: apiKey,\n  apiSecret: apiSecret,\n  queryString: queryString,\n  serverTime: serverTime\n};"
+      },
+      "id": "a8562bd2-ff17-4ba2-b688-f8f47b1a9db0",
+      "name": "Prepare Signature",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -880,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "action": "hmac",
+        "type": "sha256",
+        "value": "={{ $json.queryString }}",
+        "secret": "={{ $json.apiSecret }}"
+      },
+      "id": "8c9b450f-4171-4b88-9d9c-690714ba3a15",
+      "name": "Generate HMAC",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://fapi.asterdex.com/fapi/v2/balance",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "recvWindow",
+              "value": "={{ $('Prepare Signature').item.json.recvWindow }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $('Prepare Signature').item.json.timestamp }}"
+            },
+            {
+              "name": "signature",
+              "value": "={{ $json.data }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-MBX-APIKEY",
+              "value": "={{ $('Prepare Signature').item.json.apiKey }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "229283bd-a498-41a1-81f8-c7eaff3edf3c",
+      "name": "Get Balance",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -432,
+        128
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process balance data - handle n8n HTTP Request node output\n// O nó HTTP Request do n8n já retorna o array diretamente quando a resposta é um array JSON\n\n// Pegar todos os itens do array\nconst balances = $input.all().map(item => item.json);\n\nconsole.log('Total items received:', balances.length);\nconsole.log('First item sample:', JSON.stringify(balances[0]).substring(0, 200));\n\n// Check for API error in first item\nif (balances.length > 0 && balances[0].code) {\n  return {\n    success: false,\n    error: {\n      code: balances[0].code,\n      message: balances[0].msg\n    }\n  };\n}\n\n// Filter assets with actual balance or available balance\nconst activeAssets = balances.filter(b => {\n  const balance = parseFloat(b.balance || 0);\n  const availableBalance = parseFloat(b.availableBalance || 0);\n  const crossWalletBalance = parseFloat(b.crossWalletBalance || 0);\n\n  // Include if any balance is greater than 0\n  return balance > 0 || availableBalance > 0 || crossWalletBalance > 0;\n});\n\n// Separate real balances from available balances\nconst realBalances = activeAssets.filter(b => parseFloat(b.balance || 0) > 0);\nconst availableOnly = activeAssets.filter(b =>\n  parseFloat(b.balance || 0) === 0 && parseFloat(b.availableBalance || 0) > 0\n);\n\n// Calculate total values\nlet totalBalance = 0;\nlet totalAvailable = 0;\nlet totalUnrealizedPnL = 0;\n\n// Process USDT and USDF as main currencies\nconst usdtAsset = balances.find(b => b.asset === 'USDT');\nconst usdfAsset = balances.find(b => b.asset === 'USDF');\n\nif (usdtAsset) {\n  totalBalance += parseFloat(usdtAsset.balance || 0);\n  totalAvailable += parseFloat(usdtAsset.availableBalance || 0);\n  totalUnrealizedPnL += parseFloat(usdtAsset.crossUnPnl || 0);\n}\n\nif (usdfAsset) {\n  totalBalance += parseFloat(usdfAsset.balance || 0);\n  totalAvailable += parseFloat(usdfAsset.availableBalance || 0);\n  totalUnrealizedPnL += parseFloat(usdfAsset.crossUnPnl || 0);\n}\n\n// Format assets for output\nconst formattedAssets = activeAssets.map(asset => ({\n  asset: asset.asset,\n  balance: parseFloat(asset.balance || 0).toFixed(8),\n  crossWalletBalance: parseFloat(asset.crossWalletBalance || 0).toFixed(8),\n  crossUnPnl: parseFloat(asset.crossUnPnl || 0).toFixed(8),\n  availableBalance: parseFloat(asset.availableBalance || 0).toFixed(8),\n  maxWithdrawAmount: parseFloat(asset.maxWithdrawAmount || 0).toFixed(8),\n  marginAvailable: asset.marginAvailable,\n  lastUpdate: asset.updateTime > 0 ? new Date(asset.updateTime).toISOString() : 'N/A'\n})).sort((a, b) => {\n  // Sort by balance descending first, then by available balance\n  const balanceA = parseFloat(a.balance);\n  const balanceB = parseFloat(b.balance);\n  if (balanceB !== balanceA) return balanceB - balanceA;\n\n  const availA = parseFloat(a.availableBalance);\n  const availB = parseFloat(b.availableBalance);\n  return availB - availA;\n});\n\n// Calculate totals including all stablecoins\nconst stablecoins = ['USDT', 'USDF', 'USDC', 'BUSD', 'CUSDT', 'VUSDT', 'USDCE', 'USDBC', 'USD1', 'LISUSD', 'BONUSUSD'];\nlet totalStablecoinBalance = 0;\nlet totalStablecoinAvailable = 0;\n\nstablecoins.forEach(coin => {\n  const asset = balances.find(b => b.asset === coin);\n  if (asset) {\n    totalStablecoinBalance += parseFloat(asset.balance || 0);\n    totalStablecoinAvailable += parseFloat(asset.availableBalance || 0);\n  }\n});\n\nreturn {\n  success: true,\n  timestamp: new Date().toISOString(),\n  dataType: 'balance',\n  summary: {\n    totalAssets: balances.length,\n    assetsWithBalance: realBalances.length,\n    assetsWithAvailableOnly: availableOnly.length,\n    totalBalance: totalBalance.toFixed(2),\n    totalAvailable: totalAvailable.toFixed(2),\n    totalUnrealizedPnL: totalUnrealizedPnL.toFixed(2),\n    totalStablecoinBalance: totalStablecoinBalance.toFixed(2),\n    totalStablecoinAvailable: totalStablecoinAvailable.toFixed(2),\n    mainCurrencies: {\n      USDT: usdtAsset ? {\n        balance: parseFloat(usdtAsset.balance || 0).toFixed(2),\n        available: parseFloat(usdtAsset.availableBalance || 0).toFixed(2),\n        unrealizedPnL: parseFloat(usdtAsset.crossUnPnl || 0).toFixed(2)\n      } : null,\n      USDF: usdfAsset ? {\n        balance: parseFloat(usdfAsset.balance || 0).toFixed(2),\n        available: parseFloat(usdfAsset.availableBalance || 0).toFixed(2),\n        unrealizedPnL: parseFloat(usdfAsset.crossUnPnl || 0).toFixed(2)\n      } : null\n    }\n  },\n  assets: formattedAssets.slice(0, 20), // Top 20 assets\n  realBalances: realBalances.map(b => ({\n    asset: b.asset,\n    balance: parseFloat(b.balance).toFixed(8),\n    available: parseFloat(b.availableBalance || 0).toFixed(8)\n  })),\n  availableBalances: availableOnly.slice(0, 15).map(b => ({\n    asset: b.asset,\n    available: parseFloat(b.availableBalance).toFixed(8)\n  }))\n};"
+      },
+      "id": "7e2f903c-2d64-4d9e-922d-79bca0372857",
+      "name": "Process Balance Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -208,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://fapi.asterdex.com/fapi/v2/account",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "recvWindow",
+              "value": "={{ $('Prepare Signature').item.json.recvWindow }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $('Prepare Signature').item.json.timestamp }}"
+            },
+            {
+              "name": "signature",
+              "value": "={{ $('Generate HMAC').item.json.data }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-MBX-APIKEY",
+              "value": "={{ $('Prepare Signature').item.json.apiKey }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "cbfbbfcd-31f3-4624-85da-8582d929c163",
+      "name": "Get Account Info",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -208,
+        320
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {},
+      "id": "9b8f197b-496a-4d93-8843-849741e1874a",
+      "name": "Merge Data",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        16,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Portfolio Analysis - Fixed Version 3.0\nconst inputs = $input.all();\n\n// Configuration constants\nconst CONFIG = {\n  RISK_THRESHOLDS: {\n    CRITICAL: 5,\n    HIGH: 10,\n    MEDIUM: 20\n  },\n  LOSS_THRESHOLDS: {\n    SEVERE: -50,\n    HIGH: -20,\n    WARNING: -10\n  },\n  PRECISION: {\n    CURRENCY: 2,\n    PRICE: 4,\n    AMOUNT: 8,\n    PERCENT: 2\n  },\n  MIN_BALANCE_DISPLAY: 0.01\n};\n\n// Utility functions\nconst formatNumber = (value, precision = CONFIG.PRECISION.CURRENCY) => {\n  const num = parseFloat(value || 0);\n  return isNaN(num) ? '0.00' : num.toFixed(precision);\n};\n\nconst calculatePercentage = (value, total) => {\n  if (!total || total === 0) return 0;\n  return (value / total) * 100;\n};\n\n// Parse input data\nfunction parseInputData(inputs) {\n  let balanceData = null;\n  let accountData = null;\n  const errors = [];\n  \n  for (const item of inputs) {\n    const data = item.json;\n    \n    if (data?.error || data?.code) {\n      errors.push({\n        type: 'API_ERROR',\n        message: data.error?.message || 'Unknown error'\n      });\n      continue;\n    }\n    \n    if (data?.dataType === 'balance' || data?.summary?.totalAssets !== undefined) {\n      balanceData = data;\n    } else if (data?.positions !== undefined || data?.totalWalletBalance !== undefined) {\n      accountData = data;\n    }\n  }\n  \n  return { balanceData, accountData, errors };\n}\n\n// Process position with proper price calculation\nfunction processPosition(position, accountData) {\n  const positionAmt = parseFloat(position.positionAmt || 0);\n  if (positionAmt === 0) return null;\n  \n  const entryPrice = parseFloat(position.entryPrice || 0);\n  const unrealizedProfit = parseFloat(position.unrealizedProfit || 0);\n  const notional = parseFloat(position.notional || 0);\n  \n  // Calculate current price from notional value if markPrice is missing or zero\n  let markPrice = parseFloat(position.markPrice || 0);\n  if (markPrice === 0 && Math.abs(positionAmt) > 0) {\n    // Try to calculate from notional\n    if (Math.abs(notional) > 0) {\n      markPrice = Math.abs(notional / positionAmt);\n    } else if (entryPrice > 0 && unrealizedProfit !== 0) {\n      // Estimate from entry price and unrealized profit\n      const profitPerUnit = unrealizedProfit / Math.abs(positionAmt);\n      markPrice = positionAmt > 0 ? \n        entryPrice + profitPerUnit : \n        entryPrice - profitPerUnit;\n      \n      // Ensure mark price doesn't go negative\n      if (markPrice < 0) markPrice = 0.0001;\n    }\n  }\n  \n  // Calculate actual PnL percentage\n  let pnlPercent = 0;\n  let totalInvested = Math.abs(positionAmt * entryPrice);\n  \n  if (entryPrice > 0 && markPrice > 0) {\n    const priceChange = markPrice - entryPrice;\n    pnlPercent = (priceChange / entryPrice) * 100;\n    if (positionAmt < 0) pnlPercent = -pnlPercent; // Reverse for short positions\n  } else if (totalInvested > 0 && unrealizedProfit !== 0) {\n    // Calculate from unrealized profit\n    pnlPercent = (unrealizedProfit / totalInvested) * 100;\n  }\n  \n  // Determine risk level based on loss percentage and margin\n  let riskLevel = 'LOW';\n  const absLoss = Math.abs(pnlPercent);\n  \n  if (absLoss > 80 || pnlPercent < -80) {\n    riskLevel = 'CRITICAL';\n  } else if (absLoss > 50 || pnlPercent < -50) {\n    riskLevel = 'HIGH';\n  } else if (absLoss > 20 || pnlPercent < -20) {\n    riskLevel = 'MEDIUM';\n  }\n  \n  // Check margin level for additional risk assessment\n  const leverage = parseFloat(position.leverage || 1);\n  const marginRatio = leverage > 1 ? (100 / leverage) : 100;\n  if (marginRatio < 10 && riskLevel === 'LOW') {\n    riskLevel = 'MEDIUM';\n  }\n  \n  // Generate alerts\n  const alerts = [];\n  if (pnlPercent < CONFIG.LOSS_THRESHOLDS.SEVERE) {\n    alerts.push({\n      type: 'SEVERE_LOSS',\n      severity: 'CRITICAL',\n      symbol: position.symbol,\n      side: positionAmt > 0 ? 'LONG' : 'SHORT',\n      pnl: formatNumber(unrealizedProfit),\n      pnlPercent: formatNumber(pnlPercent, CONFIG.PRECISION.PERCENT),\n      message: `${position.symbol} ${positionAmt > 0 ? 'LONG' : 'SHORT'} has severe loss of ${formatNumber(pnlPercent, CONFIG.PRECISION.PERCENT)}%`,\n      action: 'CONSIDER_CLOSING_POSITION'\n    });\n  } else if (pnlPercent < CONFIG.LOSS_THRESHOLDS.HIGH) {\n    alerts.push({\n      type: 'LARGE_LOSS',\n      severity: 'HIGH',\n      symbol: position.symbol,\n      side: positionAmt > 0 ? 'LONG' : 'SHORT',\n      pnl: formatNumber(unrealizedProfit),\n      pnlPercent: formatNumber(pnlPercent, CONFIG.PRECISION.PERCENT),\n      message: `${position.symbol} ${positionAmt > 0 ? 'LONG' : 'SHORT'} has large loss of ${formatNumber(pnlPercent, CONFIG.PRECISION.PERCENT)}%`,\n      action: 'REVIEW_POSITION'\n    });\n  }\n  \n  return {\n    data: {\n      symbol: position.symbol,\n      side: positionAmt > 0 ? 'LONG' : 'SHORT',\n      amount: formatNumber(Math.abs(positionAmt), CONFIG.PRECISION.AMOUNT),\n      notional: formatNumber(Math.abs(notional)),\n      entryPrice: formatNumber(entryPrice, CONFIG.PRECISION.PRICE),\n      markPrice: markPrice > 0 ? formatNumber(markPrice, CONFIG.PRECISION.PRICE) : 'N/A',\n      currentValue: formatNumber(Math.abs(positionAmt * markPrice)),\n      unrealizedProfit: formatNumber(unrealizedProfit),\n      pnlPercent: formatNumber(pnlPercent, CONFIG.PRECISION.PERCENT),\n      leverage: leverage.toString(),\n      marginType: position.marginType || (position.isolated ? 'isolated' : 'cross'),\n      hasValidPrice: markPrice > 0\n    },\n    alerts,\n    riskLevel\n  };\n}\n\n// Process account info\nfunction processAccountInfo(accountData) {\n  if (!accountData || accountData.code || accountData.error) {\n    return null;\n  }\n  \n  const totalWallet = parseFloat(accountData.totalWalletBalance || 0);\n  const totalMargin = parseFloat(accountData.totalPositionInitialMargin || 0);\n  const availableBalance = parseFloat(accountData.availableBalance || 0);\n  \n  return {\n    totalWalletBalance: formatNumber(totalWallet),\n    totalUnrealizedProfit: formatNumber(accountData.totalUnrealizedProfit),\n    totalMarginBalance: formatNumber(accountData.totalMarginBalance),\n    availableBalance: formatNumber(availableBalance),\n    totalPositionInitialMargin: formatNumber(totalMargin),\n    totalOpenOrderInitialMargin: formatNumber(accountData.totalOpenOrderInitialMargin),\n    totalCrossWalletBalance: formatNumber(accountData.totalCrossWalletBalance),\n    totalCrossUnPnl: formatNumber(accountData.totalCrossUnPnl),\n    maxWithdrawAmount: formatNumber(accountData.maxWithdrawAmount),\n    marginUsagePercent: totalWallet > 0 ? \n      formatNumber((totalMargin / totalWallet) * 100, CONFIG.PRECISION.PERCENT) : '0.00'\n  };\n}\n\n// Main analysis function\nfunction analyzePortfolio(inputs) {\n  const { balanceData, accountData, errors } = parseInputData(inputs);\n  \n  if (!balanceData || !balanceData.success) {\n    return {\n      success: false,\n      error: balanceData?.error || 'Balance data not received',\n      timestamp: new Date().toISOString()\n    };\n  }\n  \n  const portfolio = {\n    timestamp: new Date().toISOString(),\n    positions: [],\n    alerts: [],\n    riskLevel: 'LOW',\n    metrics: {\n      totalPositions: 0,\n      profitablePositions: 0,\n      losingPositions: 0,\n      averagePnL: 0\n    }\n  };\n  \n  const accountInfo = processAccountInfo(accountData);\n  \n  // Process positions\n  if (accountData?.positions && Array.isArray(accountData.positions)) {\n    let totalPnL = 0;\n    \n    for (const position of accountData.positions) {\n      const processed = processPosition(position, accountData);\n      if (!processed) continue;\n      \n      portfolio.positions.push(processed.data);\n      portfolio.alerts.push(...processed.alerts);\n      \n      // Update metrics\n      portfolio.metrics.totalPositions++;\n      const pnl = parseFloat(processed.data.pnlPercent);\n      totalPnL += pnl;\n      \n      if (pnl > 0) {\n        portfolio.metrics.profitablePositions++;\n      } else if (pnl < 0) {\n        portfolio.metrics.losingPositions++;\n      }\n      \n      // Update risk level\n      if (processed.riskLevel === 'CRITICAL') {\n        portfolio.riskLevel = 'CRITICAL';\n      } else if (processed.riskLevel === 'HIGH' && portfolio.riskLevel !== 'CRITICAL') {\n        portfolio.riskLevel = 'HIGH';\n      } else if (processed.riskLevel === 'MEDIUM' && portfolio.riskLevel === 'LOW') {\n        portfolio.riskLevel = 'MEDIUM';\n      }\n    }\n    \n    portfolio.metrics.averagePnL = portfolio.metrics.totalPositions > 0 ? \n      formatNumber(totalPnL / portfolio.metrics.totalPositions, CONFIG.PRECISION.PERCENT) : '0.00';\n  }\n  \n  // Check for data inconsistencies\n  const warnings = [];\n  const reportedPnL = parseFloat(balanceData.summary.totalUnrealizedPnL || 0);\n  const calculatedPnL = portfolio.positions.reduce((sum, pos) => \n    sum + parseFloat(pos.unrealizedProfit), 0\n  );\n  \n  if (Math.abs(reportedPnL - calculatedPnL) > 1 && portfolio.positions.length === 0) {\n    warnings.push({\n      type: 'DATA_INCONSISTENCY',\n      message: 'Unrealized PnL detected but no open positions found',\n      suggestion: 'Check if all positions are being loaded correctly'\n    });\n  }\n  \n  return {\n    success: true,\n    timestamp: portfolio.timestamp,\n    riskLevel: portfolio.riskLevel,\n    hasAlerts: portfolio.alerts.length > 0,\n    hasErrors: errors.length > 0,\n    summary: {\n      totalAssets: balanceData.summary.totalAssets,\n      assetsWithBalance: balanceData.summary.assetsWithBalance,\n      totalWalletBalance: accountInfo?.totalWalletBalance || balanceData.summary.totalBalance,\n      totalUnrealizedPnL: accountInfo?.totalUnrealizedProfit || balanceData.summary.totalUnrealizedPnL,\n      availableBalance: accountInfo?.availableBalance || balanceData.summary.totalAvailable,\n      totalStablecoinBalance: balanceData.summary.totalStablecoinBalance,\n      totalStablecoinAvailable: balanceData.summary.totalStablecoinAvailable,\n      mainCurrencies: balanceData.summary.mainCurrencies,\n      openPositions: portfolio.positions.length,\n      totalAlerts: portfolio.alerts.length,\n      marginUsagePercent: accountInfo?.marginUsagePercent || '0.00%'\n    },\n    metrics: portfolio.metrics,\n    positions: portfolio.positions,\n    alerts: portfolio.alerts,\n    apiErrors: errors,\n    warnings,\n    topAssets: balanceData.assets ? \n      balanceData.assets.filter(a => parseFloat(a.balance) >= CONFIG.MIN_BALANCE_DISPLAY).slice(0, 10) : [],\n    accountInfo,\n    notification: generateNotification(portfolio, errors),\n    requiresAction: portfolio.alerts.some(a => a.severity === 'CRITICAL' || a.severity === 'HIGH')\n  };\n}\n\nfunction generateNotification(portfolio, errors) {\n  if (errors.length > 0) {\n    return 'ℹ️ API issues detected - Data may be incomplete';\n  }\n  \n  if (portfolio.alerts.length > 0) {\n    const critical = portfolio.alerts.filter(a => a.severity === 'CRITICAL').length;\n    return critical > 0 ? \n      `🚨 ${critical} CRITICAL alert(s) - Risk: ${portfolio.riskLevel}` :\n      `⚠️ ${portfolio.alerts.length} alert(s) - Risk: ${portfolio.riskLevel}`;\n  }\n  \n  if (portfolio.positions.length > 0) {\n    return `📊 ${portfolio.positions.length} position(s) active - Risk: ${portfolio.riskLevel}`;\n  }\n  \n  return '💤 No open positions';\n}\n\n// Execute\ntry {\n  return analyzePortfolio(inputs);\n} catch (error) {\n  return {\n    success: false,\n    error: `Analysis failed: ${error.message}`,\n    timestamp: new Date().toISOString()\n  };\n}"
+      },
+      "id": "d82f85e2-76be-4d89-8624-216bdc6fe43e",
+      "name": "Final Portfolio Analysis",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "SuaInstancia",
+        "remoteJid": "55XXXXXXXXXXX@s.whatsapp.net",
+        "messageText": "={{ $json.message }}",
+        "options_message": {
+          "delay": "={{ $json.message.length }}"
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        688,
+        224
+      ],
+      "id": "f9737d60-f571-40f8-8fb8-e5747b38348e",
+      "name": "Enviar texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "DEMO_EVOLUTION_CREDENTIAL_ID",
+          "name": "Evo MX3 Dev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Enhanced Portfolio Message Formatter v2.0\nconst data = $json;\n\n// Configuration\nconst CONFIG = {\n  LOCALE: 'pt-BR',\n  TIMEZONE: 'America/Sao_Paulo',\n  CURRENCY_SYMBOL: '$',\n  MIN_DISPLAY_VALUE: 0.01\n};\n\n// Utility functions\nconst formatCurrency = (value, showSign = false) => {\n  const num = parseFloat(value || 0);\n  const formatted = num.toFixed(2);\n  if (showSign && num > 0) return `+${CONFIG.CURRENCY_SYMBOL}${formatted}`;\n  return `${CONFIG.CURRENCY_SYMBOL}${formatted}`;\n};\n\nconst formatPercent = (value, showSign = true) => {\n  const num = parseFloat(value || 0);\n  const formatted = num.toFixed(2);\n  if (showSign && num > 0) return `+${formatted}%`;\n  return `${formatted}%`;\n};\n\nconst formatDateTime = (timestamp) => {\n  const date = new Date(timestamp);\n  return date.toLocaleString(CONFIG.LOCALE, {\n    timeZone: CONFIG.TIMEZONE,\n    day: '2-digit',\n    month: '2-digit',\n    year: 'numeric',\n    hour: '2-digit',\n    minute: '2-digit'\n  });\n};\n\n// Component builders\nconst buildHeader = (data) => {\n  const riskIcons = {\n    'LOW': '🟢',\n    'MEDIUM': '🟡', \n    'HIGH': '🟠',\n    'CRITICAL': '🔴'\n  };\n  \n  let header = `📊 **BINANCE FUTURES PORTFOLIO**\\n`;\n  header += `━━━━━━━━━━━━━━━━━━━━━━━━\\n`;\n  header += `⏰ ${formatDateTime(data.timestamp)}\\n`;\n  header += `${riskIcons[data.riskLevel]} Risk: **${data.riskLevel}**`;\n  \n  // Add margin usage if available\n  if (data.summary.marginUsagePercent && data.summary.marginUsagePercent !== '0.00%') {\n    header += ` | Margin Used: ${data.summary.marginUsagePercent}`;\n  }\n  \n  header += `\\n`;\n  \n  return header;\n};\n\nconst buildBalanceSection = (summary) => {\n  const pnl = parseFloat(summary.totalUnrealizedPnL || 0);\n  const pnlIcon = pnl >= 0 ? '📈' : '📉';\n  const pnlColor = pnl >= 0 ? '🟢' : '🔴';\n  \n  let section = `\\n💰 **ACCOUNT BALANCE**\\n`;\n  \n  // Main balance info\n  section += `┌─ Wallet Balance: **${formatCurrency(summary.totalWalletBalance)}**\\n`;\n  section += `├─ Available: ${formatCurrency(summary.availableBalance)}`;\n  \n  // Show available percentage if relevant\n  const totalBalance = parseFloat(summary.totalWalletBalance);\n  const available = parseFloat(summary.availableBalance);\n  if (totalBalance > 0) {\n    const availPercent = ((available / totalBalance) * 100).toFixed(1);\n    section += ` (${availPercent}% free)`;\n  }\n  section += `\\n`;\n  \n  // PnL with better formatting\n  section += `├─ Unrealized P&L: ${pnlColor} **${formatCurrency(pnl, true)}**`;\n  if (totalBalance > 0 && pnl !== 0) {\n    const pnlPercent = ((pnl / totalBalance) * 100).toFixed(2);\n    section += ` (${formatPercent(pnlPercent)})`;\n  }\n  section += `\\n`;\n  \n  // Stablecoins breakdown\n  const usdtBalance = parseFloat(summary.mainCurrencies.USDT?.balance || 0);\n  const usdfBalance = parseFloat(summary.mainCurrencies.USDF?.balance || 0);\n  \n  if (usdtBalance >= CONFIG.MIN_DISPLAY_VALUE || usdfBalance >= CONFIG.MIN_DISPLAY_VALUE) {\n    section += `└─ Stablecoins:\\n`;\n    if (usdtBalance >= CONFIG.MIN_DISPLAY_VALUE) {\n      section += `   ├─ USDT: ${formatCurrency(usdtBalance)}`;\n      const usdtPnL = parseFloat(summary.mainCurrencies.USDT?.unrealizedPnL || 0);\n      if (usdtPnL !== 0) {\n        section += ` (P&L: ${formatCurrency(usdtPnL, true)})`;\n      }\n      section += `\\n`;\n    }\n    if (usdfBalance >= CONFIG.MIN_DISPLAY_VALUE) {\n      section += `   └─ USDF: ${formatCurrency(usdfBalance)}\\n`;\n    }\n  } else {\n    section += `└─ All Stablecoins: ${formatCurrency(summary.totalStablecoinBalance)}\\n`;\n  }\n  \n  return section;\n};\n\nconst buildPositionsSection = (positions, metrics) => {\n  if (!positions || positions.length === 0) {\n    return `\\n📈 **POSITIONS**\\nNo open positions\\n`;\n  }\n  \n  let section = `\\n📈 **OPEN POSITIONS** (${positions.length})`;\n  \n  // Add metrics summary if available\n  if (metrics && metrics.totalPositions > 0) {\n    section += `\\n📊 Win Rate: ${metrics.profitablePositions}/${metrics.totalPositions}`;\n    if (metrics.averagePnL) {\n      section += ` | Avg P&L: ${formatPercent(metrics.averagePnL)}`;\n    }\n  }\n  section += `\\n`;\n  \n  // Sort positions by risk level then by PnL\n  const sortedPositions = [...positions].sort((a, b) => {\n    const riskOrder = { 'CRITICAL': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3 };\n    const riskDiff = riskOrder[a.riskLevel] - riskOrder[b.riskLevel];\n    if (riskDiff !== 0) return riskDiff;\n    return parseFloat(b.unrealizedProfit) - parseFloat(a.unrealizedProfit);\n  });\n  \n  sortedPositions.forEach((pos, index) => {\n    const pnlValue = parseFloat(pos.unrealizedProfit);\n    const pnlPercent = parseFloat(pos.pnlPercent);\n    const isLastItem = index === sortedPositions.length - 1;\n    \n    // Position header with better icons\n    let posIcon = pos.side === 'LONG' ? '📊' : '📉';\n    let pnlIcon = pnlValue >= 0 ? '✅' : (pnlValue < -20 ? '🔴' : '⚠️');\n    \n    section += `\\n${isLastItem ? '└' : '├'}─ **${pos.symbol}** ${pos.side} ${pos.leverage}x\\n`;\n    \n    // Compact but informative display\n    section += `   ${isLastItem ? ' ' : '│'} Entry: ${formatCurrency(pos.entryPrice)} → ${formatCurrency(pos.markPrice)}\\n`;\n    section += `   ${isLastItem ? ' ' : '│'} P&L: ${pnlIcon} ${formatCurrency(pnlValue, true)} (${pos.pnlPercent})\\n`;\n    \n    // Show liquidation info only if relevant\n    if (pos.liquidationPrice !== 'N/A' && pos.liquidationPrice !== 'Estimated') {\n      const liqDistance = parseFloat(pos.liquidationDistance);\n      let liqWarning = '';\n      if (liqDistance < 5) liqWarning = ' ⚠️ CRITICAL';\n      else if (liqDistance < 10) liqWarning = ' ⚠️';\n      \n      section += `   ${isLastItem ? ' ' : '│'} Liq: ${formatCurrency(pos.liquidationPrice)} (${pos.liquidationDistance}${liqWarning})\\n`;\n    }\n    \n    // Risk level only if not LOW\n    if (pos.riskLevel !== 'LOW') {\n      const riskIcons = { 'MEDIUM': '🟡', 'HIGH': '🟠', 'CRITICAL': '🔴' };\n      section += `   ${isLastItem ? ' ' : '│'} Risk: ${riskIcons[pos.riskLevel]} ${pos.riskLevel}\\n`;\n    }\n  });\n  \n  return section;\n};\n\nconst buildAlertsSection = (alerts) => {\n  if (!alerts || alerts.length === 0) return '';\n  \n  // Group alerts by severity\n  const grouped = {\n    CRITICAL: [],\n    HIGH: [],\n    MEDIUM: [],\n    LOW: []\n  };\n  \n  alerts.forEach(alert => {\n    grouped[alert.severity].push(alert);\n  });\n  \n  let section = `\\n⚠️ **ALERTS** (${alerts.length})\\n`;\n  \n  // Display by priority\n  Object.entries(grouped).forEach(([severity, severityAlerts]) => {\n    if (severityAlerts.length === 0) return;\n    \n    const severityIcons = {\n      'CRITICAL': '🔴',\n      'HIGH': '🟠',\n      'MEDIUM': '🟡',\n      'LOW': '🟢'\n    };\n    \n    severityAlerts.forEach(alert => {\n      section += `${severityIcons[severity]} ${alert.message}`;\n      if (alert.action && alert.action !== 'MONITOR') {\n        const actionText = alert.action.replace(/_/g, ' ').toLowerCase();\n        section += ` → ${actionText}`;\n      }\n      section += `\\n`;\n    });\n  });\n  \n  return section;\n};\n\nconst buildErrorsSection = (apiErrors, warnings) => {\n  if ((!apiErrors || apiErrors.length === 0) && (!warnings || warnings.length === 0)) {\n    return '';\n  }\n  \n  let section = `\\n⚠️ **ISSUES DETECTED**\\n`;\n  \n  // API Errors\n  if (apiErrors && apiErrors.length > 0) {\n    apiErrors.forEach(error => {\n      // Parse the specific error type\n      if (error.message.includes('-1021')) {\n        section += `🔄 Sync Issue: Time synchronization problem detected\\n`;\n        section += `   → Solution: Check system time or contact support\\n`;\n      } else if (error.message.includes('-2015')) {\n        section += `🔑 Auth Issue: API key problem detected\\n`;\n        section += `   → Solution: Verify API key and permissions\\n`;\n      } else if (error.message.includes('-1003')) {\n        section += `⏱️ Rate Limit: Too many requests\\n`;\n        section += `   → Solution: Reduce request frequency\\n`;\n      } else {\n        section += `ℹ️ API Issue: ${error.solution}\\n`;\n      }\n    });\n  }\n  \n  // Data Warnings\n  if (warnings && warnings.length > 0) {\n    warnings.forEach(warning => {\n      if (warning.type === 'DATA_INCONSISTENCY') {\n        section += `📊 Data Warning: ${warning.message}\\n`;\n        section += `   → ${warning.suggestion}\\n`;\n      } else {\n        section += `ℹ️ ${warning.message}\\n`;\n      }\n    });\n  }\n  \n  return section;\n};\n\nconst buildFooter = (data) => {\n  let footer = `\\n━━━━━━━━━━━━━━━━━━━━━━━━\\n`;\n  \n  // Add quick status summary\n  const hasIssues = data.hasErrors || (data.warnings && data.warnings.length > 0);\n  const hasAlerts = data.hasAlerts;\n  \n  if (data.requiresAction) {\n    footer += `⚠️ **ACTION REQUIRED** - Please review alerts above\\n`;\n  } else if (hasIssues) {\n    footer += `ℹ️ Some issues detected - Data may be incomplete\\n`;\n  } else if (data.positions && data.positions.length > 0) {\n    const totalPnL = parseFloat(data.summary.totalUnrealizedPnL || 0);\n    if (totalPnL > 0) {\n      footer += `✅ Portfolio in profit: ${formatCurrency(totalPnL, true)}\\n`;\n    } else if (totalPnL < 0) {\n      footer += `📉 Portfolio at loss: ${formatCurrency(totalPnL)}\\n`;\n    } else {\n      footer += `📊 Portfolio at breakeven\\n`;\n    }\n  } else {\n    footer += `💤 No active positions\\n`;\n  }\n  \n  return footer;\n};\n\n// Main message builder\nconst buildMessage = (data) => {\n  try {\n    let message = '';\n    \n    // Build sections\n    message += buildHeader(data);\n    message += buildBalanceSection(data.summary);\n    message += buildPositionsSection(data.positions, data.metrics);\n    message += buildAlertsSection(data.alerts);\n    message += buildErrorsSection(data.apiErrors, data.warnings);\n    message += buildFooter(data);\n    \n    return message;\n  } catch (error) {\n    // Fallback message on error\n    return `📊 **PORTFOLIO UPDATE**\\n⚠️ Error formatting message: ${error.message}\\nRaw data available in logs.`;\n  }\n};\n\n// Execute\nreturn { \n  message: buildMessage(data),\n  success: data.success,\n  requiresAction: data.requiresAction\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        224
+      ],
+      "id": "19befa66-904f-436a-b1bd-13a62a706ecb",
+      "name": "Mensagem"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 1 21,1,5,9,13,17 * * *"
+            }
+          ]
+        }
+      },
+      "id": "173b6671-e201-433c-8187-5214bd0d7633",
+      "name": "Every 4 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1328,
+        128
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Server Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Server Time": {
+      "main": [
+        [
+          {
+            "node": "Prepare Signature",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Signature": {
+      "main": [
+        [
+          {
+            "node": "Generate HMAC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate HMAC": {
+      "main": [
+        [
+          {
+            "node": "Get Balance",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Account Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Balance": {
+      "main": [
+        [
+          {
+            "node": "Process Balance Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Balance Data": {
+      "main": [
+        [
+          {
+            "node": "Merge Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Account Info": {
+      "main": [
+        [
+          {
+            "node": "Merge Data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Data": {
+      "main": [
+        [
+          {
+            "node": "Final Portfolio Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final Portfolio Analysis": {
+      "main": [
+        [
+          {
+            "node": "Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every 4 Hours": {
+      "main": [
+        [
+          {
+            "node": "Get Server Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "a688a600-8b58-49ca-99fd-a9e107e7e77e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "be2e85c12d6d5bc51db8ebc43985deb72a4b5b24d5cceacf44565f768e2de1fe"
+  },
+  "id": "wy2BCK1oPKWAnkq7",
+  "tags": [
+    {
+      "updatedAt": "2025-09-24T17:52:02.843Z",
+      "createdAt": "2025-09-24T17:52:02.843Z",
+      "id": "rTa1rNO9kIOdJbV9",
+      "name": "Portfolio"
+    },
+    {
+      "updatedAt": "2025-09-24T17:52:02.846Z",
+      "createdAt": "2025-09-24T17:52:02.846Z",
+      "id": "nRn1ZzaQKUyus8hw",
+      "name": "Telegram"
+    },
+    {
+      "updatedAt": "2025-09-24T17:52:02.832Z",
+      "createdAt": "2025-09-24T17:52:02.832Z",
+      "id": "bnm7vmm9y7mSDsXl",
+      "name": "Aster"
+    }
+  ]
+}

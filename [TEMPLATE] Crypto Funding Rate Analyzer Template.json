@@ -1,0 +1,350 @@
+{
+  "name": "Crypto Funding Rate Analyzer Template",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## n8n Template: Crypto Funding Rate Analyzer Template\n\n**Criado por:** Maxwell Melo\n**Contato:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\n**Categorias:** Crypto, Trading, Finance, Analytics\n\n---\n\n### Sobre este Template\n\nAnalisador de taxas de funding para arbitragem:\n- Coleta de dados de exchanges\n- Cálculo de oportunidades delta-neutral\n- Projeções de ROI\n- Relatórios via WhatsApp\n\n---\n\n### Como Configurar\n\n1. **Importe** este workflow no seu n8n\n2. **Configure** suas credenciais (substitua os placeholders)\n3. **Personalize** para seu caso de uso\n4. **Teste** antes de usar em produção\n\n### Credenciais para Configurar\n\nProcure por nodes com `DEMO_*` ou `SUA_*` e configure:\n- Suas chaves de API\n- Conexões de banco de dados\n- Credenciais de serviços\n\n---\n\n### Precisa de Ajuda?\n\n**Email:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\nOfereço serviços de:\n- Implementação personalizada\n- Customização de workflows\n- Treinamento em n8n\n- Consultoria em automação\n\n---\n*Template por Maxwell Melo*",
+        "height": 650,
+        "width": 400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8500,
+        200
+      ],
+      "id": "template-info-1764872616183",
+      "name": "Template Info - Leia Primeiro"
+    },
+    {
+      "parameters": {},
+      "id": "f5ea65bc-5893-49ed-a57b-39d2f0b4883d",
+      "name": "Iniciar Manualmente",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1808,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://fapi.asterdex.com/fapi/v1/exchangeInfo",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "5df8687a-cac2-45e5-b140-169aa9e9a698",
+      "name": "Buscar Todos os Pares",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1584,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Processar informações da exchange e extrair símbolos\nconst exchangeInfo = $input.item.json;\n\nif (!exchangeInfo.symbols || !Array.isArray(exchangeInfo.symbols)) {\n  throw new Error('Resposta inválida da API');\n}\n\n// Filtrar apenas pares USDT perpétuos ativos\nconst activeSymbols = exchangeInfo.symbols\n  .filter(symbol => {\n    return (\n      symbol.status === 'TRADING' &&\n      symbol.contractType === 'PERPETUAL' &&\n      symbol.quoteAsset === 'USDT' &&\n      symbol.symbol.endsWith('USDT')\n    );\n  })\n  .map(symbol => ({\n    symbol: symbol.symbol,\n    baseAsset: symbol.baseAsset,\n    quoteAsset: symbol.quoteAsset,\n    pricePrecision: symbol.pricePrecision,\n    quantityPrecision: symbol.quantityPrecision,\n    contractType: symbol.contractType\n  }));\n\n// Retornar lista de símbolos\nreturn {\n  totalSymbols: exchangeInfo.symbols.length,\n  activePerpetualsCount: activeSymbols.length,\n  symbols: activeSymbols,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "cc51194a-7cf3-4563-9d28-25ad84400c25",
+      "name": "Processar Símbolos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1360,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "symbols",
+        "options": {}
+      },
+      "id": "8b720295-9bd8-4c74-9d25-f5c943bc6784",
+      "name": "Dividir em Items",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 3,
+      "position": [
+        -1136,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "id": "13575d5c-7ba9-4bff-919b-bffd022d094b",
+      "name": "Agrupar em Lotes de 5",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -912,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://fapi.asterdex.com/fapi/v1/premiumIndex",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "symbol",
+              "value": "={{ $json.symbol }}"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 200
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "c4cfeffa-5709-498f-9a91-088d4b9b5115",
+      "name": "Buscar Funding Rate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -688,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Código corrigido para o node \"Processar Funding Data\"\n// Processar dados de funding rate\n\nconst symbolData = $input.item.json;\n\n// Se a resposta for um objeto direto (não array)\nif (symbolData && symbolData.symbol) {\n  const fundingRate = parseFloat(symbolData.lastFundingRate || 0);\n  const markPrice = parseFloat(symbolData.markPrice || 0);\n  const indexPrice = parseFloat(symbolData.indexPrice || 0);\n  const nextFundingTime = symbolData.nextFundingTime;\n\n  // Calcular métricas\n  const fundingPercent = fundingRate * 100;\n  const periodsPerDay = 4; // Funding a cada 4 horas\n  const dailyRate = fundingRate * periodsPerDay;\n  const monthlyRate = dailyRate * 30;\n  const annualRate = dailyRate * 365;\n\n  return {\n    symbol: symbolData.symbol,\n    fundingRate: fundingRate,\n    fundingPercent: fundingPercent.toFixed(4),\n\n    // Taxas calculadas\n    rates: {\n      hourly8: fundingPercent.toFixed(4) + '%',\n      daily: (dailyRate * 100).toFixed(4) + '%',\n      monthly: (monthlyRate * 100).toFixed(2) + '%',\n      annual: (annualRate * 100).toFixed(2) + '%'\n    },\n\n    // Retorno em USD para $10,000\n    returns10k: {\n      daily: '$' + (dailyRate * 1000).toFixed(2),\n      monthly: '$' + (monthlyRate * 1000).toFixed(2),\n      annual: '$' + (annualRate * 1000).toFixed(2)\n    },\n\n    // Preços\n    prices: {\n      mark: markPrice.toFixed(2),\n      index: indexPrice.toFixed(2),\n      premium: ((markPrice - indexPrice) / indexPrice * 100).toFixed(4) + '%'\n    },\n\n    // Classificação\n    classification:\n      Math.abs(fundingPercent) > 0.1 ? 'EXTREME' :\n      Math.abs(fundingPercent) > 0.05 ? 'HIGH' :\n      Math.abs(fundingPercent) > 0.01 ? 'MODERATE' : 'LOW',\n\n    direction: fundingRate > 0 ? 'POSITIVE' : 'NEGATIVE',\n\n    strategy:\n      fundingRate > 0.001 ? 'SHORT_OPPORTUNITY' :\n      fundingRate < -0.001 ? 'LONG_OPPORTUNITY' : 'NEUTRAL',\n\n    nextFundingTime: new Date(nextFundingTime).toISOString(),\n    processedAt: new Date().toISOString()\n  };\n}\n\n// Se não houver dados, retornar erro\nreturn {\n  symbol: $input.item.json.symbol || 'UNKNOWN',\n  error: 'No funding data available',\n  fundingRate: 0,\n  fundingPercent: '0'\n};"
+      },
+      "id": "f6be66bd-6354-4aaf-af81-c56a976d77f0",
+      "name": "Processar Funding Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -464,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "399c6d7d-bf1e-4980-a04d-b94713330c35",
+      "name": "Agregar Todos Resultados",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -688,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Delta Neutral Funding Arbitrage Report v2.0 - ASTER Exchange\nconst inputData = $input.item.json;\n\n// Configurações\nconst CONFIG = {\n  CAPITAL: 1000, // Capital inicial em USD\n  TOP_COUNT: 5,\n  MIN_ANNUAL_RETURN: 20, // Mínimo 20% ao ano\n  FUNDING_FREQUENCY: 6, // ASTER: 6x por dia (a cada 4 horas)\n  EXCHANGE: 'ASTER',\n  RISK_LEVELS: {\n    EXTREME: { min: 100, label: '🔥 EXTREME' },\n    HIGH: { min: 50, label: '💎 HIGH' },\n    GOOD: { min: 30, label: '✅ GOOD' },\n    MODERATE: { min: 20, label: '📊 MODERATE' }\n  }\n};\n\n// Extração de dados válidos\nfunction extractValidData(inputData) {\n  let allItems = [];\n  \n  if (Array.isArray(inputData)) {\n    allItems = inputData.flat();\n  } else if (inputData && typeof inputData === 'object') {\n    allItems = [inputData];\n  }\n  \n  let extractedData = [];\n  allItems.forEach(item => {\n    if (item?.data && Array.isArray(item.data)) {\n      extractedData.push(...item.data);\n    } else if (item?.fundingRate !== undefined) {\n      extractedData.push(item);\n    }\n  });\n  \n  return extractedData.filter(item => \n    item && \n    !item.error && \n    item.fundingRate !== undefined &&\n    item.symbol &&\n    item.fundingRate > 0 // Apenas funding positivo para delta neutro\n  );\n}\n\n// Calcular métricas para delta neutro com $1,000\nfunction calculateDeltaNeutralMetrics(item) {\n  const fundingRate = parseFloat(item.fundingRate || 0);\n  const fundingPercent = fundingRate * 100;\n  \n  // ASTER: Funding é pago 6x ao dia (a cada 4 horas)\n  const perFundingUSD = CONFIG.CAPITAL * fundingRate; // Ganho por funding\n  const dailyRate = fundingRate * CONFIG.FUNDING_FREQUENCY;\n  const monthlyRate = dailyRate * 30;\n  const annualRate = dailyRate * 365;\n  \n  // Calcular retornos em USD para capital de $1,000\n  const dailyReturn = CONFIG.CAPITAL * dailyRate;\n  const monthlyReturn = CONFIG.CAPITAL * monthlyRate;\n  const annualReturn = CONFIG.CAPITAL * annualRate;\n  \n  // ROI percentual\n  const monthlyROI = (monthlyReturn / CONFIG.CAPITAL) * 100;\n  const annualROI = (annualReturn / CONFIG.CAPITAL) * 100;\n  \n  // Avaliar risco baseado no prêmio e retorno\n  const premium = parseFloat(item.prices?.premium || '0');\n  const riskScore = calculateRiskScore(annualROI, Math.abs(premium));\n  \n  return {\n    fundingRate: fundingPercent.toFixed(4),\n    perFunding: {\n      percentage: fundingPercent.toFixed(4),\n      usd: perFundingUSD.toFixed(3) // 3 casas para valores pequenos\n    },\n    daily: {\n      rate: (dailyRate * 100).toFixed(4),\n      usd: dailyReturn.toFixed(2),\n      fundingCount: CONFIG.FUNDING_FREQUENCY\n    },\n    monthly: {\n      rate: (monthlyRate * 100).toFixed(2),\n      usd: monthlyReturn.toFixed(2),\n      roi: monthlyROI.toFixed(2),\n      fundingCount: CONFIG.FUNDING_FREQUENCY * 30\n    },\n    annual: {\n      rate: (annualRate * 100).toFixed(2),\n      usd: annualReturn.toFixed(2),\n      roi: annualROI.toFixed(2),\n      fundingCount: CONFIG.FUNDING_FREQUENCY * 365\n    },\n    riskScore,\n    premium: premium.toFixed(4),\n    breakeven: calculateBreakevenDays(fundingRate) // Dias para cobrir taxas\n  };\n}\n\n// Calcular score de risco\nfunction calculateRiskScore(annualROI, premiumAbs) {\n  if (annualROI > 100) return CONFIG.RISK_LEVELS.EXTREME.label;\n  if (annualROI > 50) return CONFIG.RISK_LEVELS.HIGH.label;\n  if (annualROI > 30) return CONFIG.RISK_LEVELS.GOOD.label;\n  return CONFIG.RISK_LEVELS.MODERATE.label;\n}\n\n// Calcular dias para breakeven (considerando taxas de ~0.1% de entrada/saída)\nfunction calculateBreakevenDays(fundingRate) {\n  const estimatedFees = 0.001; // 0.1% de taxas estimadas\n  const dailyRate = fundingRate * CONFIG.FUNDING_FREQUENCY;\n  return (estimatedFees / dailyRate).toFixed(1);\n}\n\n// Formatar oportunidade para exibição\nfunction formatOpportunity(item, index) {\n  const metrics = calculateDeltaNeutralMetrics(item);\n  const nextFunding = new Date(item.nextFundingTime);\n  const hoursUntilNext = Math.max(0, (nextFunding - new Date()) / (1000 * 60 * 60));\n  \n  // Calcular alocação proporcional do capital\n  const allocationPerPair = (CONFIG.CAPITAL / CONFIG.TOP_COUNT).toFixed(2);\n  \n  return {\n    rank: index + 1,\n    symbol: item.symbol.replace('USDT', ''),\n    markPrice: item.prices.mark,\n    allocation: allocationPerPair,\n    fundingRate: metrics.fundingRate + '%',\n    premium: metrics.premium + '%',\n    perFunding: {\n      percentage: metrics.perFunding.percentage + '%',\n      usd: '$' + metrics.perFunding.usd\n    },\n    returns: {\n      daily: {\n        percentage: metrics.daily.rate + '%',\n        usd: '$' + metrics.daily.usd,\n        payments: metrics.daily.fundingCount\n      },\n      monthly: {\n        percentage: metrics.monthly.rate + '%',\n        usd: '$' + metrics.monthly.usd,\n        roi: metrics.monthly.roi + '%',\n        payments: metrics.monthly.fundingCount\n      },\n      annual: {\n        percentage: metrics.annual.rate + '%',\n        usd: '$' + metrics.annual.usd,\n        roi: metrics.annual.roi + '%',\n        payments: metrics.annual.fundingCount\n      }\n    },\n    risk: metrics.riskScore,\n    breakeven: metrics.breakeven,\n    nextFunding: {\n      time: nextFunding.toLocaleString('pt-BR'),\n      hoursRemaining: hoursUntilNext.toFixed(1)\n    },\n    strategy: {\n      spot: 'LONG (Comprar)',\n      futures: 'SHORT (Vender)',\n      result: 'Recebe Funding 6x/dia'\n    }\n  };\n}\n\n// Gerar mensagem de alerta formatada\nfunction generateAlertMessage(opportunities) {\n  const lines = [\n    `🎯 **TOP 5 DELTA NEUTRAL - ASTER EXCHANGE**`,\n    `━━━━━━━━━━━━━━━━━━━━━━━━`,\n    `📍 Exchange: ${CONFIG.EXCHANGE}`,\n    `⏰ ${new Date().toLocaleString('pt-BR')}`,\n    `💰 Capital: $${CONFIG.CAPITAL.toFixed(2)}`,\n    `⚡ Funding: A cada 4 horas (6x/dia)`,\n    ``,\n    `📊 **ESTRATÉGIA DELTA NEUTRO**`,\n    `├─ Capital por par: $${(CONFIG.CAPITAL / CONFIG.TOP_COUNT).toFixed(2)}`,\n    `├─ Comprar SPOT (posição LONG)`,\n    `├─ Vender FUTURES (posição SHORT)`,\n    `└─ Receber funding 6x ao dia`,\n    ``\n  ];\n  \n  opportunities.forEach(opp => {\n    const medal = opp.rank === 1 ? '🥇' : \n                  opp.rank === 2 ? '🥈' : \n                  opp.rank === 3 ? '🥉' : \n                  `${opp.rank}.`;\n    \n    lines.push(`${medal} **${opp.symbol}** ${opp.risk}`);\n    lines.push(`├─ Funding/4h: ${opp.perFunding.percentage} (${opp.perFunding.usd})`);\n    lines.push(`├─ Diário: ${opp.returns.daily.percentage} (${opp.returns.daily.usd})`);\n    lines.push(`│  └─ ${opp.returns.daily.payments} pagamentos`);\n    lines.push(`├─ Mensal: ${opp.returns.monthly.percentage} (${opp.returns.monthly.usd})`);\n    lines.push(`│  └─ ROI: ${opp.returns.monthly.roi} | ${opp.returns.monthly.payments} pagamentos`);\n    lines.push(`├─ Anual: ${opp.returns.annual.percentage} (${opp.returns.annual.usd})`);\n    lines.push(`│  └─ ROI: ${opp.returns.annual.roi} | ${opp.returns.annual.payments} pagamentos`);\n    lines.push(`├─ Prêmio: ${opp.premium}`);\n    lines.push(`├─ Preço: $${opp.markPrice}`);\n    lines.push(`├─ Breakeven: ${opp.breakeven} dias`);\n    lines.push(`└─ Próximo: ${opp.nextFunding.hoursRemaining}h`);\n    lines.push(``);\n  });\n  \n  // Resumo executivo com capital de $1,000\n  const totalDailyReturn = opportunities.reduce((sum, opp) => \n    sum + (parseFloat(opp.returns.daily.usd.replace('$', '')) / CONFIG.TOP_COUNT), 0\n  );\n  const totalMonthlyReturn = opportunities.reduce((sum, opp) => \n    sum + (parseFloat(opp.returns.monthly.usd.replace('$', '')) / CONFIG.TOP_COUNT), 0\n  );\n  const totalAnnualReturn = opportunities.reduce((sum, opp) => \n    sum + (parseFloat(opp.returns.annual.usd.replace('$', '')) / CONFIG.TOP_COUNT), 0\n  );\n  \n  const monthlyROI = (totalMonthlyReturn / CONFIG.CAPITAL) * 100;\n  const annualROI = (totalAnnualReturn / CONFIG.CAPITAL) * 100;\n  \n  lines.push(`💎 **RESUMO DO PORTFÓLIO**`);\n  lines.push(`├─ Capital Total: $${CONFIG.CAPITAL.toFixed(2)}`);\n  lines.push(`├─ Retorno Diário: $${totalDailyReturn.toFixed(2)} (${(totalDailyReturn/CONFIG.CAPITAL*100).toFixed(2)}%)`);\n  lines.push(`├─ Retorno Mensal: $${totalMonthlyReturn.toFixed(2)} (${monthlyROI.toFixed(2)}% ROI)`);\n  lines.push(`├─ Retorno Anual: $${totalAnnualReturn.toFixed(2)} (${annualROI.toFixed(2)}% ROI)`);\n  lines.push(`└─ Tempo médio breakeven: ${(opportunities.reduce((sum, opp) => \n    sum + parseFloat(opp.breakeven), 0) / opportunities.length).toFixed(1)} dias`);\n  lines.push(``);\n  lines.push(`📈 **PROJEÇÃO DE CRESCIMENTO**`);\n  lines.push(`├─ Mês 1: $${(CONFIG.CAPITAL + totalMonthlyReturn).toFixed(2)}`);\n  lines.push(`├─ Mês 3: $${(CONFIG.CAPITAL * Math.pow(1 + monthlyROI/100, 3)).toFixed(2)}`);\n  lines.push(`├─ Mês 6: $${(CONFIG.CAPITAL * Math.pow(1 + monthlyROI/100, 6)).toFixed(2)}`);\n  lines.push(`└─ Ano 1: $${(CONFIG.CAPITAL * Math.pow(1 + monthlyROI/100, 12)).toFixed(2)}`);\n  lines.push(``);\n  lines.push(`⚠️ **GESTÃO DE RISCO**`);\n  lines.push(`• Usar apenas ${(100/CONFIG.TOP_COUNT).toFixed(0)}% do capital por par`);\n  lines.push(`• Manter margem de 150% para evitar liquidação`);\n  lines.push(`• Rebalancear quando funding < 0.01%/4h`);\n  lines.push(`• Considerar taxas de ~0.05% por trade`);\n  lines.push(`• Monitorar descasamento spot/futures`);\n  \n  return lines.join('\\n');\n}\n\n// Executar análise\ntry {\n  const validItems = extractValidData(inputData);\n  \n  if (validItems.length === 0) {\n    return {\n      success: false,\n      error: 'Nenhum par com funding rate positivo encontrado',\n      timestamp: new Date().toISOString()\n    };\n  }\n  \n  // Filtrar apenas funding positivos significativos\n  const positiveItems = validItems.filter(item => {\n    const metrics = calculateDeltaNeutralMetrics(item);\n    return parseFloat(metrics.annual.roi) >= CONFIG.MIN_ANNUAL_RETURN;\n  });\n  \n  // Ordenar por retorno anual\n  const sortedItems = positiveItems.sort((a, b) => {\n    const aMetrics = calculateDeltaNeutralMetrics(a);\n    const bMetrics = calculateDeltaNeutralMetrics(b);\n    return parseFloat(bMetrics.annual.roi) - parseFloat(aMetrics.annual.roi);\n  });\n  \n  // Pegar top 5\n  const top5 = sortedItems.slice(0, CONFIG.TOP_COUNT);\n  const opportunities = top5.map((item, index) => formatOpportunity(item, index));\n  \n  // Calcular métricas agregadas do portfólio\n  const portfolioMetrics = {\n    capitalPerPair: (CONFIG.CAPITAL / CONFIG.TOP_COUNT).toFixed(2),\n    avgDailyReturn: (opportunities.reduce((sum, opp) => \n      sum + (parseFloat(opp.returns.daily.usd.replace('$', '')) / CONFIG.TOP_COUNT), 0)\n    ).toFixed(2),\n    avgMonthlyReturn: (opportunities.reduce((sum, opp) => \n      sum + (parseFloat(opp.returns.monthly.usd.replace('$', '')) / CONFIG.TOP_COUNT), 0)\n    ).toFixed(2),\n    avgAnnualReturn: (opportunities.reduce((sum, opp) => \n      sum + (parseFloat(opp.returns.annual.usd.replace('$', '')) / CONFIG.TOP_COUNT), 0)\n    ).toFixed(2),\n    bestPair: opportunities[0]?.symbol || 'N/A',\n    bestAnnualROI: opportunities[0]?.returns.annual.roi || '0%',\n    totalFundingPerDay: CONFIG.FUNDING_FREQUENCY,\n    totalFundingPerMonth: CONFIG.FUNDING_FREQUENCY * 30,\n    totalFundingPerYear: CONFIG.FUNDING_FREQUENCY * 365\n  };\n  \n  return {\n    success: true,\n    timestamp: new Date().toISOString(),\n    exchange: CONFIG.EXCHANGE,\n    strategy: 'DELTA_NEUTRAL_FUNDING_ARBITRAGE',\n    capital: `$${CONFIG.CAPITAL}`,\n    fundingFrequency: '4 horas (6x ao dia)',\n    summary: {\n      totalOpportunities: positiveItems.length,\n      topCount: opportunities.length,\n      portfolio: portfolioMetrics\n    },\n    opportunities,\n    executionSteps: [\n      `1. Capital: $${CONFIG.CAPITAL} dividido em ${CONFIG.TOP_COUNT} pares ($${portfolioMetrics.capitalPerPair} cada)`,\n      '2. Para cada par: comprar no mercado SPOT',\n      '3. Simultaneamente: vender a mesma quantidade em FUTURES perpétuos',\n      '4. Receber funding a cada 4 horas (6x ao dia)',\n      '5. Monitorar funding rate - se ficar negativo, fechar posição',\n      '6. Rebalancear semanalmente baseado em performance'\n    ],\n    alertMessage: generateAlertMessage(opportunities),\n    disclaimer: 'Estratégia assume execução perfeita. Considere: taxas (0.05-0.1%), slippage, margem de manutenção (5-10%), e volatilidade do mercado.'\n  };\n  \n} catch (error) {\n  return {\n    success: false,\n    error: `Erro na análise: ${error.message}`,\n    timestamp: new Date().toISOString()\n  };\n}"
+      },
+      "id": "a68f3ab5-1f73-4ceb-9fa2-5d8bee3b1268",
+      "name": "Gerar Relatório Final",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -464,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "SuaInstancia",
+        "remoteJid": "55XXXXXXXXXXX@s.whatsapp.net",
+        "messageText": "={{ $json.alertMessage }}",
+        "options_message": {
+          "delay": "={{ $json.alertMessage.length }}"
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        288
+      ],
+      "id": "975d5877-b620-44de-a8f4-3489c2d84742",
+      "name": "Relatorio",
+      "credentials": {
+        "evolutionApi": {
+          "id": "DEMO_EVOLUTION_CREDENTIAL_ID",
+          "name": "Evo MX3 Dev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 1 21,1,5,9,13,17 * * *"
+            }
+          ]
+        }
+      },
+      "id": "e70837bf-fe74-49f2-b349-c0b8b643c7dd",
+      "name": "Every 4 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1808,
+        336
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Iniciar Manualmente": {
+      "main": [
+        [
+          {
+            "node": "Buscar Todos os Pares",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Todos os Pares": {
+      "main": [
+        [
+          {
+            "node": "Processar Símbolos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processar Símbolos": {
+      "main": [
+        [
+          {
+            "node": "Dividir em Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dividir em Items": {
+      "main": [
+        [
+          {
+            "node": "Agrupar em Lotes de 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agrupar em Lotes de 5": {
+      "main": [
+        [
+          {
+            "node": "Agregar Todos Resultados",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Buscar Funding Rate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Funding Rate": {
+      "main": [
+        [
+          {
+            "node": "Processar Funding Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processar Funding Data": {
+      "main": [
+        [
+          {
+            "node": "Agrupar em Lotes de 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agregar Todos Resultados": {
+      "main": [
+        [
+          {
+            "node": "Gerar Relatório Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar Relatório Final": {
+      "main": [
+        [
+          {
+            "node": "Relatorio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every 4 Hours": {
+      "main": [
+        [
+          {
+            "node": "Buscar Todos os Pares",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "61e7388a-05d4-47c1-83fd-e4ce2edf2178",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "be2e85c12d6d5bc51db8ebc43985deb72a4b5b24d5cceacf44565f768e2de1fe"
+  },
+  "id": "T6eDZtCwTntF6VHf",
+  "tags": []
+}

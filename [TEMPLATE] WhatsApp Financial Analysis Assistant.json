@@ -1,0 +1,1713 @@
+{
+  "name": "WhatsApp Financial Analysis Assistant with SQL Database & GPT-4o",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## WhatsApp Financial Analysis Assistant with SQL Database & GPT-4o\n\n**Author:** Maxwell Melo\n**Contact:** maxwell.melo0@gmail.com | WhatsApp: +55 86 99409-3040\n\n---\n\n## Description\n\nTransform your financial operations with this intelligent WhatsApp assistant powered by GPT-4o and connected directly to your SQL database. This template enables natural language queries against financial data, providing instant insights, reports, and analysis through simple WhatsApp conversations.\n\n### Who Is This For?\n\n- **Financial managers** who need quick access to financial data on-the-go\n- **CFOs and executives** wanting instant financial summaries\n- **Accountants** analyzing receivables, payables, and cash flow\n- **Business owners** monitoring financial health via WhatsApp\n- **IT teams** building conversational interfaces for ERP systems\n\n### Core Features\n\n#### Multi-Modal Message Processing\n- **Text**: Natural language financial queries\n- **Audio**: Voice message transcription with OpenAI Whisper\n- **Images**: Document and chart analysis with GPT-4 Vision\n\n#### SQL Database Integration\n- Direct connection to Microsoft SQL Server\n- Pre-configured financial queries (receivables, payables, aging reports)\n- Support for custom SQL queries via AI\n- Compatible with TOTVS RM and similar ERP systems\n\n#### AI-Powered Financial Analysis\n- **GPT-4o** for intelligent query understanding\n- Built-in **Calculator** tool for complex calculations\n- **Think/Reasoning** tool for multi-step analysis\n- Context-aware responses with conversation memory\n\n#### Smart Conversation Management\n- Redis-based conversation memory (20 messages)\n- Intelligent timeout handling\n- Bot pause on manual intervention\n- Response batching for WhatsApp format\n\n---\n\n## Prerequisites\n\n### Self-Hosted Requirement\nThis workflow requires a **self-hosted n8n instance** for full functionality.\n\n### Community Nodes Required\nThis template uses community nodes that must be installed:\n- `n8n-nodes-evolution-api` - WhatsApp Evolution API integration\n- `@n8n/n8n-nodes-langchain` - AI/LangChain nodes (built-in)\n\n### Required Services\n- **OpenAI API** account (GPT-4o, Whisper)\n- **Redis** server for conversation memory\n- **Microsoft SQL Server** database with financial data\n- **Evolution API** or similar WhatsApp Business API\n\n---\n\n## Setup Instructions\n\n### Step 1: Install Community Nodes\nIn n8n, go to **Settings** → **Community Nodes** and install:\n```\nn8n-nodes-evolution-api\n```\n\n### Step 2: Import the Workflow\n1. Download this JSON file\n2. In n8n, go to **Settings** → **Import Workflow**\n3. Upload the JSON file\n\n### Step 3: Configure Credentials\nCreate and configure these credentials in n8n:\n\n| Credential | Service | Purpose |\n|------------|---------|---------|\n| OpenAI API | OpenAI | GPT-4o, Whisper, Vision |\n| Redis | Redis Server | Conversation memory |\n| Microsoft SQL | SQL Server | Financial database |\n| Evolution API | WhatsApp | Message sending/receiving |\n\n### Step 4: Replace Placeholders\nSearch the workflow for these placeholders:\n- `DEMO_*` - Credential IDs\n- `SUA_*` - API keys\n- `55XXXXXXXXXXX` - Your authorized WhatsApp numbers\n- `[EMPRESA]` - Your company name\n\n### Step 5: Customize SQL Queries\nEdit the \"SQL Query Tool\" node's system prompt to match your database schema:\n- Table names\n- Column names\n- Business logic\n\n### Step 6: Test\nSend a test message asking for financial data (e.g., \"Show me receivables summary\").\n\n---\n\n## Workflow Architecture\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│              WhatsApp Webhook Receiver                       │\n└─────────────────────────┬───────────────────────────────────┘\n                          │\n┌─────────────────────────▼───────────────────────────────────┐\n│              Configuration Settings                          │\n│              (Timeout, API Keys, Typing Speed)               │\n└─────────────────────────┬───────────────────────────────────┘\n                          │\n┌─────────────────────────▼───────────────────────────────────┐\n│              Security Filters                                │\n│              • Filter Own Messages (fromMe)                  │\n│              • Filter Authorized Numbers                     │\n└─────────────────────────┬───────────────────────────────────┘\n                          │\n┌─────────────────────────▼───────────────────────────────────┐\n│              Route By Message Type                           │\n│              ├→ Text Messages                                │\n│              ├→ Reply Messages                               │\n│              ├→ Edited Messages                              │\n│              ├→ Audio → Whisper Transcription                │\n│              └→ Images → GPT-4 Vision Analysis               │\n└─────────────────────────┬───────────────────────────────────┘\n                          │\n┌─────────────────────────▼───────────────────────────────────┐\n│              Store Message in Redis                          │\n│              Retrieve Conversation History                   │\n└─────────────────────────┬───────────────────────────────────┘\n                          │\n┌─────────────────────────▼───────────────────────────────────┐\n│              Wait for Response Timeout                       │\n│              (Batches multiple messages)                     │\n└─────────────────────────┬───────────────────────────────────┘\n                          │\n┌─────────────────────────▼───────────────────────────────────┐\n│              Financial AI Agent (GPT-4o)                     │\n│              Tools Available:                                │\n│              • SQL Query Tool (Financial DB)                 │\n│              • Calculator                                    │\n│              • Reasoning Tool                                │\n└─────────────────────────┬───────────────────────────────────┘\n                          │\n┌─────────────────────────▼───────────────────────────────────┐\n│              Route Response By Content Type                  │\n│              ├→ Text → Send Text via WhatsApp               │\n│              ├→ Image URL → Send Image                       │\n│              └→ Video URL → Send Video                       │\n└─────────────────────────────────────────────────────────────┘\n```\n\n---\n\n## Example Queries\n\nThe AI can understand natural language queries like:\n- \"What's our receivables summary for this month?\"\n- \"Show me overdue invoices\"\n- \"Who are our top 10 debtors?\"\n- \"Compare this month's revenue to last month\"\n- \"What's our cash flow projection?\"\n\n---\n\n## Customization Tips\n\n### Change the AI Model\nEdit the \"GPT-4o Language Model\" node to use different models.\n\n### Adjust Conversation Memory\nEdit the \"Redis Conversation Memory\" node to change context window size.\n\n### Add More SQL Tools\nCreate additional SQL tool nodes for different databases or specialized queries.\n\n### Modify Response Format\nEdit the AI Agent's system prompt to customize response formatting.\n\n---\n\n## Troubleshooting\n\n### Messages Not Received\n- Verify webhook URL is publicly accessible\n- Check Evolution API credentials\n- Ensure authorized number filter includes your number\n\n### SQL Queries Failing\n- Verify SQL Server connection credentials\n- Check table and column names match your schema\n- Test queries directly in SQL Server first\n\n### AI Not Responding\n- Verify OpenAI API key is valid\n- Check Redis connection\n- Review execution logs for errors\n\n---\n\n## Support\n\nNeed help implementing or customizing this workflow?\n\n**Email:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\n### Services Offered\n- Custom implementation\n- Database schema integration\n- AI prompt engineering\n- n8n training and consulting\n\n---\n\n*Created by Maxwell Melo - Automation Specialist*",
+        "height": 1400,
+        "width": 550,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8500,
+        200
+      ],
+      "id": "template-info-1764872616148",
+      "name": "Template Info - Read First"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "=Timeout.{{ $('WhatsApp Webhook Receiver').item.json.body.data.key.remoteJid }}",
+        "value": "={{ $now.plus($('Configuration Settings').item.json.TIMEOUT*1000).toISO() }}"
+      },
+      "name": "Store Conversation Timeout",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        896
+      ],
+      "id": "1d6b5db3-34a1-4f49-b2af-3f455401a9a1",
+      "credentials": {
+        "redis": {
+          "id": "lW3Qxxf3V8W5N049",
+          "name": "Redis_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "={{ $('WhatsApp Webhook Receiver').item.json.body.data.message.conversation }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "eb830d1c-3373-4d7b-8c52-61d519802499",
+      "name": "Set Default Text Message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2320,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "=Menção: {{ $('WhatsApp Webhook Receiver').item.json.body.data.contextInfo.quotedMessage.conversation }}\nResposta:{{ $('WhatsApp Webhook Receiver').item.json.body.data.message.extendedTextMessage.text }} ",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a0be3cc4-fe59-45dc-aab1-9b31a5c55358",
+      "name": "Set Reply Context Message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2320,
+        736
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "={{ $('WhatsApp Webhook Receiver').item.json.body.data.message.editedMessage.message.protocolMessage.editedMessage.conversation+'*' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6de5069b-959e-4a06-9c52-b660e35f71fe",
+      "name": "Set Edited Message Content",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2320,
+        944
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "MESSAGE",
+        "options": {
+          "mimeType": "audio/mp3"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1888,
+        1136
+      ],
+      "id": "63cb4bd1-8613-4ca3-aa1f-7aa7ab7702cf",
+      "name": "Convert Audio to MP3 Format"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "21428571-a2b5-4c9f-a8fb-2bf54d5e9869",
+      "name": "Set Transcribed Audio Message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2320,
+        1136
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "MESSAGE",
+        "options": {
+          "fileName": "={{(+new Date).toString(36).slice(-5) + Math.random().toString(36).substr(2, 5)}}.webp",
+          "mimeType": "image/webp"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1888,
+        1344
+      ],
+      "id": "a391dd71-cd8f-45cc-9a38-7a1fefa189b3",
+      "name": "Convert Image to WEBP Format"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "={{ $('WhatsApp Webhook Receiver').item.json.body.data.message.base64 }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8cdc52c9-deaa-4b41-a120-43776bc994e3",
+      "name": "Extract Audio Base64 Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1664,
+        1136
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "={{ $('WhatsApp Webhook Receiver').item.json.body.data.message.base64 }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9d92752e-eb7a-493f-bb8c-54ce342144fc",
+      "name": "Extract Image Base64 Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1664,
+        1344
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "=Transcrição do Áudio enviado pelo usuário: {{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "120b83fa-b0ae-465b-b3e9-bd6072312686",
+      "name": "Set Image Analysis Message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2320,
+        1344
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "=Messages.{{ $('WhatsApp Webhook Receiver').item.json.body.data.key.remoteJid }}",
+        "messageData": "={{ $json.MESSAGE }}",
+        "tail": true
+      },
+      "name": "Store Message in Redis",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2544,
+        928
+      ],
+      "id": "4f926a39-532f-4a0d-8f6d-e686c5c9d3bb",
+      "credentials": {
+        "redis": {
+          "id": "lW3Qxxf3V8W5N049",
+          "name": "Redis_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "keys",
+        "keyPattern": "=Messages.{{ $('WhatsApp Webhook Receiver').item.json.body.data.key.remoteJid }}"
+      },
+      "name": "Retrieve Conversation History",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2784,
+        928
+      ],
+      "id": "00599477-9079-4df0-94cf-af55b650803f",
+      "credentials": {
+        "redis": {
+          "id": "lW3Qxxf3V8W5N049",
+          "name": "Redis_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "keys",
+        "keyPattern": "=Timeout.{{ $('WhatsApp Webhook Receiver').item.json.body.data.key.remoteJid }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        3264,
+        928
+      ],
+      "id": "901c7c30-31b8-4410-8e07-177e42271216",
+      "name": "Get Current Timeout State",
+      "credentials": {
+        "redis": {
+          "id": "lW3Qxxf3V8W5N049",
+          "name": "Redis_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": "={{ $('Configuration Settings').item.json.TIMEOUT }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3024,
+        928
+      ],
+      "id": "a5635d4d-ce67-447d-893a-c8e6346ca810",
+      "name": "Wait for Response Timeout",
+      "webhookId": "SEU_WEBHOOK_ID"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2539a6bb-4bc5-419b-85d6-a2a456b14cca",
+              "leftValue": "={{ $now }}",
+              "rightValue": "={{ $json.values()[0].toDateTime() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3488,
+        928
+      ],
+      "id": "1a80607a-9229-454a-8d60-575fed95a265",
+      "name": "Check Timeout Expired"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4d29f1b4-c344-41a3-87de-2e572d101d74",
+              "leftValue": "={{ $('WhatsApp Webhook Receiver').item.json.body.data.key.fromMe }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        784
+      ],
+      "id": "f0b25e66-ba1c-49d5-a4c7-67ab79b11fc5",
+      "name": "Filter Own Messages (fromMe)"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "=Timeout.{{ $('WhatsApp Webhook Receiver').item.json.body.data.key.remoteJid }}",
+        "value": "={{ $now.plus($('Configuration Settings').item.json[\"FROM-ME-WINDOW\"]*60*1000).toISO() }}"
+      },
+      "name": "Pause Bot on Own Message",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        352,
+        688
+      ],
+      "id": "d336ce21-c009-460e-8256-d9f0209ab358",
+      "credentials": {
+        "redis": {
+          "id": "DEMO_REDIS_ID",
+          "name": "Redis_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "keys",
+        "keyPattern": "=Timeout.{{ $('WhatsApp Webhook Receiver').item.json.body.data.key.remoteJid }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        352,
+        896
+      ],
+      "id": "ca6605c7-ce36-4313-8f98-2fb334291885",
+      "name": "Get Initial Timeout State",
+      "alwaysOutputData": true,
+      "credentials": {
+        "redis": {
+          "id": "lW3Qxxf3V8W5N049",
+          "name": "Redis_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5c24b57c-246d-4815-97d8-b0c9d7a335ad",
+              "leftValue": "={{ $now }}",
+              "rightValue": "={{ $json.values()[0]?.toDateTime() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1008,
+        960
+      ],
+      "id": "16bf2f89-310f-4ffb-9117-0f30e8bb7199",
+      "name": "Check If Past Timeout Window"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e3b6ff31-61cb-40c2-92d3-7f3f6ea2b4b4",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        784,
+        896
+      ],
+      "id": "95395dbe-0df7-48da-bd33-ef66b7c3ac96",
+      "name": "Check If Empty Timeout"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "a7c1c0a5-8ec5-4302-a1e2-7034aebfe36d",
+        "options": {}
+      },
+      "id": "5e5b02d2-22bb-46a8-bcc0-a49ee89b9ede",
+      "name": "WhatsApp Webhook Receiver",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        784
+      ],
+      "webhookId": "SEU_WEBHOOK_ID"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('WhatsApp Webhook Receiver').item.json.body.data.message.conversation }}",
+                    "rightValue": "conversation",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Default"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "86e7e773-8586-458f-a1fb-2890f2030230",
+                    "leftValue": "={{ $('WhatsApp Webhook Receiver').item.json.body.data.contextInfo.quotedMessage }}",
+                    "rightValue": "extendedTextMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Reply"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "7f108034-a1be-4e90-b42e-e4f8a719e311",
+                    "leftValue": "={{ $('WhatsApp Webhook Receiver').item.json.body.data.messageType }}",
+                    "rightValue": "editedMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Edited"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "256e7cf8-be54-4c41-ba80-2d9eb0a07563",
+                    "leftValue": "={{ $('WhatsApp Webhook Receiver').item.json.body.data.messageType }}",
+                    "rightValue": "audioMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "da03e413-3422-419c-af1a-71ff87c307e2",
+                    "leftValue": "={{ $('WhatsApp Webhook Receiver').item.json.body.data.messageType }}",
+                    "rightValue": "imageMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image"
+            }
+          ]
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "1a54c8bf-0530-4827-90d8-79ae0526c9ab",
+      "name": "Route By Message Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        1440,
+        848
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "Descreva essa imagem",
+        "inputType": "base64",
+        "options": {}
+      },
+      "id": "5e0142cf-9909-4ee0-aa87-9db203544da8",
+      "name": "GPT-4 Vision Image Analysis",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.7,
+      "position": [
+        2112,
+        1344
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "G0LDoWdRwifWvpdR",
+          "name": "OpenAI_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "cbcadf84-f48e-41f0-864a-4c5aa55c0f64",
+      "name": "Whisper Audio Transcription",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.7,
+      "position": [
+        2112,
+        1136
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "G0LDoWdRwifWvpdR",
+          "name": "OpenAI_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "messages",
+        "options": {}
+      },
+      "id": "246236f8-b2d5-4eb8-9809-bd0aab8916ec",
+      "name": "Split Response into Parts",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        4400,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "94387db6-4af1-4149-9eeb-320a8f2e1a98",
+      "name": "Process Each Message Part",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        4704,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://api.[EMPRESA]otica.com.br/message/sendMedia/{{ $('WhatsApp Webhook Receiver').item.json.body.instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuration Settings').item.json['EVOLUTION-API-KEY'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $('WhatsApp Webhook Receiver').item.json.body.data.key.remoteJid }}\",\n  \"mediatype\": \"image\",\n  \"media\": \"{{ $json.messages.match(/https:\\/\\/[^\\s]+?\\.(jpeg|jpg|png|webp)/)[0] }}\"\n}",
+        "options": {}
+      },
+      "id": "8d899879-e418-4c9e-a450-a5735d11899b",
+      "name": "Send Image via WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5328,
+        1248
+      ],
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://api.[EMPRESA]otica.com.br/message/sendMedia/{{ $('WhatsApp Webhook Receiver').item.json.body.instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('Configuration Settings').item.json['EVOLUTION-API-KEY'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $('WhatsApp Webhook Receiver').item.json.body.data.key.remoteJid }}\",\n  \"mediatype\": \"video\",\n  \"media\": \"{{ $json.messages.match(/https:\\/\\/[^\\s]+?\\.(wmv|mp4|mov|mkv)/)[0] }}\"\n}",
+        "options": {}
+      },
+      "id": "ed9016a0-581a-4c11-bdee-cf92e2f4cf1c",
+      "name": "Send Video via WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5328,
+        1440
+      ],
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "bd6c6ac4-8ebd-4d14-9935-1fd270106c48",
+                    "leftValue": "={{ $json.messages.match(/https:\\/\\/.*\\.(jpeg|jpg|png|webp)/g) !== null }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Imagem"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "8a8907db-2f29-4fc3-a50d-264a2c5d015e",
+                    "leftValue": "={{ $json.messages.match(/https:\\/\\/.*\\.(wmv|mp4|mov|mkv)/g) !== null}}",
+                    "rightValue": "=",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Video"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.messages.toBoolean() && $json.messages.isEmpty() == false && $json.messages.replace(/\\s+/g, '').isUrl() == false && $json.messages !== '\\n\\n'}}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "1e39b36c-7f91-46d0-a550-9bcaf6f6aa1e",
+                    "leftValue": "={{ $json.messages }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Vazio"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e69b0221-84a3-4aaf-9809-28b33f13442f",
+      "name": "Route Response By Content Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        4928,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8c49a9be-f027-4ca6-8a8c-856fa46ee664",
+              "name": "TIMEOUT",
+              "value": 1,
+              "type": "number"
+            },
+            {
+              "id": "24d3b8c3-c8c4-4bee-9876-db1f82cb5dfb",
+              "name": "EVOLUTION-API-KEY",
+              "value": "SUA_EVOLUTION_API_KEY",
+              "type": "string"
+            },
+            {
+              "id": "2925f61f-175c-4f67-b38f-581d23cd5684",
+              "name": "FROM-ME-WINDOW",
+              "value": 4360,
+              "type": "number"
+            },
+            {
+              "id": "4c777567-176a-4a87-98cf-5e883a37270d",
+              "name": "TIME-PER-CHAR",
+              "value": 5,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -96,
+        784
+      ],
+      "id": "5022369c-358c-46ee-a5a7-adfc530007ca",
+      "name": "Configuration Settings"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "=Messages.{{ $('WhatsApp Webhook Receiver').first().json.body.data.key.remoteJid }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        5328,
+        720
+      ],
+      "id": "66309fde-f5fd-4fd4-920f-c0db74a5b4c5",
+      "name": "Clear Conversation History",
+      "credentials": {
+        "redis": {
+          "id": "lW3Qxxf3V8W5N049",
+          "name": "Redis_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        5104,
+        720
+      ],
+      "id": "873d453f-85fe-4090-b786-5bda4705ba82",
+      "name": "Limit to First Result"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39040a95-bd85-497e-b531-014af083fed8",
+              "name": "messages",
+              "value": "={{ $json.output.split(\"\\n\\n\") }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "df9782ad-5015-4bef-9043-874c9201bc78",
+      "name": "Parse AI Response to Messages",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4192,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=Messages.chat.{{ $('WhatsApp Webhook Receiver').first().json.body.data.key.remoteJid }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
+      "typeVersion": 1.4,
+      "position": [
+        3824,
+        1168
+      ],
+      "id": "54c3b4fe-c33a-4f1b-893e-82f73b299efe",
+      "name": "Redis Conversation Memory (20 msgs)",
+      "credentials": {
+        "redis": {
+          "id": "lW3Qxxf3V8W5N049",
+          "name": "Redis_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8de46fe5-d4db-47f0-9a4c-f2fd9f3c374c",
+              "leftValue": "={{ $('WhatsApp Webhook Receiver').item.json.body.data.key.remoteJid }}",
+              "rightValue": "55XXXXXXXXXXX@s.whatsapp.net",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "cb4694a6-e75d-4267-a7d4-7f5ae8978480",
+              "leftValue": "={{ $('WhatsApp Webhook Receiver').item.json.body.data.key.remoteJid }}",
+              "rightValue": "55XXXXXXXXXXX@s.whatsapp.net",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "f79cdd25-fc6e-4e67-9c18-4ce327914292",
+              "leftValue": "={{ $('WhatsApp Webhook Receiver').item.json.body.data.key.remoteJid }}",
+              "rightValue": "55XXXXXXXXXXX@s.whatsapp.net",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "2a144b36-169e-4ecf-be62-1b2096cdd932",
+              "leftValue": "={{ $('WhatsApp Webhook Receiver').item.json.body.data.key.remoteJid }}",
+              "rightValue": "55XXXXXXXXXXX@s.whatsapp.net",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        896
+      ],
+      "id": "44d45727-c1bf-4e16-9756-2b8fa0804da3",
+      "name": "Filter Authorized Numbers"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        3968,
+        1168
+      ],
+      "id": "8b7f281e-06e7-4aa8-bbf8-d2985f1fac00",
+      "name": "Calculator Tool"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        4112,
+        1168
+      ],
+      "id": "92feb60c-8c7e-48d6-ab70-f39b90468f50",
+      "name": "Reasoning Tool"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "[EMPRESA]-ia",
+        "remoteJid": "={{ $('WhatsApp Webhook Receiver').item.json.body.data.key.remoteJid }}",
+        "messageText": "={{ $json.messages }}",
+        "options_message": {
+          "delay": "={{ $json.messages.length * $('Configuration Settings').item.json['TIME-PER-CHAR']}}"
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        5328,
+        1024
+      ],
+      "id": "14a54170-b427-4c87-8a2f-1ded8415400b",
+      "name": "Send Text via WhatsApp",
+      "credentials": {
+        "evolutionApi": {
+          "id": "DXG26RAjrD6NDSmQ",
+          "name": "Evolution [EMPRESA] TI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "{{ $fromAI(\"subject\") }}"
+      },
+      "type": "n8n-nodes-base.microsoftSqlTool",
+      "typeVersion": 1.1,
+      "position": [
+        4224,
+        1168
+      ],
+      "id": "060f300e-bed9-44a0-8b80-5c09fb3094b1",
+      "name": "SQL Query Tool (Financial Database)",
+      "credentials": {
+        "microsoftSql": {
+          "id": "DEMO_MSSQL_ID",
+          "name": "Microsoft_SQL_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {
+          "temperature": 0.5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        3664,
+        1168
+      ],
+      "id": "40626bf2-c9ee-44f5-9baa-7543370a1233",
+      "name": "GPT-4o Language Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "G0LDoWdRwifWvpdR",
+          "name": "OpenAI_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Retrieve Conversation History').item.json.values().flat().join(`\n`) }}",
+        "options": {
+          "systemMessage": "=# Financial Manager AI Agent\n\nYou are a financial manager AI assistant, specialized in analyzing financial data via WhatsApp.\n\n## AVAILABLE TOOLS\n- **SQL Query Tool**: Execute SQL queries on the financial database (last 120 days)\n- **Calculator**: Complex calculations and financial math\n- **Reasoning Tool**: Structured reasoning for complex analysis\n\n## DECISION PROCESS\n\n### 1. ANALYZE THE QUESTION\n**Use Reasoning Tool first** for complex questions involving:\n- Multiple analyses or comparisons\n- Trend interpretation\n- Strategic recommendations\n- Context-dependent analysis\n\n### 2. SQL EXECUTION\n\n**SMART QUERIES BY TYPE:**\n\n**General Summary:**\n```sql\nSELECT\n    SUM(CASE WHEN PAGREC = 1 THEN VALORORIGINAL ELSE 0 END) as receivables,\n    SUM(CASE WHEN PAGREC = 2 THEN VALORORIGINAL ELSE 0 END) as payables,\n    SUM(CASE WHEN STATUSLAN = 0 THEN VALORORIGINAL ELSE 0 END) as pending,\n    SUM(CASE WHEN STATUSLAN = 0 AND DATAVENCIMENTO < GETDATE() THEN VALORORIGINAL ELSE 0 END) as overdue\nFROM FLAN (NOLOCK)\nWHERE DATAEMISSAO >= DATEADD(DAY, -120, GETDATE())\n```\n\n**Time Evolution:**\n```sql\nSELECT\n    FORMAT(DATAEMISSAO, 'yyyy-MM') as period,\n    SUM(CASE WHEN PAGREC = 1 THEN VALORORIGINAL ELSE 0 END) as receivables,\n    SUM(CASE WHEN PAGREC = 2 THEN VALORORIGINAL ELSE 0 END) as payables\nFROM FLAN (NOLOCK)\nWHERE DATAEMISSAO >= DATEADD(DAY, -120, GETDATE())\nGROUP BY FORMAT(DATAEMISSAO, 'yyyy-MM')\nORDER BY period DESC\n```\n\n**Top Debtors:**\n```sql\nSELECT TOP 10\n    C.NOME as customer_name,\n    SUM(F.VALORORIGINAL) as amount_due,\n    MAX(DATEDIFF(DAY, F.DATAVENCIMENTO, GETDATE())) as days_overdue\nFROM FLAN F (NOLOCK)\nJOIN FCFO C (NOLOCK) ON F.CODCOLIGADA = C.CODCOLIGADA AND F.CODCFO = C.CODCFO\nWHERE F.STATUSLAN = 0 AND F.DATAVENCIMENTO < GETDATE()\n    AND F.DATAEMISSAO >= DATEADD(DAY, -120, GETDATE())\nGROUP BY C.NOME\nORDER BY amount_due DESC\n```\n\n### 3. CALCULATIONS (Calculator)\nUse for:\n- Complex percentages\n- Trend-based projections\n- Financial ratios\n- Proportional comparisons\n\n### 4. RESPONSE FORMAT\n\n**For WhatsApp (< 400 chars = 1 block, > 400 chars = split with \\\\n\\\\n):**\n\n```\n**📊 [DIRECT TITLE]**\n_Period: [date]_\n\n• **Receivables**: $ X,XXX,XXX\n• **Payables**: $ X,XXX,XXX\n• **Balance**: $ X,XXX,XXX ✅/❌\n\n⚠️ **[IMPORTANT HIGHLIGHT]**\n\nNeed more details on any point?\n```\n\n## CRITICAL RULES\n\n1. **ALWAYS execute** SQL query before responding\n2. **Use Reasoning** for analysis requiring interpretation\n3. **Combine tools**: Reasoning → SQL → Calculator when needed\n4. **Formatting**:\n   - Values: $ 1,234,567.89\n   - Emojis: 📊📈📉✅❌⚠️💰\n   - **Bold** for important values\n5. **Key fields**:\n   - PAGREC: 1=Receivable, 2=Payable\n   - STATUSLAN: 0=Open, 1=Settled, 2=Cancelled\n   - HISTORICO: transaction description\n6. **Name searches**: always use LIKE '%term%'\n7. **End** with question for continuity\n\n## MAIN TABLES\n- **FLAN**: Financial transactions\n- **FCFO**: Customers/Vendors\n- **GDEPTO**: Departments/Projects\n- **GCCUSTO**: Cost Centers\n\nCurrent date: {{ $now }}\n\n**Be direct, use tools strategically, and deliver valuable insights!**"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        3792,
+        912
+      ],
+      "id": "54d71f0d-66e1-4bd9-8591-897067d85096",
+      "name": "Financial AI Agent (GPT-4o)"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Store Conversation Timeout": {
+      "main": [
+        [
+          {
+            "node": "Route By Message Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Default Text Message": {
+      "main": [
+        [
+          {
+            "node": "Store Message in Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Reply Context Message": {
+      "main": [
+        [
+          {
+            "node": "Store Message in Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Edited Message Content": {
+      "main": [
+        [
+          {
+            "node": "Store Message in Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Audio to MP3 Format": {
+      "main": [
+        [
+          {
+            "node": "Whisper Audio Transcription",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Transcribed Audio Message": {
+      "main": [
+        [
+          {
+            "node": "Store Message in Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Image to WEBP Format": {
+      "main": [
+        [
+          {
+            "node": "GPT-4 Vision Image Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Audio Base64 Data": {
+      "main": [
+        [
+          {
+            "node": "Convert Audio to MP3 Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Image Base64 Data": {
+      "main": [
+        [
+          {
+            "node": "Convert Image to WEBP Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Image Analysis Message": {
+      "main": [
+        [
+          {
+            "node": "Store Message in Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Message in Redis": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Conversation History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Conversation History": {
+      "main": [
+        [
+          {
+            "node": "Wait for Response Timeout",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Current Timeout State": {
+      "main": [
+        [
+          {
+            "node": "Check Timeout Expired",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Response Timeout": {
+      "main": [
+        [
+          {
+            "node": "Get Current Timeout State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Timeout Expired": {
+      "main": [
+        [
+          {
+            "node": "Financial AI Agent (GPT-4o)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Own Messages (fromMe)": {
+      "main": [
+        [
+          {
+            "node": "Pause Bot on Own Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Initial Timeout State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Initial Timeout State": {
+      "main": [
+        [
+          {
+            "node": "Filter Authorized Numbers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Past Timeout Window": {
+      "main": [
+        [
+          {
+            "node": "Store Conversation Timeout",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Empty Timeout": {
+      "main": [
+        [
+          {
+            "node": "Store Conversation Timeout",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check If Past Timeout Window",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Webhook Receiver": {
+      "main": [
+        [
+          {
+            "node": "Configuration Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route By Message Type": {
+      "main": [
+        [
+          {
+            "node": "Set Default Text Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Reply Context Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Edited Message Content",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Audio Base64 Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Image Base64 Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4 Vision Image Analysis": {
+      "main": [
+        [
+          {
+            "node": "Set Image Analysis Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Whisper Audio Transcription": {
+      "main": [
+        [
+          {
+            "node": "Set Transcribed Audio Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Response into Parts": {
+      "main": [
+        [
+          {
+            "node": "Process Each Message Part",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Each Message Part": {
+      "main": [
+        [
+          {
+            "node": "Limit to First Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Route Response By Content Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Image via WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Process Each Message Part",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Video via WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Process Each Message Part",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Response By Content Type": {
+      "main": [
+        [
+          {
+            "node": "Send Image via WhatsApp",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Process Each Message Part",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Video via WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Text via WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Process Each Message Part",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuration Settings": {
+      "main": [
+        [
+          {
+            "node": "Filter Own Messages (fromMe)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit to First Result": {
+      "main": [
+        [
+          {
+            "node": "Clear Conversation History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI Response to Messages": {
+      "main": [
+        [
+          {
+            "node": "Split Response into Parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis Conversation Memory (20 msgs)": {
+      "ai_memory": [
+        [
+          {
+            "node": "Financial AI Agent (GPT-4o)",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Authorized Numbers": {
+      "main": [
+        [
+          {
+            "node": "Check If Empty Timeout",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Calculator Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Financial AI Agent (GPT-4o)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reasoning Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Financial AI Agent (GPT-4o)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Text via WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Process Each Message Part",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SQL Query Tool (Financial Database)": {
+      "ai_tool": [
+        [
+          {
+            "node": "Financial AI Agent (GPT-4o)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4o Language Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Financial AI Agent (GPT-4o)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Financial AI Agent (GPT-4o)": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Response to Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "c8edf2d9-ce0e-428b-99bb-eec8bfcdec15",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b51b32292d927cd58c4ad95066a64064c94d5e0bb589e40cfa3a14544ef9c49a"
+  },
+  "id": "AFToPKjEBaQX8026",
+  "tags": []
+}

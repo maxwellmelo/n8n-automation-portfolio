@@ -1,0 +1,406 @@
+{
+  "name": "Gmail AI Agent Template",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## n8n Template: Gmail AI Agent Template\n\n**Criado por:** Maxwell Melo\n**Contato:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\n**Categorias:** Email, AI, Gmail, Productivity\n\n---\n\n### Sobre este Template\n\nAgente de IA para Gmail:\n- Enviar, buscar e responder emails\n- Gerenciar labels e marcações\n- Processamento de linguagem natural\n- Integração com WhatsApp para notificações\n\n---\n\n### Como Configurar\n\n1. **Importe** este workflow no seu n8n\n2. **Configure** suas credenciais (substitua os placeholders)\n3. **Personalize** para seu caso de uso\n4. **Teste** antes de usar em produção\n\n### Credenciais para Configurar\n\nProcure por nodes com `DEMO_*` ou `SUA_*` e configure:\n- Suas chaves de API\n- Conexões de banco de dados\n- Credenciais de serviços\n\n---\n\n### Precisa de Ajuda?\n\n**Email:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\nOfereço serviços de:\n- Implementação personalizada\n- Customização de workflows\n- Treinamento em n8n\n- Consultoria em automação\n\n---\n*Template por Maxwell Melo*",
+        "height": 650,
+        "width": 400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8500,
+        200
+      ],
+      "id": "template-info-1764872616179",
+      "name": "Template Info - Leia Primeiro"
+    },
+    {
+      "parameters": {},
+      "id": "f9ae1dd7-8a20-4e47-acfe-9f8a87d4e0af",
+      "name": "When called by another workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "={\n  \"name\": \"Email Agent - Especialista em Gmail\",\n  \"role\": \"Agente especializado em gerenciamento de emails\",\n  \"version\": \"1.0\",\n  \"language\": \"pt-BR\",\n\n  \"identity\": {\n    \"expertise\": [\"Gmail\", \"Gerenciamento de emails\", \"Organização de inbox\", \"Comunicação eficiente\"],\n    \"approach\": \"Focado em eficiência e organização de emails\"\n  },\n\n  \"capabilities\": {\n    \"send\": {\n      \"description\": \"Enviar emails com formatação apropriada\",\n      \"best_practices\": [\n        \"Sempre confirmar destinatário antes de enviar\",\n        \"Sugerir assunto claro e objetivo\",\n        \"Formatar mensagem profissionalmente\"\n      ]\n    },\n    \"search\": {\n      \"description\": \"Buscar emails com filtros avançados\",\n      \"filters\": [\"remetente\", \"data\", \"assunto\", \"labels\", \"lido/não lido\"],\n      \"tips\": \"Use combinações de filtros para resultados precisos\"\n    },\n    \"organize\": {\n      \"description\": \"Organizar inbox com labels e marcações\",\n      \"actions\": [\"marcar como lido\", \"marcar como não lido\", \"adicionar labels\", \"remover labels\"]\n    },\n    \"reply\": {\n      \"description\": \"Responder emails mantendo contexto\",\n      \"approach\": \"Manter tom apropriado e contexto da conversa\"\n    }\n  },\n\n  \"workflow_process\": {\n    \"1_analyze\": \"Entender exatamente o que o usuário precisa fazer com emails\",\n    \"2_validate\": \"Confirmar detalhes importantes (destinatários, datas, etc)\",\n    \"3_execute\": \"Executar ação(ões) solicitada(s) com precisão\",\n    \"4_report\": \"Confirmar execução com detalhes relevantes\"\n  },\n\n  \"email_formatting\": {\n    \"professional\": {\n      \"greeting\": [\"Prezado(a)\", \"Olá\", \"Bom dia/tarde/noite\"],\n      \"closing\": [\"Atenciosamente\", \"Cordialmente\", \"Abraços\"]\n    },\n    \"casual\": {\n      \"greeting\": [\"Oi\", \"Olá\", \"E aí\"],\n      \"closing\": [\"Abraços\", \"Até mais\", \"Falou\"]\n    }\n  },\n\n  \"search_strategies\": {\n    \"unread_today\": \"is:unread after:{{ today }}\",\n    \"important_unread\": \"is:unread is:important\",\n    \"from_person\": \"from:{{ email }}\",\n    \"date_range\": \"after:{{ start_date }} before:{{ end_date }}\"\n  },\n\n  \"response_format\": {\n    \"action_confirmation\": \"✅ Email [ação]: [detalhes]\",\n    \"search_results\": \"📧 Encontrei X emails:\\n[lista formatada]\",\n    \"error_handling\": \"⚠️ Não foi possível [ação]: [razão]\"\n  },\n\n  \"security_rules\": [\n    \"SEMPRE confirmar destinatário antes de enviar\",\n    \"NUNCA incluir informações sensíveis sem confirmação\",\n    \"VERIFICAR contexto antes de responder emails\"\n  ],\n\n  \"optimization_tips\": [\n    \"Sugerir uso de labels para melhor organização\",\n    \"Recomendar limpeza periódica de emails antigos\",\n    \"Propor templates para emails recorrentes\"\n  ]\n}",
+          "maxIterations": 20,
+          "returnIntermediateSteps": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        576,
+        0
+      ],
+      "id": "50ac4bd5-310f-4af7-85cf-2ad362c5bc54",
+      "name": "Email Specialist Agent"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Sender_Name', ``, 'string') }}",
+          "replyTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Send_Replies_To', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        320,
+        224
+      ],
+      "id": "a6a29516-ff2b-49e3-a65a-a10eea792752",
+      "name": "Send a message in Gmail",
+      "webhookId": "SEU_WEBHOOK_ID",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "oeXsDTwRzSfbOkuX",
+          "name": "Gmail SuaInstancia.melo0"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "simple": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Simplify', ``, 'boolean') }}",
+        "filters": {
+          "includeSpamTrash": false,
+          "q": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search', ``, 'string') }}",
+          "receivedAfter": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Received_After', ``, 'string') }}",
+          "receivedBefore": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Received_Before', ``, 'string') }}",
+          "sender": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Sender', ``, 'string') }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        224
+      ],
+      "id": "34bc07cc-c495-43a8-be82-f71e101a3c24",
+      "name": "Get many messages in Gmail",
+      "webhookId": "SEU_WEBHOOK_ID",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "oeXsDTwRzSfbOkuX",
+          "name": "Gmail SuaInstancia.melo0"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        576,
+        224
+      ],
+      "id": "b20c3ab1-8f9c-4ab8-b9d1-ff5968db8a23",
+      "name": "Reply to a message in Gmail",
+      "webhookId": "SEU_WEBHOOK_ID",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "oeXsDTwRzSfbOkuX",
+          "name": "Gmail SuaInstancia.melo0"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        704,
+        224
+      ],
+      "id": "29d7b076-4267-44e4-a072-1a2b0c2867e6",
+      "name": "Mark as read",
+      "webhookId": "SEU_WEBHOOK_ID",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "oeXsDTwRzSfbOkuX",
+          "name": "Gmail SuaInstancia.melo0"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsUnread",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        832,
+        224
+      ],
+      "id": "d71ec4ef-cad3-4db1-b875-526be0631135",
+      "name": "Mark as unread",
+      "webhookId": "SEU_WEBHOOK_ID",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "oeXsDTwRzSfbOkuX",
+          "name": "Gmail SuaInstancia.melo0"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}",
+        "labelIds": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Label_Names_or_IDs', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        224
+      ],
+      "id": "5f3a6641-955d-48d0-9ebb-53d547e4a98a",
+      "name": "Add labels",
+      "webhookId": "SEU_WEBHOOK_ID",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "oeXsDTwRzSfbOkuX",
+          "name": "Gmail SuaInstancia.melo0"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "removeLabels",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}",
+        "labelIds": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Label_Names_or_IDs', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1088,
+        224
+      ],
+      "id": "cf7f6efe-6c7f-401c-a1ef-f89e37eb4a5f",
+      "name": "Remove labels",
+      "webhookId": "SEU_WEBHOOK_ID",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "oeXsDTwRzSfbOkuX",
+          "name": "Gmail SuaInstancia.melo0"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        224
+      ],
+      "id": "4c53e0c5-8b92-4bc9-81f8-5eb8b523107b",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "DEMO_GOOGLE_CREDENTIAL_ID",
+          "name": "OpenAi SuaInstancia"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        432
+      ],
+      "id": "fcd08095-045d-4f01-8f90-bf414143ab21",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "SuaInstancia",
+        "remoteJid": "55XXXXXXXXXXX",
+        "messageText": "=Fluxo: {{ $json.workflow.name }}\nNó: {{ $json.execution.lastNodeExecuted }}\nErro: {{ $json.execution.error.message }}",
+        "options_message": {
+          "delay": 1200
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        192,
+        432
+      ],
+      "id": "87ee8fa2-43bc-4d87-a137-a23c01f452a5",
+      "name": "Enviar Erro",
+      "credentials": {
+        "evolutionApi": {
+          "id": "DEMO_EVOLUTION_CREDENTIAL_ID",
+          "name": "Evo MX3 Dev"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When called by another workflow": {
+      "main": [
+        [
+          {
+            "node": "Email Specialist Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email Specialist Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Specialist Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Specialist Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply to a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Specialist Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as read": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Specialist Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as unread": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Specialist Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add labels": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Specialist Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove labels": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Specialist Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Enviar Erro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": 300
+  },
+  "versionId": "8d9a1fc6-838d-4640-8893-5073f01180e4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "be2e85c12d6d5bc51db8ebc43985deb72a4b5b24d5cceacf44565f768e2de1fe"
+  },
+  "id": "2K2FDzUIz8hbpYyj",
+  "tags": []
+}

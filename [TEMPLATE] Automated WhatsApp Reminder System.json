@@ -1,0 +1,623 @@
+{
+  "name": "Automated WhatsApp Reminder System with Scheduled Delivery & Number Normalization",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Automated WhatsApp Reminder System with Scheduled Delivery & Number Normalization\n\n**Author:** Maxwell Melo\n**Contact:** maxwell.melo0@gmail.com | WhatsApp: +55 86 99409-3040\n\n---\n\n## Description\n\nTransform your workflow with this powerful automated reminder system that delivers WhatsApp messages precisely when you need them. This template provides a complete solution for scheduling and sending reminders through WhatsApp, with intelligent phone number normalization that handles various Brazilian phone formats.\n\n### Who Is This For?\n\n- **Business owners** who need to send appointment reminders to clients\n- **Healthcare providers** managing patient appointment notifications\n- **Service companies** automating follow-up communications\n- **Personal users** wanting automated reminders via WhatsApp\n- **Developers** building notification systems\n\n### Core Features\n\n#### Scheduled Delivery System\n- Minute-by-minute polling for pending reminders\n- Precise delivery timing based on scheduled datetime\n- UTC timezone normalization for accurate scheduling\n- Support for both internal and external recipients\n\n#### Smart Phone Number Normalization\n- Automatic handling of Brazilian phone formats (DDI + DDD)\n- Removes 9th digit when needed for WhatsApp compatibility\n- Supports various input formats (with/without country code)\n- Validates and formats numbers to WhatsApp API requirements\n\n#### Database Integration\n- Uses n8n Data Tables for reminder storage\n- Tracks reminder status (PENDING/SENT)\n- Supports custom fields: datetime, message, contact, status\n- Automatic status updates after successful delivery\n\n#### Error Handling\n- Built-in error trigger for workflow failures\n- WhatsApp notification when errors occur\n- Detailed error messages for debugging\n\n---\n\n## Prerequisites\n\n### Self-Hosted Requirement\nThis workflow requires a **self-hosted n8n instance** for full functionality due to Evolution API integration.\n\n### Required Services\n- Evolution API or similar WhatsApp Business API\n- n8n Data Tables (built-in)\n- Self-hosted n8n instance\n\n### Data Table Structure\nCreate a Data Table named \"reminders\" with columns:\n- `data_e_hora_lembrete` (datetime) - Scheduled datetime\n- `lembrete` (text) - Reminder message\n- `contato` (text) - Phone number\n- `status` (text) - PENDING or SENT\n\n---\n\n## Setup Instructions\n\n### Step 1: Import the Workflow\n1. Download this JSON file\n2. In n8n, go to **Settings** → **Import Workflow**\n3. Upload the JSON file\n\n### Step 2: Configure Credentials\nCreate Evolution API credentials in n8n with your:\n- API URL\n- API Key\n- Instance name\n\n### Step 3: Create Data Table\nCreate a Data Table with the structure described above.\n\n### Step 4: Replace Placeholders\n- Replace `DEMO_*` IDs with your actual credential IDs\n- Replace `SuaInstancia` with your Evolution API instance name\n- Replace `55XXXXXXXXXXX` with your WhatsApp number\n\n### Step 5: Activate & Test\nEnable the workflow and add a test reminder to verify functionality.\n\n---\n\n## Workflow Architecture\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│              Scheduled Check (Every Minute)                  │\n└─────────────────────────┬───────────────────────────────────┘\n                          │\n┌─────────────────────────▼───────────────────────────────────┐\n│              Get Pending Reminders (status=PENDING)          │\n└─────────────────────────┬───────────────────────────────────┘\n                          │\n┌─────────────────────────▼───────────────────────────────────┐\n│              Extract Reminder Data Fields                    │\n└─────────────────────────┬───────────────────────────────────┘\n                          │\n┌─────────────────────────▼───────────────────────────────────┐\n│              Normalize DateTime to UTC                       │\n└─────────────────────────┬───────────────────────────────────┘\n                          │\n┌─────────────────────────▼───────────────────────────────────┐\n│              Check If Reminder Is Due                        │\n│              (scheduled_time <= current_time)                │\n└─────────────────────────┬───────────────────────────────────┘\n                          │\n┌─────────────────────────▼───────────────────────────────────┐\n│              Route By Recipient Type                         │\n│              ├→ Internal (specific number)                   │\n│              └→ External (other contacts)                    │\n└───────────┬─────────────────────────────────┬───────────────┘\n            │                                 │\n┌───────────▼───────────────┐   ┌────────────▼────────────────┐\n│ Normalize Phone (Internal)│   │ Normalize Phone (External)  │\n└───────────┬───────────────┘   └────────────┬────────────────┘\n            │                                 │\n┌───────────▼───────────────┐   ┌────────────▼────────────────┐\n│ Send WhatsApp (Internal)  │   │ Send WhatsApp (External)    │\n└───────────┬───────────────┘   └────────────┬────────────────┘\n            │                                 │\n┌───────────▼───────────────┐   ┌────────────▼────────────────┐\n│ Update Status (Internal)  │   │ Update Status (External)    │\n└───────────────────────────┘   └─────────────────────────────┘\n```\n\n---\n\n## Customization Tips\n\n### Change Polling Interval\nEdit the \"Scheduled Check\" node to modify how often pending reminders are checked.\n\n### Add More Fields\nExtend the Data Table and workflow to include additional fields like priority, category, or recurrence.\n\n### Multiple WhatsApp Instances\nDuplicate the sender nodes and add logic to route messages to different WhatsApp instances.\n\n---\n\n## Troubleshooting\n\n### Reminders Not Sending\n- Check if the reminder datetime has passed\n- Verify the status is \"PENDING\"\n- Check Evolution API credentials and instance status\n\n### Phone Numbers Not Working\n- Ensure numbers include country code (55 for Brazil)\n- Check the normalization logic handles your number format\n\n### Time Zone Issues\n- The workflow uses UTC for comparison\n- Set your n8n instance timezone correctly\n\n---\n\n## Support\n\nNeed help implementing or customizing this workflow?\n\n**Email:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\n### Services Offered\n- Custom implementation\n- Workflow customization\n- n8n training and consulting\n- System integration\n\n---\n\n*Created by Maxwell Melo - Automation Specialist*",
+        "height": 1200,
+        "width": 500,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8500,
+        200
+      ],
+      "id": "template-info-1764872616184",
+      "name": "Template Info - Read First"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -288,
+        -80
+      ],
+      "id": "37a2cc80-ca7b-41ed-9cc8-e8e7e4b401be",
+      "name": "Scheduled Check (Every Minute)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "997064ba-186d-45f6-b5d0-add507e5f523",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "number"
+            },
+            {
+              "id": "7cba5131-e23e-4824-976b-d5e7fdf1600a",
+              "name": "data_e_hora_lembrete",
+              "value": "={{ $json.data_e_hora_lembrete }}",
+              "type": "string"
+            },
+            {
+              "id": "aad97c5f-c495-49f3-b891-284788742c21",
+              "name": "lembrete",
+              "value": "={{ $json.lembrete }}",
+              "type": "string"
+            },
+            {
+              "id": "7627ecc0-5b9e-40e4-964e-d266f4eb1d2b",
+              "name": "contato",
+              "value": "={{ $json.contato }}",
+              "type": "string"
+            },
+            {
+              "id": "9026bb62-ef93-414d-b161-1db8221eaa18",
+              "name": "status",
+              "value": "={{ $json.status }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        -80
+      ],
+      "id": "4dd1bb91-65e5-40d5-a6b6-2891b6bccce3",
+      "name": "Extract Reminder Data Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "caa172c3-e437-49e5-bfd6-238ebef7e2a0",
+              "leftValue": "={{ $json.data_lembrete_utc }}",
+              "rightValue": "={{ $json.data_atual_utc }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "beforeOrEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        -80
+      ],
+      "id": "641078ae-f002-4f02-baca-6c274ab8c3cf",
+      "name": "Check If Reminder Is Due"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        240
+      ],
+      "id": "0384566a-07df-40e8-8b03-7dec15ad9ef7",
+      "name": "Error Handler Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "SuaInstancia",
+        "remoteJid": "55XXXXXXXXXXX",
+        "messageText": "=Fluxo: {{ $json.workflow.name }}\nNó: {{ $json.execution.lastNodeExecuted }}\nErro: {{ $json.execution.error.message }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        240
+      ],
+      "id": "2dce96c2-7c1d-4f7d-95d9-ec7a59dcab72",
+      "name": "Send Error Notification via WhatsApp",
+      "credentials": {
+        "evolutionApi": {
+          "id": "DEMO_EVOLUTION_CREDENTIAL_ID",
+          "name": "Evo MX3 Dev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fa167f49-c87f-412a-a1c2-a64c1907e7fc",
+              "leftValue": "={{ $json.contato }}",
+              "rightValue": "55XXXXXXXXXXX",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        -80
+      ],
+      "id": "cca1fbc4-ced7-4e50-ac79-62fb38f07187",
+      "name": "Route By Recipient Type"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "ID2",
+        "remoteJid": "={{ $json.contato_normalizado }}",
+        "messageText": "={{ $('Extract Reminder Data Fields').item.json.lembrete }}",
+        "options_message": {
+          "delay": "={{ $('Extract Reminder Data Fields').item.json.lembrete.length * 10 }}"
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        16
+      ],
+      "id": "34b9e2af-7f0b-43b8-8b06-1699949aad01",
+      "name": "Send WhatsApp Reminder (External)",
+      "credentials": {
+        "evolutionApi": {
+          "id": "DEMO_EVOLUTION_CREDENTIAL_ID",
+          "name": "Evo MX3 Dev"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "/**\n * WhatsApp Phone Number Normalizer for Brazil\n *\n * This function normalizes Brazilian phone numbers to WhatsApp format.\n * It handles various input formats:\n * - With/without country code (55)\n * - With/without 9th digit\n * - Different separators (spaces, dashes, parentheses)\n *\n * Output format: 55DDXXXXXXXX@s.whatsapp.net\n */\nfunction normalizeWhatsAppNumber(contact) {\n  if (!contact) {\n    throw new Error('Contact not provided');\n  }\n\n  // Remove all non-numeric characters\n  let cleanNumber = contact.toString().replace(/\\D/g, '');\n\n  // Remove country code if exists\n  if (cleanNumber.startsWith('55')) {\n    cleanNumber = cleanNumber.substring(2);\n  }\n\n  let result = '';\n\n  // Analyze length to determine format\n  if (cleanNumber.length === 11) {\n    // Format: DD 9 XXXX-XXXX (11 digits with 9th digit)\n    // Get DDD (first 2) + last 8 digits\n    const ddd = cleanNumber.substring(0, 2);\n    const number = cleanNumber.slice(-8);\n    result = `55${ddd}${number}`;\n\n  } else if (cleanNumber.length === 10) {\n    // Format: DD XXXX-XXXX (10 digits - landline or old mobile)\n    // Keep as is\n    result = `55${cleanNumber}`;\n\n  } else if (cleanNumber.length === 9) {\n    // Probably 9 XXXX-XXXX (missing DDD)\n    console.warn('Number without DDD - using as is');\n    result = `55${cleanNumber}`;\n\n  } else {\n    // Other cases - use as is\n    result = `55${cleanNumber}`;\n  }\n\n  return `${result}@s.whatsapp.net`;\n}\n\nconst normalizedContact = normalizeWhatsAppNumber($json.contato);\n\nreturn {\n  ...$json,\n  original_contact: $json.contato,\n  contato_normalizado: normalizedContact\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        16
+      ],
+      "id": "4ef1a919-f6ac-4605-a085-a9b2b496dff2",
+      "name": "Normalize Phone Number (External)"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "SuaInstancia",
+        "remoteJid": "={{ $json.contato_normalizado }}",
+        "messageText": "={{ $('Extract Reminder Data Fields').item.json.lembrete }}",
+        "options_message": {
+          "delay": "={{ $('Extract Reminder Data Fields').item.json.lembrete.length * 10 }}"
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        -176
+      ],
+      "id": "ebc9d61b-8d99-42c5-95a6-d5ed2b6dfbec",
+      "name": "Send WhatsApp Reminder (Internal)",
+      "credentials": {
+        "evolutionApi": {
+          "id": "DEMO_EVOLUTION_CREDENTIAL_ID",
+          "name": "Evo MX3 Dev"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "/**\n * WhatsApp Phone Number Normalizer for Brazil\n *\n * This function normalizes Brazilian phone numbers to WhatsApp format.\n * It handles various input formats:\n * - With/without country code (55)\n * - With/without 9th digit\n * - Different separators (spaces, dashes, parentheses)\n *\n * Output format: 55DDXXXXXXXX@s.whatsapp.net\n */\nfunction normalizeWhatsAppNumber(contact) {\n  if (!contact) {\n    throw new Error('Contact not provided');\n  }\n\n  // Remove all non-numeric characters\n  let cleanNumber = contact.toString().replace(/\\D/g, '');\n\n  // Remove country code if exists\n  if (cleanNumber.startsWith('55')) {\n    cleanNumber = cleanNumber.substring(2);\n  }\n\n  let result = '';\n\n  // Analyze length to determine format\n  if (cleanNumber.length === 11) {\n    // Format: DD 9 XXXX-XXXX (11 digits with 9th digit)\n    // Get DDD (first 2) + last 8 digits\n    const ddd = cleanNumber.substring(0, 2);\n    const number = cleanNumber.slice(-8);\n    result = `55${ddd}${number}`;\n\n  } else if (cleanNumber.length === 10) {\n    // Format: DD XXXX-XXXX (10 digits - landline or old mobile)\n    // Keep as is\n    result = `55${cleanNumber}`;\n\n  } else if (cleanNumber.length === 9) {\n    // Probably 9 XXXX-XXXX (missing DDD)\n    console.warn('Number without DDD - using as is');\n    result = `55${cleanNumber}`;\n\n  } else {\n    // Other cases - use as is\n    result = `55${cleanNumber}`;\n  }\n\n  return `${result}@s.whatsapp.net`;\n}\n\nconst normalizedContact = normalizeWhatsAppNumber($json.contato);\n\nreturn {\n  ...$json,\n  original_contact: $json.contato,\n  contato_normalizado: normalizedContact\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        -176
+      ],
+      "id": "bfa531bb-dc49-4fbe-8db9-040827b0adf3",
+      "name": "Normalize Phone Number (Internal)"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "DEMO_DATA_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "lembretes",
+          "cachedResultUrl": "/projects/DdgwZGnmwjkIj2jp/datatables/DEMO_DATA_TABLE_ID"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "status",
+              "keyValue": "PENDENTE"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        -80
+      ],
+      "id": "d7298ba6-96af-4ce4-9e11-4bca127d6792",
+      "name": "Get Pending Reminders from Database"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "DEMO_DATA_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "lembretes",
+          "cachedResultUrl": "/projects/DdgwZGnmwjkIj2jp/datatables/DEMO_DATA_TABLE_ID"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $('Check If Reminder Is Due').item.json.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "ENVIADO"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "data_e_hora_lembrete",
+              "displayName": "data_e_hora_lembrete",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "lembrete",
+              "displayName": "lembrete",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "contato",
+              "displayName": "contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        16
+      ],
+      "id": "dae24a09-4cc8-448d-ad6e-9a3573b78ac0",
+      "name": "Update Status to SENT (External)"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "DEMO_DATA_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "lembretes",
+          "cachedResultUrl": "/projects/DdgwZGnmwjkIj2jp/datatables/DEMO_DATA_TABLE_ID"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $('Check If Reminder Is Due').item.json.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "ENVIADO"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "data_e_hora_lembrete",
+              "displayName": "data_e_hora_lembrete",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "lembrete",
+              "displayName": "lembrete",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "contato",
+              "displayName": "contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        -176
+      ],
+      "id": "ad1863d9-c60a-40d4-9c90-53ec321eabf1",
+      "name": "Update Status to SENT (Internal)"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "/**\n * DateTime Normalizer for Reminder Scheduling\n *\n * Converts the reminder datetime to UTC ISO format\n * and gets current time in UTC for comparison.\n * This ensures accurate scheduling across timezones.\n */\n\n// Get reminder datetime string\nlet dateString = $json.data_e_hora_lembrete;\n\n// Remove extra double quotes if present\nif (typeof dateString === 'string') {\n  dateString = dateString.replace(/^\"(.*)\"$/, '$1');\n}\n\n// Convert to UTC ISO format\nconst reminderDateUTC = new Date(dateString).toISOString();\nconst currentDateUTC = new Date().toISOString();\n\nreturn {\n  ...$json,\n  data_lembrete_utc: reminderDateUTC,\n  data_atual_utc: currentDateUTC\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        -80
+      ],
+      "id": "daaaea3f-58a7-4f70-ad1e-591ed93d79b2",
+      "name": "Normalize DateTime to UTC"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Scheduled Check (Every Minute)": {
+      "main": [
+        [
+          {
+            "node": "Get Pending Reminders from Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Reminder Data Fields": {
+      "main": [
+        [
+          {
+            "node": "Normalize DateTime to UTC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Reminder Is Due": {
+      "main": [
+        [
+          {
+            "node": "Route By Recipient Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Handler Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send Error Notification via WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route By Recipient Type": {
+      "main": [
+        [
+          {
+            "node": "Normalize Phone Number (Internal)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Normalize Phone Number (External)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WhatsApp Reminder (External)": {
+      "main": [
+        [
+          {
+            "node": "Update Status to SENT (External)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Phone Number (External)": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp Reminder (External)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WhatsApp Reminder (Internal)": {
+      "main": [
+        [
+          {
+            "node": "Update Status to SENT (Internal)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Phone Number (Internal)": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp Reminder (Internal)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Pending Reminders from Database": {
+      "main": [
+        [
+          {
+            "node": "Extract Reminder Data Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status to SENT (External)": {
+      "main": [
+        []
+      ]
+    },
+    "Normalize DateTime to UTC": {
+      "main": [
+        [
+          {
+            "node": "Check If Reminder Is Due",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "90c37a11-ce08-4b88-a3d8-429486fb2a7d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "be2e85c12d6d5bc51db8ebc43985deb72a4b5b24d5cceacf44565f768e2de1fe"
+  },
+  "id": "LyPNdTgRsO8rJESt",
+  "tags": []
+}

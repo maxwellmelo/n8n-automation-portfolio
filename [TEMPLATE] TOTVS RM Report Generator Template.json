@@ -1,0 +1,329 @@
+{
+  "name": "TOTVS RM Report Generator Template",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## n8n Template: TOTVS RM Report Generator Template\n\n**Criado por:** Maxwell Melo\n**Contato:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\n**Categorias:** ERP, TOTVS, Reports, PDF\n\n---\n\n### Sobre este Template\n\nGerador de relatórios TOTVS RM:\n- Conexão SOAP com RM\n- Geração de relatórios PDF\n- Envio via WhatsApp\n- Autenticação integrada\n\n---\n\n### Como Configurar\n\n1. **Importe** este workflow no seu n8n\n2. **Configure** suas credenciais (substitua os placeholders)\n3. **Personalize** para seu caso de uso\n4. **Teste** antes de usar em produção\n\n### Credenciais para Configurar\n\nProcure por nodes com `DEMO_*` ou `SUA_*` e configure:\n- Suas chaves de API\n- Conexões de banco de dados\n- Credenciais de serviços\n\n---\n\n### Precisa de Ajuda?\n\n**Email:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\nOfereço serviços de:\n- Implementação personalizada\n- Customização de workflows\n- Treinamento em n8n\n- Consultoria em automação\n\n---\n*Template por Maxwell Melo*",
+        "height": 650,
+        "width": 400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8500,
+        200
+      ],
+      "id": "template-info-1764872616190",
+      "name": "Template Info - Leia Primeiro"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Obter a string XML\nvar xmlString = $json.data;\n\n// Usar regex para extrair o conteúdo entre <GenerateReportResult>...</GenerateReportResult>\nvar match = xmlString.match(/<GenerateReportResult>(.*?)<\\/GenerateReportResult>/);\n\nif (match && match[1]) {\n  var reportId = match[1];\n  console.log(\"ID extraído:\", reportId);\n  return { id: reportId };\n} else {\n  throw new Error(\"ID não encontrado no XML.\");\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        -720
+      ],
+      "id": "a204ab18-db53-4bcc-aab4-9d3f50e61718",
+      "name": "ID do Relatorio"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -720
+      ],
+      "id": "3d941292-75cd-48ad-9c67-6bda9f8efbc3",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://seu-servidor.rm.cloudtotvs.com.br:8051/wsReport/IwsReport",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "text/xml; charset=utf-8"
+            },
+            {
+              "name": "SOAPAction",
+              "value": "\"http://www.totvs.com/IwsReport/GetFileChunk\""
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "text/xml; charset=utf-8",
+        "body": "=<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tot=\"http://www.totvs.com/\">    <soapenv:Header/>    <soapenv:Body>       <tot:GetFileChunk>          <tot:guid>{{ $json.id }}</tot:guid>          <tot:offset>0</tot:offset>          <tot:length>10048576</tot:length>       </tot:GetFileChunk>    </soapenv:Body> </soapenv:Envelope> ",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        848,
+        -720
+      ],
+      "id": "9744cfd4-8b02-4746-b6c2-2acbfdb018f5",
+      "name": "Baixar Relatorio",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "DEMO_TOTVS_ID",
+          "name": "TOTVS_RM_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Processar a resposta e extrair o conteúdo do relatório\nconst responseBody = $input.first().json.data || '';\n\n// Extrair o conteúdo codificado em base64\nconst fileChunkMatch = responseBody.match(/<GetFileChunkResult>([^<]+)<\\/GetFileChunkResult>/i);\nlet fileChunkBase64 = fileChunkMatch ? fileChunkMatch[1] : null;\n\nif (fileChunkBase64) {\n  // Limpar o conteúdo base64 (remover quebras de linha, espaços, etc.)\n  fileChunkBase64 = fileChunkBase64.replace(/[\\n\\r\\s]/g, '');\n  \n  // Configurar o arquivo binário com o conteúdo decodificado\n  const fileName = `RELATORIO.pdf`;\n  const mimeType = 'application/pdf';\n  \n  // Preparar o objeto de retorno com o binário\n  const newItem = {\n    json: {\n      success: true,\n      fileName: fileName,\n      mimeType: mimeType\n    },\n    binary: {\n      data: {\n        data: fileChunkBase64,\n        mimeType: mimeType,\n        fileName: fileName\n      }\n    }\n  };\n  \n  return newItem;\n} else {\n  // Se não encontrou o conteúdo\n  return {\n    json: {\n      success: false,\n      error: 'Não foi possível extrair o conteúdo do relatório'\n    }\n  };\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        -720
+      ],
+      "id": "6cebe678-7473-458a-8396-10805734423d",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "destinationKey": "relatorio",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        -720
+      ],
+      "id": "0ec9c689-6df2-4950-8099-de98c4cd85c5",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3d9d7bd8-8d9f-4776-9505-8c85bb0da3f3",
+              "name": "codcoligada",
+              "value": "1",
+              "type": "string"
+            },
+            {
+              "id": "5b341621-daf1-4ebb-a0f2-5d1307acf1ee",
+              "name": "sistema",
+              "value": "F",
+              "type": "string"
+            },
+            {
+              "id": "22a3f3be-4247-41e0-8be7-a88f55e0aaa3",
+              "name": "idrel",
+              "value": "898",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        192,
+        -720
+      ],
+      "id": "89f4e091-f91c-4838-8432-ef511678e9f7",
+      "name": "SALDOS"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://seu-servidor.rm.cloudtotvs.com.br:8051/wsReport/IwsReport",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "text/xml; charset=utf-8"
+            },
+            {
+              "name": "SOAPAction",
+              "value": "\"http://www.totvs.com/IwsReport/GenerateReport\""
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "text/xml; charset=utf-8",
+        "body": "=<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tot=\"http://www.totvs.com/\">    <soapenv:Header/>    <soapenv:Body>       <tot:GenerateReport>          <tot:codColigada>{{ $json.codcoligada }}</tot:codColigada>          <tot:codSistema>{{ $json.sistema }}</tot:codSistema>          <tot:id>{{ $json.idrel }}</tot:id>          <tot:filters></tot:filters>          <tot:parameters></tot:parameters>          <tot:fileName>SALDOS.pdf</tot:fileName>          <tot:contexto></tot:contexto>       </tot:GenerateReport>    </soapenv:Body> </soapenv:Envelope> ",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        -720
+      ],
+      "id": "da386be7-475d-43b0-83ba-8246c969fe19",
+      "name": "Gerar Relatorio",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "DEMO_TOTVS_ID",
+          "name": "TOTVS_RM_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://api.[EMPRESA]otica.com.br/message/sendMedia/SuaInstancia",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "=SUA_EVOLUTION_API_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\"number\":\"55XXXXXXXXXXX@s.whatsapp.net\",\n      \"mediatype\":\"document\",\n      \"fileName\":\"REL-{{$now.format('dd-MM-yyyy')}}.pdf\",\n      \"media\":\"{{ $json.relatorio }}\"\n}",
+        "options": {}
+      },
+      "id": "071a6df1-6b86-4adf-a4db-90916aefb7c4",
+      "name": "Envia Relatorio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        -720
+      ],
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "ID do Relatorio": {
+      "main": [
+        [
+          {
+            "node": "Baixar Relatorio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "SALDOS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixar Relatorio": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Envia Relatorio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SALDOS": {
+      "main": [
+        [
+          {
+            "node": "Gerar Relatorio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar Relatorio": {
+      "main": [
+        [
+          {
+            "node": "ID do Relatorio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e79c2d26-ac65-4215-b16d-2d86c5154549",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b51b32292d927cd58c4ad95066a64064c94d5e0bb589e40cfa3a14544ef9c49a"
+  },
+  "id": "MifDHA9YKNJQS7Ui",
+  "tags": [
+    {
+      "createdAt": "2025-03-28T14:45:39.306Z",
+      "updatedAt": "2025-03-28T14:45:39.306Z",
+      "id": "Y5xEELUixcN09rM3",
+      "name": "[EMPRESA]"
+    }
+  ]
+}

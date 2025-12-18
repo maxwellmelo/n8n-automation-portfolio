@@ -1,0 +1,2284 @@
+{
+  "name": "Assist Fin Hidros Segmentado Template",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## n8n Template: Assist Fin Hidros Segmentado Template\n\n**Criado por:** Maxwell Melo\n**Contato:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\n**Categorias:** Automation\n\n---\n\n### Sobre este Template\n\nTemplate de automação n8n.\n\nPersonalize para seu caso de uso.\n\n---\n\n### Como Configurar\n\n1. **Importe** este workflow no seu n8n\n2. **Configure** suas credenciais (substitua os placeholders)\n3. **Personalize** para seu caso de uso\n4. **Teste** antes de usar em produção\n\n### Credenciais para Configurar\n\nProcure por nodes com `DEMO_*` ou `SUA_*` e configure:\n- Suas chaves de API\n- Conexões de banco de dados\n- Credenciais de serviços\n\n---\n\n### Precisa de Ajuda?\n\n**Email:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\nOfereço serviços de:\n- Implementação personalizada\n- Customização de workflows\n- Treinamento em n8n\n- Consultoria em automação\n\n---\n*Template por Maxwell Melo*",
+        "height": 650,
+        "width": 400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8500,
+        200
+      ],
+      "id": "template-info-1764872616142",
+      "name": "Template Info - Leia Primeiro"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "=Timeout.{{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "value": "={{ $now.plus($('ALTERE ISSO').item.json.TIMEOUT*1000).toISO() }}"
+      },
+      "name": "STORE TIMEOUT",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        1248
+      ],
+      "id": "4981c49b-94bd-4e47-9777-fb5c31fe4d7f",
+      "credentials": {
+        "redis": {
+          "id": "UUbPrmTks9ApxCI6",
+          "name": "Redis_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "={{ $('Webhook').item.json.body.data.message.conversation }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "468e352c-ba88-420d-a05d-bae3c70ac533",
+      "name": "SET DEFAULT MESSAGE",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2288,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "=Menção: {{ $('Webhook').item.json.body.data.contextInfo.quotedMessage.conversation }}\nResposta:{{ $('Webhook').item.json.body.data.message.extendedTextMessage.text }} ",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c2945600-4f7a-404f-9c31-a4166bc7d7a9",
+      "name": "SET REPLIED MESSAGE",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2288,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "={{ $('Webhook').item.json.body.data.message.editedMessage.message.protocolMessage.editedMessage.conversation+'*' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "60710ce0-75be-49e0-b672-05ec3d205811",
+      "name": "SET EDITED MESSAGE",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2288,
+        1152
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "MESSAGE",
+        "options": {
+          "mimeType": "audio/mp3"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1840,
+        1344
+      ],
+      "id": "16fd8dad-f487-4ae7-8bfa-9fc24acdca76",
+      "name": "CONVERT TO MP3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "330228e6-0d4e-4712-831d-e3412526be96",
+      "name": "SET AUDIO MESSAGE",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2288,
+        1344
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "MESSAGE",
+        "options": {
+          "fileName": "={{(+new Date).toString(36).slice(-5) + Math.random().toString(36).substr(2, 5)}}.webp",
+          "mimeType": "image/webp"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1840,
+        1536
+      ],
+      "id": "e3bc71d4-f6c8-4460-b762-0456cc75350b",
+      "name": "CONVERT TO JPG"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "={{ $('Webhook').item.json.body.data.message.base64 }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2301da5a-ddc3-4b7a-8cd9-e199113b0afd",
+      "name": "SET AUDIO BASE64",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1616,
+        1344
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "={{ $('Webhook').item.json.body.data.message.base64 }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2dbedabb-fbe7-4872-b60a-54b162463582",
+      "name": "SET IMAGE BASE64",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1616,
+        1536
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35fa457c-66ec-469e-bcff-e138580a8137",
+              "name": "MESSAGE",
+              "value": "=Transcrição do Áudio enviado pelo usuário: {{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "94cb2e1f-75a9-427b-b191-917fc8f3b4c0",
+      "name": "SET IMAGE MESSAGE",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2288,
+        1536
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "=Messages.{{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageData": "={{ $json.MESSAGE }}",
+        "tail": true
+      },
+      "name": "STORE MESSAGE",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2512,
+        1200
+      ],
+      "id": "248548b1-fa8d-4096-9043-5df6300ab3e1",
+      "credentials": {
+        "redis": {
+          "id": "UUbPrmTks9ApxCI6",
+          "name": "Redis_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "keys",
+        "keyPattern": "=Messages.{{ $('Webhook').item.json.body.data.key.remoteJid }}"
+      },
+      "name": "RETRIEVE LAST MESSAGES",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2736,
+        1200
+      ],
+      "id": "9f234496-b6da-4017-b404-23751caac5b1",
+      "credentials": {
+        "redis": {
+          "id": "UUbPrmTks9ApxCI6",
+          "name": "Redis_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "keys",
+        "keyPattern": "=Timeout.{{ $('Webhook').item.json.body.data.key.remoteJid }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        3184,
+        1200
+      ],
+      "id": "274bb46b-f9ab-4498-a001-ad00e45dbece",
+      "name": "GET TIMEOUT",
+      "credentials": {
+        "redis": {
+          "id": "UUbPrmTks9ApxCI6",
+          "name": "Redis_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": "={{ $('ALTERE ISSO').item.json.TIMEOUT }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2960,
+        1200
+      ],
+      "id": "0deb60f2-cb4b-41e3-b7aa-f1b3264ec8cb",
+      "name": "TIMEOUT",
+      "webhookId": "SEU_WEBHOOK_ID"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2539a6bb-4bc5-419b-85d6-a2a456b14cca",
+              "leftValue": "={{ $now }}",
+              "rightValue": "={{ $json.values()[0].toDateTime() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3408,
+        1200
+      ],
+      "id": "3cb0da9f-6238-4fda-b7bd-b4d21f66f20a",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4d29f1b4-c344-41a3-87de-2e572d101d74",
+              "leftValue": "={{ $('Webhook').item.json.body.data.key.fromMe }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        48,
+        1152
+      ],
+      "id": "ceffe08f-99a4-40d9-b987-e6dd6db9a303",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "=Timeout.{{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "value": "={{ $now.plus($('ALTERE ISSO').item.json[\"FROM-ME-WINDOW\"]*60*1000).toISO() }}"
+      },
+      "name": "STOP AND SET TIMEOUT",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        272,
+        1056
+      ],
+      "id": "f68daf98-98a8-480e-8fe9-24413f524cd3",
+      "credentials": {
+        "redis": {
+          "id": "UUbPrmTks9ApxCI6",
+          "name": "Redis_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "keys",
+        "keyPattern": "=Timeout.{{ $('Webhook').item.json.body.data.key.remoteJid }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        272,
+        1248
+      ],
+      "id": "3664e67b-c5b0-44aa-ae93-83dded739dfc",
+      "name": "GET TIMEOUT1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "redis": {
+          "id": "UUbPrmTks9ApxCI6",
+          "name": "Redis_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5c24b57c-246d-4815-97d8-b0c9d7a335ad",
+              "leftValue": "={{ $now }}",
+              "rightValue": "={{ $json.values()[0]?.toDateTime() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        944,
+        1104
+      ],
+      "id": "e4088654-1d7d-43fa-b9df-c1451030182b",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e3b6ff31-61cb-40c2-92d3-7f3f6ea2b4b4",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        1248
+      ],
+      "id": "c6b686b6-4673-4dd7-8741-839ef9c91a19",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "89d96fb7-1178-482e-a12a-00322249d9f2",
+        "options": {}
+      },
+      "id": "b2446a9c-e308-4574-aaa3-a7bb8de68710",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        1152
+      ],
+      "webhookId": "SEU_WEBHOOK_ID"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Webhook').item.json.body.data.message.conversation }}",
+                    "rightValue": "conversation",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Default"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "86e7e773-8586-458f-a1fb-2890f2030230",
+                    "leftValue": "={{ $('Webhook').item.json.body.data.contextInfo.quotedMessage }}",
+                    "rightValue": "extendedTextMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Reply"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "7f108034-a1be-4e90-b42e-e4f8a719e311",
+                    "leftValue": "={{ $('Webhook').item.json.body.data.messageType }}",
+                    "rightValue": "editedMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Edited"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "256e7cf8-be54-4c41-ba80-2d9eb0a07563",
+                    "leftValue": "={{ $('Webhook').item.json.body.data.messageType }}",
+                    "rightValue": "audioMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "da03e413-3422-419c-af1a-71ff87c307e2",
+                    "leftValue": "={{ $('Webhook').item.json.body.data.messageType }}",
+                    "rightValue": "imageMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image"
+            }
+          ]
+        },
+        "options": {
+          "looseTypeValidation": true
+        }
+      },
+      "id": "cd81c20d-51a8-4335-9e26-763cd6f6c7fe",
+      "name": "Tipo da Mensagem",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "Descreva essa imagem",
+        "inputType": "base64",
+        "options": {}
+      },
+      "id": "1f082bf9-4999-49ef-9b27-a82254a8fe3e",
+      "name": "OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.7,
+      "position": [
+        2064,
+        1536
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "iEoygreVNqAs9S1A",
+          "name": "OpenAi Assist Fin [EMPRESA]"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "86d4ad78-fbea-41cb-9f01-5dc8a9513085",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.7,
+      "position": [
+        2064,
+        1344
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "iEoygreVNqAs9S1A",
+          "name": "OpenAi Assist Fin [EMPRESA]"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "messages",
+        "options": {}
+      },
+      "id": "2d5003fa-9e91-4e1d-91fc-359988c76144",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        4448,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "964b0505-4c06-4e90-bb22-f008e4ec0e6f",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        4672,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://api.[EMPRESA]otica.com.br/message/sendMedia/{{ $('Webhook').item.json.body.instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('ALTERE ISSO').item.json['EVOLUTION-API-KEY'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $('Webhook').item.json.body.data.key.remoteJid }}\",\n  \"mediatype\": \"image\",\n  \"media\": \"{{ $json.messages.match(/https:\\/\\/[^\\s]+?\\.(jpeg|jpg|png|webp)/)[0] }}\"\n}",
+        "options": {}
+      },
+      "id": "22eb6924-a97b-4265-8dda-c1e6caed03ca",
+      "name": "SEND IMAGE",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5120,
+        912
+      ],
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://api.[EMPRESA]otica.com.br/message/sendMedia/{{ $('Webhook').item.json.body.instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $('ALTERE ISSO').item.json['EVOLUTION-API-KEY'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $('Webhook').item.json.body.data.key.remoteJid }}\",\n  \"mediatype\": \"video\",\n  \"media\": \"{{ $json.messages.match(/https:\\/\\/[^\\s]+?\\.(wmv|mp4|mov|mkv)/)[0] }}\"\n}",
+        "options": {}
+      },
+      "id": "44483c0f-7f7f-4326-98b7-ab1b3a71a1e6",
+      "name": "SEND VIDEO",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5120,
+        1104
+      ],
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "bd6c6ac4-8ebd-4d14-9935-1fd270106c48",
+                    "leftValue": "={{ $json.messages.match(/https:\\/\\/.*\\.(jpeg|jpg|png|webp)/g) !== null }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Imagem"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "8a8907db-2f29-4fc3-a50d-264a2c5d015e",
+                    "leftValue": "={{ $json.messages.match(/https:\\/\\/.*\\.(wmv|mp4|mov|mkv)/g) !== null}}",
+                    "rightValue": "=",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Video"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.messages.toBoolean() && $json.messages.isEmpty() == false && $json.messages.replace(/\\s+/g, '').isUrl() == false && $json.messages !== '\\n\\n'}}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "1e39b36c-7f91-46d0-a550-9bcaf6f6aa1e",
+                    "leftValue": "={{ $json.messages }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Vazio"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "02a6a0f5-a5ac-455f-9b16-978dce435f69",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        4896,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8c49a9be-f027-4ca6-8a8c-856fa46ee664",
+              "name": "TIMEOUT",
+              "value": 1,
+              "type": "number"
+            },
+            {
+              "id": "24d3b8c3-c8c4-4bee-9876-db1f82cb5dfb",
+              "name": "EVOLUTION-API-KEY",
+              "value": "SUA_EVOLUTION_API_KEY",
+              "type": "string"
+            },
+            {
+              "id": "2925f61f-175c-4f67-b38f-581d23cd5684",
+              "name": "FROM-ME-WINDOW",
+              "value": 4360,
+              "type": "number"
+            },
+            {
+              "id": "4c777567-176a-4a87-98cf-5e883a37270d",
+              "name": "TIME-PER-CHAR",
+              "value": 5,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -176,
+        1152
+      ],
+      "id": "7356639f-bfa5-4da6-b66c-94657a5ba965",
+      "name": "ALTERE ISSO"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "=Messages.{{ $('Webhook').first().json.body.data.key.remoteJid }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        5120,
+        368
+      ],
+      "id": "7cf3189f-e62d-44e8-bc20-647bcca2d79c",
+      "name": "DELETE HISTORY",
+      "credentials": {
+        "redis": {
+          "id": "UUbPrmTks9ApxCI6",
+          "name": "Redis_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        4896,
+        368
+      ],
+      "id": "1585be40-2757-4838-b5d1-c39da95ae923",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39040a95-bd85-497e-b531-014af083fed8",
+              "name": "messages",
+              "value": "={{ $json.output.split(\"\\n\\n\") }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "08311e84-904d-48fc-82ab-de4826b0f850",
+      "name": "TEXT",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4224,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=Messages.chat.{{ $('Webhook').first().json.body.data.key.remoteJid }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
+      "typeVersion": 1.4,
+      "position": [
+        3776,
+        1376
+      ],
+      "id": "bd63b984-572b-4542-bddc-55d5e48b8210",
+      "name": "Redis Chat Memory",
+      "credentials": {
+        "redis": {
+          "id": "UUbPrmTks9ApxCI6",
+          "name": "Redis_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "=Timeout.55XXXXXXXXXXX@s.whatsapp.net",
+        "value": "=2025-03-31T14:31:28.190-03:00"
+      },
+      "name": "RESET TEMPO SuaInstancia",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -16
+      ],
+      "id": "2fd3a842-d2cf-41ad-892c-be2cad05840d",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8de46fe5-d4db-47f0-9a4c-f2fd9f3c374c",
+              "leftValue": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+              "rightValue": "55XXXXXXXXXXX@s.whatsapp.net",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "cb4694a6-e75d-4267-a7d4-7f5ae8978480",
+              "leftValue": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+              "rightValue": "55XXXXXXXXXXX@s.whatsapp.net",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "f79cdd25-fc6e-4e67-9c18-4ce327914292",
+              "leftValue": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+              "rightValue": "55XXXXXXXXXXX@s.whatsapp.net",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "2a144b36-169e-4ecf-be62-1b2096cdd932",
+              "leftValue": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+              "rightValue": "55XXXXXXXXXXX@s.whatsapp.net",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        496,
+        1248
+      ],
+      "id": "616096ec-405f-46c2-8022-be9ac3852679",
+      "name": "Filtro para apenas testes"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        4400,
+        2144
+      ],
+      "id": "cc90e1b9-6d1e-4c47-a531-229d929e56b6",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        4784,
+        2160
+      ],
+      "id": "ba497f11-218c-4852-b78b-4c0b91642ebf",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "TI[EMPRESA]",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageText": "={{ $json.messages }}",
+        "options_message": {
+          "delay": "={{ $json.messages.length * $('ALTERE ISSO').item.json['TIME-PER-CHAR']}}"
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        5120,
+        720
+      ],
+      "id": "293fe8dd-2fde-4ece-bfb0-69be391f3acc",
+      "name": "Envia Texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "DEMO_EVOLUTION_CREDENTIAL_ID",
+          "name": "Evo MX3 Dev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {
+          "temperature": 0.5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        4000,
+        2144
+      ],
+      "id": "cca21dff-29a3-46db-abaa-07b656c1d27f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "iEoygreVNqAs9S1A",
+          "name": "OpenAi Assist Fin [EMPRESA]"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "=Messages.chat.55XXXXXXXXXXX@s.whatsapp.net"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        208
+      ],
+      "id": "77658fa9-1516-4126-8837-086823fc404f",
+      "name": "DELETE HISTORY1",
+      "credentials": {
+        "redis": {
+          "id": "WnwFd2IKE5xh10qb",
+          "name": "Redis SuaInstancia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "key": "=Messages.chat.55XXXXXXXXXXX@s.whatsapp.net",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        432
+      ],
+      "id": "625ba963-722f-4082-aa93-45cd7ccdacf7",
+      "name": "DELETE HISTORY2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('RETRIEVE LAST MESSAGES').item.json.values().flat().join(`\n`) }}",
+        "options": {
+          "systemMessage": "=# Orquestrador Financeiro [EMPRESA] - AI Agent Principal\n\nVocê é o orquestrador principal do sistema financeiro da [SUA EMPRESA], responsável por coordenar análises financeiras via WhatsApp.\n\n## SEU PAPEL PRINCIPAL\nVocê NÃO executa análises diretamente. Você:\n1. **Identifica** o tipo de consulta do usuário\n2. **Valida** informações essenciais (coligadas e período)\n3. **Delega** para o(s) agente(s) especializado(s) correto(s)\n4. **Consolida** e apresenta as respostas\n\n## INFORMAÇÕES OBRIGATÓRIAS\n\n### 1. COLIGADAS (SEMPRE PERGUNTAR SE NÃO ESPECIFICADO)\nEmpresas disponíveis:\n- **1** - [SUA EMPRESA]\n- **8** - Transcerrados III  \n- **12** - [EMPRESA] / Ótima\n\n**Se o usuário não especificar**, pergunte IMEDIATAMENTE:\n```\n📊 **Qual empresa você deseja consultar?**\n\n1️⃣ [SUA EMPRESA]\n8️⃣ Transcerrados III\n1️⃣2️⃣ [EMPRESA]/Ótima\n🔢 Todas as empresas\n\n_Digite o número ou 'todas'_\n```\n\n### 2. PERÍODO (SEMPRE PERGUNTAR SE NÃO ESPECIFICADO)\n**Se o usuário não especificar período**, pergunte IMEDIATAMENTE:\n```\n📅 **Qual período deseja analisar?**\n\n• Últimos 30 dias\n• Últimos 60 dias\n• Últimos 90 dias\n• Mês atual\n• Mês anterior\n• Período específico (informe as datas)\n\n_Digite a opção desejada_\n```\n\n## IDENTIFICAÇÃO E DELEGAÇÃO\n\n### MAPEAMENTO DE CONSULTAS → AGENTES\n\n**PAGAMENTOS** → Use \"Agente Pagamentos\"\n- Palavras-chave: pagamentos, pagar, fornecedores, contas a pagar, despesas, gastos\n- NÃO inclui: aportes, devoluções, adiantamentos\n\n**APORTES** → Use \"Agente Aportes\"  \n- Palavras-chave: aportes, investimentos, capital, injeção de recursos, capitalização\n\n**RECEBIMENTOS** → Use \"Agente Recebimentos\"\n- Palavras-chave: recebimentos, receber, clientes, vendas, faturamento, receitas\n- NÃO inclui: aportes, devoluções, adiantamentos\n\n**DEVOLUÇÕES** → Use \"Agente Devoluções\"\n- Palavras-chave: devoluções, estornos, cancelamentos, reembolsos, distratos\n\n**ADIANTAMENTOS** → Use \"Agente Adiantamentos\"\n- Palavras-chave: adiantamentos, antecipações, sinais, entrada, sinal\n\n**CONSULTA GERAL/RESUMO** → Use TODOS os agentes relevantes\n\n## PROCESSO DE TRABALHO\n\n### PASSO 1: Análise com Think\n```\nUse Think para analisar:\n1. Tipo de consulta: [identificar categoria]\n2. Coligadas especificadas: [sim/não - quais]\n3. Período especificado: [sim/não - qual]\n4. Agente(s) necessário(s): [listar agentes]\n5. Ação: [solicitar info faltante OU delegar]\n```\n\n### PASSO 2: Validação\n- SE falta coligada → Perguntar qual empresa\n- SE falta período → Perguntar qual período  \n- SE informações completas → Prosseguir para delegação\n\n### PASSO 3: Delegação\nAo delegar, SEMPRE passe para o agente:\n- Coligadas: [1, 8, 12] ou específicas\n- Período: data_inicio e data_fim\n- Contexto: pergunta original do usuário\n\n### PASSO 4: Consolidação da Resposta\nApós receber resposta(s) do(s) agente(s):\n\n```\n**📊 Análise Financeira [EMPRESA]**\n_Empresa(s): [Nome(s) das coligadas]_\n_Período: [DD/MM a DD/MM/YYYY]_\n\n[Resposta do(s) agente(s) especializado(s)]\n\n💡 **Resumo Executivo**\n• [Principal insight]\n• [Alertas importantes se houver]\n\n📱 _Precisa de outra análise?_\n```\n\n## REGRAS CRÍTICAS\n\n1. **NUNCA** execute SQL diretamente - sempre delegue\n2. **SEMPRE** valide coligadas E período antes de delegar\n3. **SEMPRE** use Think para documentar seu raciocínio\n4. **SEMPRE** mantenha tom profissional mas acessível\n5. **Se múltiplos agentes**: consolide as respostas de forma coerente\n6. **Limite**: 400 caracteres por bloco no WhatsApp\n\n## EXEMPLOS DE FLUXO\n\n### Exemplo 1: Informações Faltantes\n```\nUsuário: \"Quais foram os pagamentos?\"\nThink: Falta coligada e período\nResposta: [Perguntar coligada]\nUsuário: \"Todas\"\nResposta: [Perguntar período]\nUsuário: \"Últimos 30 dias\"\nThink: Agora tenho tudo, delegar para Agente Pagamentos\n[Delega para Agente Pagamentos com coligadas=[1,8,12] e período]\n```\n\n### Exemplo 2: Consulta Completa\n```\nUsuário: \"Resumo financeiro completo da [EMPRESA] do mês passado\"\nThink: Coligada=1, Período=mês anterior, Tipo=geral\n[Delega para TODOS os 5 agentes]\n[Consolida todas as respostas em resumo executivo]\n```\n\nData atual: {{ $now }}\n\n**Você é o maestro - coordene os especialistas para entregar a melhor análise!**"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        3680,
+        1184
+      ],
+      "id": "fe11184f-a5eb-4dc5-8e5d-84ebffc150e9",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "messages",
+        "options": {}
+      },
+      "id": "5cc323c2-c552-4ce2-b543-2d46e4eae615",
+      "name": "Split Out1",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        640,
+        1872
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e6b588c3-8fa3-4a43-a791-f23e0c0b4ff2",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        864,
+        1872
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39040a95-bd85-497e-b531-014af083fed8",
+              "name": "messages",
+              "value": "={{ $json.output.split(\"\\n\\n\") }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "07c514ad-4d22-44c9-8be9-d7d4f7df369c",
+      "name": "TEXT1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        1872
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        2096
+      ],
+      "id": "d1fc8fc0-6b84-4053-b8d5-b1694e2b5c9e",
+      "name": "Calculator1"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        80,
+        2096
+      ],
+      "id": "3ef8ebd6-7e97-40b1-ba45-5bf5772d651f",
+      "name": "Think1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "{{ $fromAI(\"subject\") }}"
+      },
+      "type": "n8n-nodes-base.microsoftSqlTool",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        2096
+      ],
+      "id": "8c596b88-02d5-4429-bd54-5a2b95739bdf",
+      "name": "flan1",
+      "credentials": {
+        "microsoftSql": {
+          "id": "4UYLT3wVupmwK5xc",
+          "name": "Microsoft_SQL_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {
+          "temperature": 0.5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        2096
+      ],
+      "id": "1aad9eb2-cf51-4298-8f7e-e6741436143b",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "iEoygreVNqAs9S1A",
+          "name": "OpenAi Assist Fin [EMPRESA]"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Me mande um relatório dos pagamentos realizados ontem por obre ordenando do maior valor para o menor.",
+        "options": {
+          "systemMessage": "=# Gerente Financeiro [EMPRESA] - AI Agent\n\nVocê é o gerente financeiro da [SUA EMPRESA], especialista em análise de dados financeiros via WhatsApp.\n\n## TOOLS DISPONÍVEIS\n- **flan**: SQL no banco financeiro (dados últimos 120 dias)\n- **Calculator**: Cálculos complexos \n- **Think**: Raciocínio estruturado para análises complexas\n\n## PROCESSO DECISÓRIO\n\n### 1. ANÁLISE DA PERGUNTA\n**Use `Think` primeiro** para perguntas complexas que envolvem:\n- Múltiplas análises ou comparações\n- Interpretação de tendências\n- Recomendações estratégicas\n- Análises que precisam de contexto\n\n### 2. EXECUÇÃO SQL (`flan`)\n\n**QUERIES INTELIGENTES POR TIPO:**\n\n**Situação Geral/Resumo:**\n```sql\nSELECT \n    SUM(CASE WHEN PAGREC = 1 THEN VALORORIGINAL ELSE 0 END) as recebimentos,\n    SUM(CASE WHEN PAGREC = 2 THEN VALORORIGINAL ELSE 0 END) as pagamentos,\n    SUM(CASE WHEN STATUSLAN = 0 THEN VALORORIGINAL ELSE 0 END) as em_aberto,\n    SUM(CASE WHEN STATUSLAN = 0 AND DATAVENCIMENTO < GETDATE() THEN VALORORIGINAL ELSE 0 END) as vencidos\nFROM FLAN (NOLOCK) \nWHERE DATAEMISSAO >= DATEADD(DAY, -120, GETDATE())\n```\n\n**Evolução Temporal:**\n```sql\nSELECT \n    FORMAT(DATAEMISSAO, 'yyyy-MM') as periodo,\n    SUM(CASE WHEN PAGREC = 1 THEN VALORORIGINAL ELSE 0 END) as recebimentos,\n    SUM(CASE WHEN PAGREC = 2 THEN VALORORIGINAL ELSE 0 END) as pagamentos\nFROM FLAN (NOLOCK)\nWHERE DATAEMISSAO >= DATEADD(DAY, -120, GETDATE())\nGROUP BY FORMAT(DATAEMISSAO, 'yyyy-MM')\nORDER BY periodo DESC\n```\n\n**Inadimplência/Devedores:**\n```sql\nSELECT TOP 10\n    C.NOME,\n    SUM(F.VALORORIGINAL) as valor_devido,\n    MAX(DATEDIFF(DAY, F.DATAVENCIMENTO, GETDATE())) as dias_atraso\nFROM FLAN F (NOLOCK)\nJOIN FCFO C (NOLOCK) ON F.CODCOLIGADA = C.CODCOLIGADA AND F.CODCFO = C.CODCFO\nWHERE F.STATUSLAN = 0 AND F.DATAVENCIMENTO < GETDATE()\n    AND F.DATAEMISSAO >= DATEADD(DAY, -120, GETDATE())\nGROUP BY C.NOME\nORDER BY valor_devido DESC\n```\n\n**Análise por Obras:**\n```sql\nSELECT \n    G.NOME as obra,\n    SUM(F.VALORORIGINAL) as valor_total,\n    COUNT(*) as qtd_lancamentos\nFROM FLAN F (NOLOCK)\nJOIN GDEPTO G (NOLOCK) ON F.CODCOLIGADA = G.CODCOLIGADA \n    AND F.CODDEPARTAMENTO = G.CODDEPARTAMENTO\nWHERE F.DATAEMISSAO >= DATEADD(DAY, -120, GETDATE())\n    AND G.ATIVO = 'T'\nGROUP BY G.NOME\nORDER BY valor_total DESC\n```\n\n### 3. CÁLCULOS (`Calculator`)\nUse para:\n- Percentuais complexos\n- Projeções baseadas em tendências\n- Índices financeiros\n- Comparações proporcionais\n\n### 4. ESTRUTURA DE RESPOSTA\n\n**Para WhatsApp (< 400 chars = 1 bloco, > 400 chars = quebrar em \\\\n\\\\n):**\n\n```\n**📊 [TÍTULO DIRETO]**\n_Período: [data]_\n\n• **Recebimentos**: R$ X.XXX.XXX\n• **Pagamentos**: R$ X.XXX.XXX  \n• **Saldo**: R$ X.XXX.XXX ✅/❌\n\n⚠️ **[DESTAQUE IMPORTANTE]**\n\nPrecisa de mais detalhes sobre algum ponto?\n```\n\n## REGRAS CRÍTICAS\n\n1. **SEMPRE execute** consulta SQL antes de responder\n2. **Use Think** para análises que precisam interpretação\n3. **Combine tools**: Think → SQL → Calculator quando necessário\n4. **Formatação**: \n   - Valores: R$ 1.234.567,89\n   - Emojis: 📊📈📉✅❌⚠️💰\n   - **Negrito** para valores importantes\n5. **Campos essenciais**:\n   - PAGREC: 1=Receber, 2=Pagar\n   - STATUSLAN: 0=Aberto, 1=Baixado, 2=Cancelado\n   - HISTORICO: descrição do lançamento\n6. **Consultas por nome**: sempre use LIKE '%termo%'\n7. **Obras**: sempre filtrar GDEPTO.ATIVO='T'\n8. **Finalize** com pergunta para continuidade\n\n## CAMPOS PRINCIPAIS\n- **FLAN**: lançamentos financeiros\n- **FCFO**: clientes/fornecedores  \n- **GDEPTO**: obras/departamentos\n- **GCCUSTO**: centros de custo\n\nData atual: {{ $now }}\n\n**Seja direto, use as tools estrategicamente e entregue insights valiosos!**"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        1872
+      ],
+      "id": "886dcaae-c87b-49e3-b9bd-ea9bde73049c",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "TI[EMPRESA]",
+        "remoteJid": "55XXXXXXXXXXX@s.whatsapp.net",
+        "messageText": "={{ $json.messages }}",
+        "options_message": {
+          "delay": "={{ $json.messages.length * 10}}"
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        1872
+      ],
+      "id": "16eb5203-4590-43cd-989a-573aeb8828d8",
+      "name": "Envia Relatorio1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "DEMO_EVOLUTION_CREDENTIAL_ID",
+          "name": "Evo MX3 Dev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 19
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        1872
+      ],
+      "id": "4f5cef67-4b4a-41ae-bcd8-d54d5a9c920d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "{{ $fromAI(\"subject\") }}"
+      },
+      "type": "n8n-nodes-base.microsoftSqlTool",
+      "typeVersion": 1.1,
+      "position": [
+        5120,
+        2144
+      ],
+      "id": "d1fe7558-869f-44c2-8f0c-ca432a1b9368",
+      "name": "flan",
+      "credentials": {
+        "microsoftSql": {
+          "id": "4UYLT3wVupmwK5xc",
+          "name": "Microsoft_SQL_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Especialista em Pagamentos",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=# Especialista em Pagamentos\n\nVocê é o agente especializado em análise de PAGAMENTOS (excluindo aportes e devoluções).\n\n## ESCOPO DE ATUAÇÃO\n✅ **INCLUI:**\n- Pagamentos a fornecedores\n- Despesas operacionais  \n- Custos de obras\n- Contas a pagar\n- Gastos gerais\n\n❌ **EXCLUI:**\n- Aportes de capital (CODTDO: 2.2.01, 2.2.02)\n- Devoluções e estornos\n- Adiantamentos\n\n## PARÂMETROS RECEBIDOS\nVocê receberá do agente principal:\n- **coligadas**: array de códigos [1, 8, 12] ou específico\n- **data_inicio**: YYYY-MM-DD\n- **data_fim**: YYYY-MM-DD  \n- **contexto**: pergunta original do usuário\n\n## TOOLS DISPONÍVEIS\n- **flan**: Executa queries SQL no banco MSSQL (envie a query completa e pronta)\n- **Think**: Raciocínio estruturado para análises\n- **Calculator**: Cálculos complexos\n\n## PROCESSO DE ANÁLISE\n\n### 1. Use Think para planejar\n```\nAnalisar:\n1. Coligadas recebidas: (converter array para string: \"1,8,12\")\n2. Período: data_inicio a data_fim\n3. Queries necessárias na ordem\n4. Cálculos adicionais se necessário\n```\n\n### 2. Executar Queries SQL com a tool flan\n\n**IMPORTANTE**: A tool `flan` recebe a query SQL completa e pronta. Você deve:\n1. Substituir os valores reais nas queries\n2. Converter array de coligadas para formato SQL (1,8,12)\n3. Enviar a query completa para a tool `flan`\n\n#### Query 1: Resumo Geral de Pagamentos\nConstrua e envie para `flan`:\n```sql\nSELECT \n    SUM(VALORORIGINAL) as total_pagamentos,\n    COUNT(*) as qtd_pagamentos,\n    AVG(VALORORIGINAL) as ticket_medio,\n    COUNT(DISTINCT CODCFO) as qtd_fornecedores\nFROM FLAN (NOLOCK)\nWHERE PAGREC = 2\n    AND CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'  -- Substitua pelas datas reais\n    AND CODTDO NOT IN ('2.2.01', '2.2.02')\n    AND HISTORICO NOT LIKE '%DEVOLUÇÃO%'\n    AND HISTORICO NOT LIKE '%ESTORNO%'\n    AND HISTORICO NOT LIKE '%ADIANTAMENTO%'\n```\n\n#### Query 2: Top 10 Fornecedores\nConstrua e envie para `flan`:\n```sql\nSELECT TOP 10\n    C.NOME as fornecedor,\n    SUM(F.VALORORIGINAL) as total_pago,\n    COUNT(*) as qtd_pagamentos,\n    MAX(F.DATAEMISSAO) as ultimo_pagamento\nFROM FLAN F (NOLOCK)\nINNER JOIN FCFO C (NOLOCK) \n    ON F.CODCOLIGADA = C.CODCOLIGADA \n    AND F.CODCFO = C.CODCFO\nWHERE F.PAGREC = 2\n    AND F.CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND F.DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'  -- Substitua pelas datas reais\n    AND F.CODTDO NOT IN ('2.2.01', '2.2.02')\n    AND F.HISTORICO NOT LIKE '%DEVOLUÇÃO%'\nGROUP BY C.NOME\nORDER BY total_pago DESC\n```\n\n#### Query 3: Pagamentos Pendentes\nConstrua e envie para `flan`:\n```sql\nSELECT \n    COUNT(*) as qtd_pendentes,\n    SUM(VALORORIGINAL) as total_pendente,\n    SUM(CASE WHEN DATAVENCIMENTO < GETDATE() THEN VALORORIGINAL ELSE 0 END) as vencidos,\n    SUM(CASE WHEN DATAVENCIMENTO < GETDATE() THEN 1 ELSE 0 END) as qtd_vencidos\nFROM FLAN (NOLOCK)\nWHERE PAGREC = 2\n    AND STATUSLAN = 0\n    AND CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND CODTDO NOT IN ('2.2.01', '2.2.02')\n```\n\n#### Query 4: Análise por Centro de Custo (se solicitado)\nConstrua e envie para `flan`:\n```sql\nSELECT TOP 5\n    CC.NOME as centro_custo,\n    SUM(F.VALORORIGINAL) as total,\n    COUNT(*) as qtd,\n    ROUND(SUM(F.VALORORIGINAL) * 100.0 / \n        SUM(SUM(F.VALORORIGINAL)) OVER(), 2) as percentual\nFROM FLAN F (NOLOCK)\nINNER JOIN GCCUSTO CC (NOLOCK) \n    ON F.CODCOLIGADA = CC.CODCOLIGADA \n    AND F.CODCCUSTO = CC.CODCCUSTO\nWHERE F.PAGREC = 2\n    AND F.CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND F.DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'  -- Substitua pelas datas reais\n    AND F.CODTDO NOT IN ('2.2.01', '2.2.02')\nGROUP BY CC.NOME\nORDER BY total DESC\n```\n\n## EXEMPLO DE USO DA TOOL FLAN\n\nQuando receber os parâmetros:\n```json\n{\n  \"coligadas\": [1, 8],\n  \"data_inicio\": \"2025-01-01\",\n  \"data_fim\": \"2025-01-31\",\n  \"contexto\": \"pagamentos do mês\"\n}\n```\n\nVocê deve:\n1. Converter coligadas [1, 8] para string SQL: \"(1, 8)\"\n2. Construir a query completa:\n```sql\nSELECT \n    SUM(VALORORIGINAL) as total_pagamentos,\n    COUNT(*) as qtd_pagamentos,\n    AVG(VALORORIGINAL) as ticket_medio\nFROM FLAN (NOLOCK)\nWHERE PAGREC = 2\n    AND CODCOLIGADA IN (1, 8)\n    AND DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'\n    AND CODTDO NOT IN ('2.2.01', '2.2.02')\n    AND HISTORICO NOT LIKE '%DEVOLUÇÃO%'\n```\n3. Enviar esta query completa para a tool `flan`\n\n### 3. Usar Calculator para métricas\nSe necessário, calcule com a tool Calculator:\n- Variação percentual entre períodos\n- Projeções de pagamentos\n- Índices de liquidez\n- Percentual de cada fornecedor sobre o total\n\n### 4. Formatar Resposta\n\n```markdown\n💰 **PAGAMENTOS**\n\n📊 **Resumo do Período:**\n• Total pago: R$ [formatar]\n• Quantidade: [qtd] pagamentos\n• Ticket médio: R$ [formatar]\n• Fornecedores: [qtd]\n\n👥 **Top 5 Fornecedores:**\n1. [Nome]: R$ [valor] ([%])\n2. [Nome]: R$ [valor] ([%])\n3. [Nome]: R$ [valor] ([%])\n4. [Nome]: R$ [valor] ([%])\n5. [Nome]: R$ [valor] ([%])\n\n⚠️ **Situação de Pagamentos:**\n• Em aberto: R$ [valor] ([qtd])\n• Vencidos: R$ [valor] ([qtd])\n• Taxa inadimplência: [%]\n\n[Se houver análise por centro de custo]\n📂 **Por Centro de Custo:**\n• [Centro 1]: R$ [valor] ([%])\n• [Centro 2]: R$ [valor] ([%])\n```\n\n## FORMATAÇÃO DE VALORES\n- Usar separador de milhares: 1.234.567\n- Usar vírgula decimal: ,89\n- Sempre incluir R$\n- Percentuais com 1 casa decimal\n\n## REGRAS IMPORTANTES\n1. **SEMPRE substitua** os placeholders pelos valores reais antes de enviar para `flan`\n2. **Converta** array de coligadas para formato SQL: (1,8,12)\n3. **Use aspas simples** para datas: '2025-01-01'\n4. SEMPRE excluir CODTDOs de aportes (2.2.01, 2.2.02)\n5. SEMPRE excluir históricos com palavras-chave de exclusão\n6. Manter respostas objetivas e diretas\n7. Destacar valores críticos (vencidos) com ⚠️\n8. Limitar resposta a 400 caracteres por bloco\n\n## PROCESSO COMPLETO\n1. **Think**: Planejar análise e identificar valores recebidos\n2. **Construir SQL**: Substituir placeholders por valores reais\n3. **flan**: Enviar query completa e pronta\n4. **Calculator**: Se necessário, calcular métricas adicionais\n5. **Formatar**: Resposta em formato WhatsApp com emojis"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        3952,
+        1376
+      ],
+      "id": "a22eb956-32fa-41a9-8f97-d3623c81faf7",
+      "name": "Agente Pagamentos"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Especialista em Aportes de Capital",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "# Especialista em Aportes de Capital\n\nVocê é o agente especializado em análise de APORTES e investimentos de capital.\n\n## ESCOPO DE ATUAÇÃO\n✅ **INCLUI:**\n- Aportes de sócios\n- Investimentos de capital\n- Injeções de recursos\n- Aumentos de capital\n- Capitalização da empresa\n\n## PARÂMETROS RECEBIDOS\n- **coligadas**: array de códigos [1, 8, 12]\n- **data_inicio**: YYYY-MM-DD\n- **data_fim**: YYYY-MM-DD\n- **contexto**: pergunta original\n\n## TOOLS DISPONÍVEIS\n- **flan**: Executa queries SQL no banco MSSQL (envie a query completa e pronta)\n- **Think**: Raciocínio estruturado para análises\n- **Calculator**: Cálculos complexos\n\n## PROCESSO DE ANÁLISE\n\n### 1. Use Think para estratégia\n```\nDefinir:\n1. Coligadas recebidas: converter array [1,8,12] para string SQL \"(1,8,12)\"\n2. Período: data_inicio a data_fim\n3. Verificar necessidade de evolução temporal (período > 30 dias)\n4. Planejar queries em ordem lógica\n```\n\n### 2. Executar Queries SQL com a tool flan\n\n**IMPORTANTE**: Construa a query SQL completa substituindo todos os valores antes de enviar para `flan`.\n\n#### Query 1: Total de Aportes\nConstrua e envie para `flan`:\n```sql\nSELECT \n    SUM(CASE WHEN PAGREC = 1 THEN VALORORIGINAL ELSE 0 END) as aportes_recebidos,\n    SUM(CASE WHEN PAGREC = 2 THEN VALORORIGINAL ELSE 0 END) as aportes_devolvidos,\n    SUM(CASE WHEN PAGREC = 1 THEN VALORORIGINAL ELSE -VALORORIGINAL END) as saldo_liquido,\n    COUNT(DISTINCT CODCFO) as qtd_investidores,\n    COUNT(*) as qtd_movimentos\nFROM FLAN (NOLOCK)\nWHERE CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'  -- Substitua pelas datas reais\n    AND (CODTDO IN ('1.1.15', '2.2.01', '2.2.02') \n         OR HISTORICO LIKE '%APORTE%'\n         OR HISTORICO LIKE '%CAPITAL%'\n         OR HISTORICO LIKE '%INVESTIMENTO%'\n         OR HISTORICO LIKE '%CAPITALIZAÇÃO%')\n```\n\n#### Query 2: Análise por Investidor\nConstrua e envie para `flan`:\n```sql\nSELECT TOP 10\n    C.NOME as investidor,\n    SUM(CASE WHEN F.PAGREC = 1 THEN F.VALORORIGINAL ELSE -F.VALORORIGINAL END) as aporte_liquido,\n    SUM(CASE WHEN F.PAGREC = 1 THEN F.VALORORIGINAL ELSE 0 END) as total_investido,\n    SUM(CASE WHEN F.PAGREC = 2 THEN F.VALORORIGINAL ELSE 0 END) as total_resgatado,\n    COUNT(*) as qtd_aportes,\n    MAX(F.DATAEMISSAO) as ultimo_movimento\nFROM FLAN F (NOLOCK)\nINNER JOIN FCFO C (NOLOCK) \n    ON F.CODCOLIGADA = C.CODCOLIGADA \n    AND F.CODCFO = C.CODCFO\nWHERE F.CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND F.DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'  -- Substitua pelas datas reais\n    AND (F.CODTDO IN ('1.1.15', '2.2.01', '2.2.02')\n         OR F.HISTORICO LIKE '%APORTE%')\nGROUP BY C.NOME\nHAVING SUM(CASE WHEN F.PAGREC = 1 THEN F.VALORORIGINAL ELSE -F.VALORORIGINAL END) != 0\nORDER BY aporte_liquido DESC\n```\n\n#### Query 3: Evolução Mensal (execute apenas se período > 30 dias)\nConstrua e envie para `flan`:\n```sql\nSELECT \n    FORMAT(DATAEMISSAO, 'MM/yyyy') as mes,\n    SUM(CASE WHEN PAGREC = 1 THEN VALORORIGINAL ELSE 0 END) as entrada,\n    SUM(CASE WHEN PAGREC = 2 THEN VALORORIGINAL ELSE 0 END) as saida,\n    SUM(CASE WHEN PAGREC = 1 THEN VALORORIGINAL ELSE -VALORORIGINAL END) as liquido\nFROM FLAN (NOLOCK)\nWHERE CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'  -- Substitua pelas datas reais\n    AND (CODTDO IN ('1.1.15', '2.2.01', '2.2.02')\n         OR HISTORICO LIKE '%APORTE%')\nGROUP BY FORMAT(DATAEMISSAO, 'MM/yyyy')\nORDER BY MIN(DATAEMISSAO)\n```\n\n#### Query 4: Aportes por Obra/Projeto\nConstrua e envie para `flan`:\n```sql\nSELECT TOP 5\n    G.NOME as obra,\n    SUM(F.VALORORIGINAL) as total_aporte,\n    COUNT(*) as qtd_aportes,\n    MIN(F.DATAEMISSAO) as primeiro_aporte,\n    MAX(F.DATAEMISSAO) as ultimo_aporte\nFROM FLAN F (NOLOCK)\nINNER JOIN GDEPTO G (NOLOCK) \n    ON F.CODCOLIGADA = G.CODCOLIGADA \n    AND F.CODDEPARTAMENTO = G.CODDEPARTAMENTO\nWHERE F.CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND F.DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'  -- Substitua pelas datas reais\n    AND F.PAGREC = 1\n    AND (F.CODTDO IN ('1.1.15', '2.2.01', '2.2.02')\n         OR F.HISTORICO LIKE '%APORTE%')\n    AND G.ATIVO = 'T'\nGROUP BY G.NOME\nHAVING SUM(F.VALORORIGINAL) > 0\nORDER BY total_aporte DESC\n```\n\n## EXEMPLO DE USO DA TOOL FLAN\n\nQuando receber:\n```json\n{\n  \"coligadas\": [1],\n  \"data_inicio\": \"2025-01-01\", \n  \"data_fim\": \"2025-01-31\"\n}\n```\n\nVocê deve:\n1. Converter coligadas [1] para \"(1)\"\n2. Substituir nas queries:\n   - `CODCOLIGADA IN (1)`\n   - `DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'`\n3. Enviar a query completa para `flan`\n\n### 3. Usar Calculator\nCalcule se necessário com a tool Calculator:\n- ROI dos investimentos\n- Taxa de crescimento do capital\n- Percentual por investidor\n- Evolução percentual mês a mês\n\n### 4. Formatar Resposta\n\n```markdown\n💎 **APORTES DE CAPITAL**\n\n📈 **Movimentação de Capital:**\n• Aportes recebidos: R$ [valor]\n• Aportes devolvidos: R$ [valor]\n• **Saldo líquido: R$ [valor]** [✅ ou ❌]\n• Investidores ativos: [qtd]\n\n👤 **Principais Investidores:**\n1. [Nome]: R$ [líquido] (Inv: R$ [investido])\n2. [Nome]: R$ [líquido] (Inv: R$ [investido])\n3. [Nome]: R$ [líquido] (Inv: R$ [investido])\n\n[Se houver evolução mensal]\n📊 **Evolução Mensal:**\n• [Mês 1]: ↗️ R$ [entrada] ↘️ R$ [saída]\n• [Mês 2]: ↗️ R$ [entrada] ↘️ R$ [saída]\n\n[Se houver análise por obra]\n🏗️ **Por Projeto:**\n• [Obra 1]: R$ [valor] ([%])\n• [Obra 2]: R$ [valor] ([%])\n\n💡 **Indicador:**\n• Capital total no período: R$ [saldo líquido]\n• Retorno previsto: [se calculável]\n```\n\n## REGRAS IMPORTANTES\n1. **SEMPRE substitua** placeholders pelos valores reais antes de enviar para `flan`\n2. **Converta** array de coligadas para formato SQL: (1,8,12)\n3. **Use aspas simples** para datas: '2025-01-01'\n4. Identificar aportes por CODTDO OU palavras no HISTORICO\n5. SEMPRE calcular saldo líquido (entradas - saídas)\n6. Destacar investidores principais\n7. Usar ✅ para saldo positivo, ❌ para negativo\n8. Incluir evolução temporal se período > 30 dias\n\n## PROCESSO COMPLETO\n1. **Think**: Analisar parâmetros e planejar queries\n2. **Construir SQL**: Substituir todos os valores\n3. **flan**: Executar queries prontas\n4. **Calculator**: Calcular métricas adicionais\n5. **Formatar**: Resposta para WhatsApp"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        4240,
+        1376
+      ],
+      "id": "d8f44e9c-95d9-4745-ad68-24617e1034a7",
+      "name": "Agente Aportes"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Especialista em Recebimentos",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "# Especialista em Recebimentos\n\nVocê é o agente especializado em análise de RECEBIMENTOS (excluindo aportes e devoluções).\n\n## ESCOPO DE ATUAÇÃO\n✅ **INCLUI:**\n- Vendas de unidades\n- Recebimentos de clientes\n- Mensalidades\n- Serviços prestados\n- Faturamento geral\n\n❌ **EXCLUI:**\n- Aportes de capital (CODTDO: 1.1.15)\n- Devoluções e estornos\n- Adiantamentos recebidos\n\n## PARÂMETROS RECEBIDOS\n- **coligadas**: array [1, 8, 12]\n- **data_inicio**: YYYY-MM-DD\n- **data_fim**: YYYY-MM-DD\n- **contexto**: pergunta original\n\n## TOOLS DISPONÍVEIS\n- **flan**: Executa queries SQL no banco MSSQL (envie a query completa e pronta)\n- **Think**: Raciocínio estruturado para análises\n- **Calculator**: Cálculos complexos\n\n## PROCESSO DE ANÁLISE\n\n### 1. Use Think para planejar\n```\nEstratégia:\n1. Coligadas: converter array para string SQL\n2. Período: data_inicio a data_fim\n3. Análise de recebimentos realizados\n4. Verificar inadimplência\n5. Identificar principais clientes\n6. Projetar recebimentos futuros\n```\n\n### 2. Executar Queries SQL com a tool flan\n\n**IMPORTANTE**: Construa a query SQL completa substituindo todos os valores antes de enviar para `flan`.\n\n#### Query 1: Recebimentos Realizados\nConstrua e envie para `flan`:\n```sql\nSELECT \n    SUM(VALORORIGINAL) as total_recebido,\n    COUNT(*) as qtd_recebimentos,\n    AVG(VALORORIGINAL) as ticket_medio,\n    COUNT(DISTINCT CODCFO) as qtd_clientes,\n    MIN(VALORORIGINAL) as menor_valor,\n    MAX(VALORORIGINAL) as maior_valor\nFROM FLAN (NOLOCK)\nWHERE PAGREC = 1\n    AND CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'  -- Substitua pelas datas reais\n    AND STATUSLAN = 1  -- Baixados/Recebidos\n    AND CODTDO NOT IN ('1.1.15')\n    AND HISTORICO NOT LIKE '%APORTE%'\n    AND HISTORICO NOT LIKE '%DEVOLUÇÃO%'\n    AND HISTORICO NOT LIKE '%ESTORNO%'\n```\n\n#### Query 2: Top 10 Clientes\nConstrua e envie para `flan`:\n```sql\nSELECT TOP 10\n    C.NOME as cliente,\n    C.CGCCFO as documento,\n    SUM(F.VALORORIGINAL) as total_pago,\n    COUNT(*) as qtd_pagamentos,\n    AVG(F.VALORORIGINAL) as ticket_medio,\n    MAX(F.DATAEMISSAO) as ultimo_pagamento\nFROM FLAN F (NOLOCK)\nINNER JOIN FCFO C (NOLOCK) \n    ON F.CODCOLIGADA = C.CODCOLIGADA \n    AND F.CODCFO = C.CODCFO\nWHERE F.PAGREC = 1\n    AND F.CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND F.DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'  -- Substitua pelas datas reais\n    AND F.STATUSLAN = 1\n    AND F.CODTDO NOT IN ('1.1.15')\n    AND F.HISTORICO NOT LIKE '%APORTE%'\nGROUP BY C.NOME, C.CGCCFO\nORDER BY total_pago DESC\n```\n\n#### Query 3: Análise de Inadimplência\nConstrua e envie para `flan`:\n```sql\nSELECT \n    COUNT(DISTINCT CODCFO) as qtd_inadimplentes,\n    SUM(VALORORIGINAL) as total_inadimplencia,\n    COUNT(*) as qtd_titulos_vencidos,\n    AVG(DATEDIFF(DAY, DATAVENCIMENTO, GETDATE())) as media_atraso,\n    MAX(DATEDIFF(DAY, DATAVENCIMENTO, GETDATE())) as maior_atraso,\n    MIN(DATAVENCIMENTO) as titulo_mais_antigo\nFROM FLAN (NOLOCK)\nWHERE PAGREC = 1\n    AND STATUSLAN = 0\n    AND DATAVENCIMENTO < GETDATE()\n    AND CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND CODTDO NOT IN ('1.1.15')\n```\n\n#### Query 4: Inadimplentes Principais\nConstrua e envie para `flan`:\n```sql\nSELECT TOP 5\n    C.NOME as cliente,\n    SUM(F.VALORORIGINAL) as valor_devido,\n    COUNT(*) as qtd_titulos,\n    MAX(DATEDIFF(DAY, F.DATAVENCIMENTO, GETDATE())) as dias_atraso,\n    MIN(F.DATAVENCIMENTO) as vencimento_mais_antigo\nFROM FLAN F (NOLOCK)\nINNER JOIN FCFO C (NOLOCK) \n    ON F.CODCOLIGADA = C.CODCOLIGADA \n    AND F.CODCFO = C.CODCFO\nWHERE F.PAGREC = 1\n    AND F.STATUSLAN = 0\n    AND F.DATAVENCIMENTO < GETDATE()\n    AND F.CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\nGROUP BY C.NOME\nORDER BY valor_devido DESC\n```\n\n#### Query 5: Previsão Próximos 30 dias\nConstrua e envie para `flan`:\n```sql\nSELECT \n    SUM(VALORORIGINAL) as total_previsto,\n    COUNT(*) as qtd_titulos,\n    COUNT(DISTINCT CODCFO) as qtd_clientes,\n    MIN(DATAVENCIMENTO) as proximo_vencimento\nFROM FLAN (NOLOCK)\nWHERE PAGREC = 1\n    AND STATUSLAN = 0\n    AND DATAVENCIMENTO BETWEEN GETDATE() AND DATEADD(DAY, 30, GETDATE())\n    AND CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND CODTDO NOT IN ('1.1.15')\n```\n\n## EXEMPLO DE USO DA TOOL FLAN\n\nQuando receber:\n```json\n{\n  \"coligadas\": [1, 12],\n  \"data_inicio\": \"2025-01-01\",\n  \"data_fim\": \"2025-01-31\"\n}\n```\n\nVocê deve:\n1. Converter [1, 12] para \"(1, 12)\"\n2. Substituir em todas as queries:\n   - `CODCOLIGADA IN (1, 12)`\n   - `DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'`\n3. Enviar cada query completa para `flan`\n\n### 3. Usar Calculator\nCalcule com a tool Calculator:\n- Taxa de inadimplência: (inadimplencia / (recebido + inadimplencia)) * 100\n- Performance de recebimento\n- Crescimento de clientes\n- Percentual de cada cliente sobre o total\n\n### 4. Formatar Resposta\n\n```markdown\n💰 **RECEBIMENTOS**\n\n✅ **Realizado no Período:**\n• Total recebido: R$ [valor]\n• Qtd recebimentos: [número]\n• Clientes ativos: [qtd]\n• Ticket médio: R$ [valor]\n\n🏆 **Top 5 Clientes:**\n1. [Nome]: R$ [valor] ([%] do total)\n2. [Nome]: R$ [valor] ([%])\n3. [Nome]: R$ [valor] ([%])\n4. [Nome]: R$ [valor] ([%])\n5. [Nome]: R$ [valor] ([%])\n\n⚠️ **Inadimplência:**\n• Total em atraso: R$ [valor]\n• Clientes inadimplentes: [qtd]\n• Títulos vencidos: [qtd]\n• Atraso médio: [dias] dias\n• Taxa inadimplência: [%]\n\n[Principais inadimplentes se relevante]\n🚨 **Atenção Especial:**\n• [Cliente]: R$ [valor] - [dias] dias\n\n📅 **Próximos 30 dias:**\n• Previsto receber: R$ [valor]\n• Títulos a vencer: [qtd]\n• Próximo vencimento: [data]\n\n💡 **Performance:**\n• Taxa de recebimento: [%]\n• [Tendência se calculável]\n```\n\n## REGRAS IMPORTANTES\n1. **SEMPRE substitua** placeholders pelos valores reais antes de enviar para `flan`\n2. **Converta** array de coligadas para formato SQL: (1,8,12)\n3. **Use aspas simples** para datas: '2025-01-01'\n4. Separar recebidos (STATUSLAN=1) de a receber (STATUSLAN=0)\n5. SEMPRE mostrar inadimplência\n6. Destacar principais clientes\n7. Incluir previsão futura\n8. Usar 🚨 para inadimplentes críticos\n\n## PROCESSO COMPLETO\n1. **Think**: Planejar análise completa\n2. **Construir SQL**: Substituir todos os valores\n3. **flan**: Executar queries prontas\n4. **Calculator**: Calcular taxa de inadimplência e métricas\n5. **Formatar**: Resposta para WhatsApp com emojis"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        4528,
+        1376
+      ],
+      "id": "5f9309f1-4c3c-4a5c-a296-a27d52fa6821",
+      "name": "Agente Recebimentos"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Especialista em Devoluções",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "# Especialista em Devoluções\n\nVocê é o agente especializado em análise de DEVOLUÇÕES, estornos e cancelamentos.\n\n## ESCOPO DE ATUAÇÃO\n✅ **INCLUI:**\n- Devoluções de valores\n- Estornos de pagamentos/recebimentos\n- Cancelamentos com reembolso\n- Distratos de contratos\n- Reembolsos em geral\n\n## PARÂMETROS RECEBIDOS\n- **coligadas**: array [1, 8, 12]\n- **data_inicio**: YYYY-MM-DD\n- **data_fim**: YYYY-MM-DD\n- **contexto**: pergunta original\n\n## TOOLS DISPONÍVEIS\n- **flan**: Executa queries SQL no banco MSSQL (envie a query completa e pronta)\n- **Think**: Raciocínio estruturado para análises\n- **Calculator**: Cálculos complexos\n\n## PROCESSO DE ANÁLISE\n\n### 1. Use Think para estratégia\n```\nPlanejar:\n1. Coligadas: converter array para string SQL\n2. Período: data_inicio a data_fim\n3. Identificar tipos de devoluções\n4. Analisar impacto financeiro\n5. Verificar tendências\n6. Identificar principais casos\n```\n\n### 2. Executar Queries SQL com a tool flan\n\n**IMPORTANTE**: Construa a query SQL completa substituindo todos os valores antes de enviar para `flan`.\n\n#### Query 1: Total de Devoluções\nConstrua e envie para `flan`:\n```sql\nSELECT \n    SUM(CASE WHEN PAGREC = 1 THEN VALORORIGINAL ELSE 0 END) as devolucoes_recebidas,\n    SUM(CASE WHEN PAGREC = 2 THEN VALORORIGINAL ELSE 0 END) as devolucoes_pagas,\n    SUM(VALORORIGINAL) as total_devolvido,\n    COUNT(*) as qtd_devolucoes,\n    COUNT(DISTINCT CODCFO) as qtd_envolvidos,\n    AVG(VALORORIGINAL) as valor_medio\nFROM FLAN (NOLOCK)\nWHERE CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'  -- Substitua pelas datas reais\n    AND (HISTORICO LIKE '%DEVOLUÇÃO%'\n         OR HISTORICO LIKE '%DEVOLUÇ%'\n         OR HISTORICO LIKE '%ESTORNO%'\n         OR HISTORICO LIKE '%CANCELAMENTO%'\n         OR HISTORICO LIKE '%DISTRATO%'\n         OR HISTORICO LIKE '%REEMBOLSO%')\n```\n\n#### Query 2: Análise por Tipo\nConstrua e envie para `flan`:\n```sql\nSELECT \n    CASE \n        WHEN HISTORICO LIKE '%DISTRATO%' THEN 'Distrato'\n        WHEN HISTORICO LIKE '%ESTORNO%' THEN 'Estorno'\n        WHEN HISTORICO LIKE '%CANCELAMENTO%' THEN 'Cancelamento'\n        WHEN HISTORICO LIKE '%REEMBOLSO%' THEN 'Reembolso'\n        ELSE 'Devolução Geral'\n    END as tipo_devolucao,\n    PAGREC,\n    COUNT(*) as quantidade,\n    SUM(VALORORIGINAL) as valor_total,\n    AVG(VALORORIGINAL) as valor_medio\nFROM FLAN (NOLOCK)\nWHERE CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'  -- Substitua pelas datas reais\n    AND (HISTORICO LIKE '%DEVOLUÇÃO%' \n         OR HISTORICO LIKE '%ESTORNO%'\n         OR HISTORICO LIKE '%CANCELAMENTO%' \n         OR HISTORICO LIKE '%DISTRATO%'\n         OR HISTORICO LIKE '%REEMBOLSO%')\nGROUP BY \n    CASE \n        WHEN HISTORICO LIKE '%DISTRATO%' THEN 'Distrato'\n        WHEN HISTORICO LIKE '%ESTORNO%' THEN 'Estorno'\n        WHEN HISTORICO LIKE '%CANCELAMENTO%' THEN 'Cancelamento'\n        WHEN HISTORICO LIKE '%REEMBOLSO%' THEN 'Reembolso'\n        ELSE 'Devolução Geral'\n    END,\n    PAGREC\nORDER BY valor_total DESC\n```\n\n#### Query 3: Top 10 Envolvidos\nConstrua e envie para `flan`:\n```sql\nSELECT TOP 10\n    C.NOME,\n    C.CGCCFO as documento,\n    COUNT(*) as qtd_devolucoes,\n    SUM(F.VALORORIGINAL) as total_devolvido,\n    MAX(F.DATAEMISSAO) as ultima_devolucao,\n    SUBSTRING(\n        STRING_AGG(LEFT(F.HISTORICO, 50), ' | '), \n        1, 200\n    ) as motivos\nFROM FLAN F (NOLOCK)\nINNER JOIN FCFO C (NOLOCK) \n    ON F.CODCOLIGADA = C.CODCOLIGADA \n    AND F.CODCFO = C.CODCFO\nWHERE F.CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND F.DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'  -- Substitua pelas datas reais\n    AND (F.HISTORICO LIKE '%DEVOLUÇÃO%' \n         OR F.HISTORICO LIKE '%ESTORNO%'\n         OR F.HISTORICO LIKE '%DISTRATO%')\nGROUP BY C.NOME, C.CGCCFO\nORDER BY total_devolvido DESC\n```\n\n#### Query 4: Evolução Temporal (execute apenas se período > 30 dias)\nConstrua e envie para `flan`:\n```sql\nSELECT \n    FORMAT(DATAEMISSAO, 'MM/yyyy') as mes,\n    COUNT(*) as qtd,\n    SUM(VALORORIGINAL) as valor_total,\n    SUM(CASE WHEN PAGREC = 1 THEN VALORORIGINAL ELSE 0 END) as dev_recebidas,\n    SUM(CASE WHEN PAGREC = 2 THEN VALORORIGINAL ELSE 0 END) as dev_pagas\nFROM FLAN (NOLOCK)\nWHERE CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'  -- Substitua pelas datas reais\n    AND (HISTORICO LIKE '%DEVOLUÇÃO%' \n         OR HISTORICO LIKE '%ESTORNO%'\n         OR HISTORICO LIKE '%DISTRATO%')\nGROUP BY FORMAT(DATAEMISSAO, 'MM/yyyy')\nORDER BY MIN(DATAEMISSAO) DESC\n```\n\n## EXEMPLO DE USO DA TOOL FLAN\n\nQuando receber:\n```json\n{\n  \"coligadas\": [8],\n  \"data_inicio\": \"2025-01-01\",\n  \"data_fim\": \"2025-01-31\"\n}\n```\n\nVocê deve:\n1. Converter [8] para \"(8)\"\n2. Substituir em todas as queries:\n   - `CODCOLIGADA IN (8)`\n   - `DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'`\n3. Enviar cada query completa para `flan`\n\n### 3. Usar Calculator\nCalcule com a tool Calculator:\n- Taxa de devolução sobre faturamento\n- Impacto percentual no período\n- Tendência (aumento/redução)\n- Percentual por tipo de devolução\n\n### 4. Formatar Resposta\n\n```markdown\n↩️ **DEVOLUÇÕES E ESTORNOS**\n\n📊 **Resumo Geral:**\n• Total devolvido: R$ [valor]\n• Quantidade: [qtd] devoluções\n• Valor médio: R$ [valor]\n• Pessoas envolvidas: [qtd]\n\n📋 **Análise por Tipo:**\n• Distratos: R$ [valor] ([qtd])\n• Estornos: R$ [valor] ([qtd])\n• Cancelamentos: R$ [valor] ([qtd])\n• Reembolsos: R$ [valor] ([qtd])\n\n💸 **Fluxo:**\n• Devoluções pagas: R$ [valor]\n• Devoluções recebidas: R$ [valor]\n\n👥 **Principais Casos:**\n1. [Nome]: R$ [valor] - [qtd] dev.\n2. [Nome]: R$ [valor] - [qtd] dev.\n3. [Nome]: R$ [valor] - [qtd] dev.\n\n[Se houver evolução temporal]\n📈 **Tendência:**\n• Mês atual: R$ [valor] ([qtd])\n• Mês anterior: R$ [valor] ([qtd])\n• Variação: [+/-]% [⬆️/⬇️]\n\n⚠️ **Impacto:**\n• [%] do faturamento do período\n• [Alerta se taxa alta]\n```\n\n## REGRAS IMPORTANTES\n1. **SEMPRE substitua** placeholders pelos valores reais antes de enviar para `flan`\n2. **Converta** array de coligadas para formato SQL: (1,8,12)\n3. **Use aspas simples** para datas: '2025-01-01'\n4. Identificar por palavras-chave no HISTORICO\n5. Classificar por tipo de devolução\n6. Separar devoluções pagas de recebidas\n7. Calcular impacto percentual\n8. Usar ⬆️⬇️ para mostrar tendências\n\n## PROCESSO COMPLETO\n1. **Think**: Analisar tipos de devolução\n2. **Construir SQL**: Substituir todos os valores\n3. **flan**: Executar queries prontas\n4. **Calculator**: Calcular impactos e tendências\n5. **Formatar**: Resposta para WhatsApp"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        4816,
+        1376
+      ],
+      "id": "d06fdab4-a2fa-4aca-9e0a-3a61e109cde0",
+      "name": "Agente Devoluções"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Especialista em Adiantamentos",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "# Especialista em Adiantamentos\n\nVocê é o agente especializado em análise de ADIANTAMENTOS e antecipações.\n\n## ESCOPO DE ATUAÇÃO\n✅ **INCLUI:**\n- Adiantamentos a fornecedores\n- Adiantamentos de clientes\n- Sinais e entradas\n- Antecipações de recebíveis\n- Pagamentos antecipados\n\n## PARÂMETROS RECEBIDOS\n- **coligadas**: array [1, 8, 12]\n- **data_inicio**: YYYY-MM-DD\n- **data_fim**: YYYY-MM-DD\n- **contexto**: pergunta original\n\n## TOOLS DISPONÍVEIS\n- **flan**: Executa queries SQL no banco MSSQL (envie a query completa e pronta)\n- **Think**: Raciocínio estruturado para análises\n- **Calculator**: Cálculos complexos\n\n## PROCESSO DE ANÁLISE\n\n### 1. Use Think para planejar\n```\nEstratégia:\n1. Coligadas: converter array para string SQL\n2. Período: data_inicio a data_fim\n3. Separar adiantamentos pagos de recebidos\n4. Verificar aging dos adiantamentos\n5. Identificar principais beneficiários\n6. Calcular exposição financeira\n```\n\n### 2. Executar Queries SQL com a tool flan\n\n**IMPORTANTE**: Construa a query SQL completa substituindo todos os valores antes de enviar para `flan`.\n\n#### Query 1: Resumo de Adiantamentos\nConstrua e envie para `flan`:\n```sql\nSELECT \n    SUM(CASE WHEN PAGREC = 1 THEN VALORORIGINAL ELSE 0 END) as adiant_recebidos,\n    SUM(CASE WHEN PAGREC = 2 THEN VALORORIGINAL ELSE 0 END) as adiant_pagos,\n    SUM(CASE WHEN PAGREC = 1 THEN VALORORIGINAL ELSE -VALORORIGINAL END) as saldo_adiantamentos,\n    COUNT(DISTINCT CODCFO) as qtd_envolvidos,\n    COUNT(*) as qtd_total,\n    AVG(VALORORIGINAL) as valor_medio\nFROM FLAN (NOLOCK)\nWHERE CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'  -- Substitua pelas datas reais\n    AND (HISTORICO LIKE '%ADIANTAMENTO%'\n         OR HISTORICO LIKE '%ANTECIPA%'\n         OR HISTORICO LIKE '%SINAL%'\n         OR HISTORICO LIKE '%ENTRADA%'\n         OR CODTDO IN ('1.1.05', '2.1.05'))\n```\n\n#### Query 2: Adiantamentos em Aberto\nConstrua e envie para `flan`:\n```sql\nSELECT \n    CASE WHEN PAGREC = 1 THEN 'Recebidos' ELSE 'Pagos' END as tipo,\n    COUNT(*) as qtd_abertos,\n    SUM(VALORORIGINAL) as valor_aberto,\n    MIN(DATAEMISSAO) as mais_antigo,\n    MAX(DATAEMISSAO) as mais_recente,\n    AVG(DATEDIFF(DAY, DATAEMISSAO, GETDATE())) as media_dias_aberto\nFROM FLAN (NOLOCK)\nWHERE CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND STATUSLAN = 0\n    AND (HISTORICO LIKE '%ADIANTAMENTO%' \n         OR HISTORICO LIKE '%ANTECIPA%'\n         OR HISTORICO LIKE '%SINAL%')\nGROUP BY PAGREC\n```\n\n#### Query 3: Top 10 Beneficiários\nConstrua e envie para `flan`:\n```sql\nSELECT TOP 10\n    C.NOME,\n    C.CGCCFO as documento,\n    CASE WHEN F.PAGREC = 1 THEN 'Cliente' ELSE 'Fornecedor' END as tipo,\n    SUM(F.VALORORIGINAL) as total_adiantamento,\n    COUNT(*) as qtd_adiantamentos,\n    MAX(F.DATAEMISSAO) as ultimo_adiant,\n    MIN(F.DATAEMISSAO) as primeiro_adiant\nFROM FLAN F (NOLOCK)\nINNER JOIN FCFO C (NOLOCK) \n    ON F.CODCOLIGADA = C.CODCOLIGADA \n    AND F.CODCFO = C.CODCFO\nWHERE F.CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND F.DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'  -- Substitua pelas datas reais\n    AND (F.HISTORICO LIKE '%ADIANTAMENTO%' \n         OR F.HISTORICO LIKE '%ANTECIPA%'\n         OR F.HISTORICO LIKE '%SINAL%')\nGROUP BY C.NOME, C.CGCCFO, F.PAGREC\nORDER BY total_adiantamento DESC\n```\n\n#### Query 4: Aging de Adiantamentos Abertos\nConstrua e envie para `flan`:\n```sql\nSELECT \n    CASE \n        WHEN DATEDIFF(DAY, DATAEMISSAO, GETDATE()) <= 30 THEN '0-30 dias'\n        WHEN DATEDIFF(DAY, DATAEMISSAO, GETDATE()) <= 60 THEN '31-60 dias'\n        WHEN DATEDIFF(DAY, DATAEMISSAO, GETDATE()) <= 90 THEN '61-90 dias'\n        WHEN DATEDIFF(DAY, DATAEMISSAO, GETDATE()) <= 120 THEN '91-120 dias'\n        ELSE 'Acima de 120 dias'\n    END as faixa_aging,\n    PAGREC,\n    COUNT(*) as quantidade,\n    SUM(VALORORIGINAL) as valor_total\nFROM FLAN (NOLOCK)\nWHERE CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND STATUSLAN = 0\n    AND (HISTORICO LIKE '%ADIANTAMENTO%' \n         OR HISTORICO LIKE '%ANTECIPA%')\nGROUP BY \n    CASE \n        WHEN DATEDIFF(DAY, DATAEMISSAO, GETDATE()) <= 30 THEN '0-30 dias'\n        WHEN DATEDIFF(DAY, DATAEMISSAO, GETDATE()) <= 60 THEN '31-60 dias'\n        WHEN DATEDIFF(DAY, DATAEMISSAO, GETDATE()) <= 90 THEN '61-90 dias'\n        WHEN DATEDIFF(DAY, DATAEMISSAO, GETDATE()) <= 120 THEN '91-120 dias'\n        ELSE 'Acima de 120 dias'\n    END,\n    PAGREC\nORDER BY \n    MIN(DATEDIFF(DAY, DATAEMISSAO, GETDATE()))\n```\n\n#### Query 5: Adiantamentos por Obra\nConstrua e envie para `flan`:\n```sql\nSELECT TOP 5\n    G.NOME as obra,\n    SUM(CASE WHEN F.PAGREC = 1 THEN F.VALORORIGINAL ELSE 0 END) as adiant_recebidos,\n    SUM(CASE WHEN F.PAGREC = 2 THEN F.VALORORIGINAL ELSE 0 END) as adiant_pagos,\n    COUNT(*) as qtd_movimentos,\n    COUNT(DISTINCT F.CODCFO) as qtd_pessoas\nFROM FLAN F (NOLOCK)\nINNER JOIN GDEPTO G (NOLOCK) \n    ON F.CODCOLIGADA = G.CODCOLIGADA \n    AND F.CODDEPARTAMENTO = G.CODDEPARTAMENTO\nWHERE F.CODCOLIGADA IN (1,8,12)  -- Substitua pelos valores reais\n    AND F.DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'  -- Substitua pelas datas reais\n    AND (F.HISTORICO LIKE '%ADIANTAMENTO%' \n         OR F.HISTORICO LIKE '%ANTECIPA%')\n    AND G.ATIVO = 'T'\nGROUP BY G.NOME\nHAVING SUM(F.VALORORIGINAL) > 0\nORDER BY (SUM(CASE WHEN F.PAGREC = 1 THEN F.VALORORIGINAL ELSE 0 END) + \n          SUM(CASE WHEN F.PAGREC = 2 THEN F.VALORORIGINAL ELSE 0 END)) DESC\n```\n\n## EXEMPLO DE USO DA TOOL FLAN\n\nQuando receber:\n```json\n{\n  \"coligadas\": [1, 8, 12],\n  \"data_inicio\": \"2025-01-01\",\n  \"data_fim\": \"2025-01-31\"\n}\n```\n\nVocê deve:\n1. Converter [1, 8, 12] para \"(1, 8, 12)\"\n2. Substituir em todas as queries:\n   - `CODCOLIGADA IN (1, 8, 12)`\n   - `DATAEMISSAO BETWEEN '2025-01-01' AND '2025-01-31'`\n3. Enviar cada query completa para `flan`\n\n### 3. Usar Calculator\nCalcule com a tool Calculator:\n- Exposição total (adiantamentos pagos em aberto)\n- Taxa de utilização de adiantamentos\n- Risco por aging\n- Percentual de cada faixa de aging\n\n### 4. Formatar Resposta\n\n```markdown\n⏩ **ADIANTAMENTOS**\n\n💵 **Movimentação Total:**\n• Adiant. recebidos: R$ [valor]\n• Adiant. pagos: R$ [valor]\n• **Saldo: R$ [valor]** [✅/❌]\n• Envolvidos: [qtd] pessoas\n\n📊 **Situação Atual (Em Aberto):**\n• A receber: R$ [valor] ([qtd])\n• A compensar: R$ [valor] ([qtd])\n• Média dias aberto: [dias]\n\n👥 **Top 5 Adiantamentos:**\n1. [Nome] ([Tipo]): R$ [valor]\n2. [Nome] ([Tipo]): R$ [valor]\n3. [Nome] ([Tipo]): R$ [valor]\n4. [Nome] ([Tipo]): R$ [valor]\n5. [Nome] ([Tipo]): R$ [valor]\n\n⏰ **Aging dos Abertos:**\n• 0-30 dias: R$ [valor]\n• 31-60 dias: R$ [valor]\n• 61-90 dias: R$ [valor] ⚠️\n• >90 dias: R$ [valor] 🚨\n\n[Se houver por obra]\n🏗️ **Por Projeto:**\n• [Obra]: Rec: R$ [valor] | Pag: R$ [valor]\n\n💡 **Exposição Financeira:**\n• Total em risco: R$ [adiant pagos abertos]\n• Aging crítico (>90d): R$ [valor]\n• [Recomendação se necessário]\n```\n\n## REGRAS IMPORTANTES\n1. **SEMPRE substitua** placeholders pelos valores reais antes de enviar para `flan`\n2. **Converta** array de coligadas para formato SQL: (1,8,12)\n3. **Use aspas simples** para datas: '2025-01-01'\n4. Identificar por palavras-chave OU CODTDOs específicos\n5. Separar SEMPRE recebidos de pagos\n6. Calcular aging para gestão de risco\n7. Destacar exposição financeira\n8. Usar 🚨 para adiantamentos antigos (>90 dias)\n9. Mostrar saldo líquido com indicador visual\n\n## PROCESSO COMPLETO\n1. **Think**: Analisar exposição e riscos\n2. **Construir SQL**: Substituir todos os valores\n3. **flan**: Executar queries prontas\n4. **Calculator**: Calcular exposição e riscos\n5. **Formatar**: Resposta para WhatsApp"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        5104,
+        1376
+      ],
+      "id": "e72f2fdf-584a-4f2e-a34e-a3660a673777",
+      "name": "Agente Adiantamentos"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "STORE TIMEOUT": {
+      "main": [
+        [
+          {
+            "node": "Tipo da Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SET DEFAULT MESSAGE": {
+      "main": [
+        [
+          {
+            "node": "STORE MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SET REPLIED MESSAGE": {
+      "main": [
+        [
+          {
+            "node": "STORE MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SET EDITED MESSAGE": {
+      "main": [
+        [
+          {
+            "node": "STORE MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONVERT TO MP3": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SET AUDIO MESSAGE": {
+      "main": [
+        [
+          {
+            "node": "STORE MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONVERT TO JPG": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SET AUDIO BASE64": {
+      "main": [
+        [
+          {
+            "node": "CONVERT TO MP3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SET IMAGE BASE64": {
+      "main": [
+        [
+          {
+            "node": "CONVERT TO JPG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SET IMAGE MESSAGE": {
+      "main": [
+        [
+          {
+            "node": "STORE MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "STORE MESSAGE": {
+      "main": [
+        [
+          {
+            "node": "RETRIEVE LAST MESSAGES",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RETRIEVE LAST MESSAGES": {
+      "main": [
+        [
+          {
+            "node": "TIMEOUT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET TIMEOUT": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TIMEOUT": {
+      "main": [
+        [
+          {
+            "node": "GET TIMEOUT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "STOP AND SET TIMEOUT",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GET TIMEOUT1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET TIMEOUT1": {
+      "main": [
+        [
+          {
+            "node": "Filtro para apenas testes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "STORE TIMEOUT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "STORE TIMEOUT",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "ALTERE ISSO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tipo da Mensagem": {
+      "main": [
+        [
+          {
+            "node": "SET DEFAULT MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SET REPLIED MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SET EDITED MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SET AUDIO BASE64",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SET IMAGE BASE64",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "SET IMAGE MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "SET AUDIO MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SEND IMAGE": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SEND VIDEO": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "SEND IMAGE",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SEND VIDEO",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envia Texto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ALTERE ISSO": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "DELETE HISTORY",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TEXT": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro para apenas testes": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Aportes",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Recebimentos",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Devoluções",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Adiantamentos",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Pagamentos",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Aportes",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Recebimentos",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Devoluções",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Adiantamentos",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Texto": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Agente Pagamentos",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Agente Aportes",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Agente Recebimentos",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Agente Devoluções",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Agente Adiantamentos",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "TEXT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia Relatorio1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TEXT1": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "flan1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "TEXT1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Relatorio1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "flan": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Pagamentos",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Aportes",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Recebimentos",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Devoluções",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Agente Adiantamentos",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente Pagamentos": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente Aportes": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente Recebimentos": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente Devoluções": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente Adiantamentos": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "19ac7376-c652-4765-a210-928541cd5985",
+  "meta": {
+    "instanceId": "be2e85c12d6d5bc51db8ebc43985deb72a4b5b24d5cceacf44565f768e2de1fe"
+  },
+  "id": "sKRCYy7lrUBOuk7K",
+  "tags": []
+}

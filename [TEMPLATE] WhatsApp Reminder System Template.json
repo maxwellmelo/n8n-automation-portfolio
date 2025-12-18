@@ -1,0 +1,623 @@
+{
+  "name": "WhatsApp Reminder System Template",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## n8n Template: WhatsApp Reminder System Template\n\n**Criado por:** Maxwell Melo\n**Contato:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\n**Categorias:** Reminders, WhatsApp, Automation\n\n---\n\n### Sobre este Template\n\nSistema de lembretes via WhatsApp:\n- Agendamento de lembretes\n- Disparo automático no horário\n- Normalização de números WhatsApp\n- Rastreamento de envios\n\n---\n\n### Como Configurar\n\n1. **Importe** este workflow no seu n8n\n2. **Configure** suas credenciais (substitua os placeholders)\n3. **Personalize** para seu caso de uso\n4. **Teste** antes de usar em produção\n\n### Credenciais para Configurar\n\nProcure por nodes com `DEMO_*` ou `SUA_*` e configure:\n- Suas chaves de API\n- Conexões de banco de dados\n- Credenciais de serviços\n\n---\n\n### Precisa de Ajuda?\n\n**Email:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\nOfereço serviços de:\n- Implementação personalizada\n- Customização de workflows\n- Treinamento em n8n\n- Consultoria em automação\n\n---\n*Template por Maxwell Melo*",
+        "height": 650,
+        "width": 400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8500,
+        200
+      ],
+      "id": "template-info-1764872616184",
+      "name": "Template Info - Leia Primeiro"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -288,
+        -80
+      ],
+      "id": "37a2cc80-ca7b-41ed-9cc8-e8e7e4b401be",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "997064ba-186d-45f6-b5d0-add507e5f523",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "number"
+            },
+            {
+              "id": "7cba5131-e23e-4824-976b-d5e7fdf1600a",
+              "name": "data_e_hora_lembrete",
+              "value": "={{ $json.data_e_hora_lembrete }}",
+              "type": "string"
+            },
+            {
+              "id": "aad97c5f-c495-49f3-b891-284788742c21",
+              "name": "lembrete",
+              "value": "={{ $json.lembrete }}",
+              "type": "string"
+            },
+            {
+              "id": "7627ecc0-5b9e-40e4-964e-d266f4eb1d2b",
+              "name": "contato",
+              "value": "={{ $json.contato }}",
+              "type": "string"
+            },
+            {
+              "id": "9026bb62-ef93-414d-b161-1db8221eaa18",
+              "name": "status",
+              "value": "={{ $json.status }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        -80
+      ],
+      "id": "4dd1bb91-65e5-40d5-a6b6-2891b6bccce3",
+      "name": "DADOS"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "caa172c3-e437-49e5-bfd6-238ebef7e2a0",
+              "leftValue": "={{ $json.data_lembrete_utc }}",
+              "rightValue": "={{ $json.data_atual_utc }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "beforeOrEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        -80
+      ],
+      "id": "641078ae-f002-4f02-baca-6c274ab8c3cf",
+      "name": "Envia?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        240
+      ],
+      "id": "0384566a-07df-40e8-8b03-7dec15ad9ef7",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "SuaInstancia",
+        "remoteJid": "55XXXXXXXXXXX",
+        "messageText": "=Fluxo: {{ $json.workflow.name }}\nNó: {{ $json.execution.lastNodeExecuted }}\nErro: {{ $json.execution.error.message }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        240
+      ],
+      "id": "2dce96c2-7c1d-4f7d-95d9-ec7a59dcab72",
+      "name": "Enviar Erro",
+      "credentials": {
+        "evolutionApi": {
+          "id": "DEMO_EVOLUTION_CREDENTIAL_ID",
+          "name": "Evo MX3 Dev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fa167f49-c87f-412a-a1c2-a64c1907e7fc",
+              "leftValue": "={{ $json.contato }}",
+              "rightValue": "55XXXXXXXXXXX",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        -80
+      ],
+      "id": "cca1fbc4-ced7-4e50-ac79-62fb38f07187",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "ID2",
+        "remoteJid": "={{ $json.contato_normalizado }}",
+        "messageText": "={{ $('DADOS').item.json.lembrete }}",
+        "options_message": {
+          "delay": "={{ $('DADOS').item.json.lembrete.length * 10 }}"
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        16
+      ],
+      "id": "34b9e2af-7f0b-43b8-8b06-1699949aad01",
+      "name": "Enviar Lembrete Externo",
+      "credentials": {
+        "evolutionApi": {
+          "id": "DEMO_EVOLUTION_CREDENTIAL_ID",
+          "name": "Evo MX3 Dev"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "function normalizeWhatsAppNumber(contato) {\n  if (!contato) {\n    throw new Error('Contato não fornecido');\n  }\n  \n  // Remove tudo que não for número\n  let cleanNumber = contato.toString().replace(/\\D/g, '');\n  \n  // Remove código do país se existir\n  if (cleanNumber.startsWith('55')) {\n    cleanNumber = cleanNumber.substring(2);\n  }\n  \n  let result = '';\n  \n  // Analisa o tamanho para determinar o formato\n  if (cleanNumber.length === 11) {\n    // Formato: DD 9 XXXX-XXXX (11 dígitos)\n    // Pega DDD (2 primeiros) + últimos 8\n    const ddd = cleanNumber.substring(0, 2);\n    const numero = cleanNumber.slice(-8);\n    result = `55${ddd}${numero}`;\n    \n  } else if (cleanNumber.length === 10) {\n    // Formato: DD XXXX-XXXX (10 dígitos - número fixo ou antigo)\n    // Mantém como está\n    result = `55${cleanNumber}`;\n    \n  } else if (cleanNumber.length === 9) {\n    // Provavelmente 9 XXXX-XXXX (falta DDD)\n    console.warn('Número sem DDD - usando DDD padrão ou pedindo ao usuário');\n    // Você pode definir um DDD padrão aqui se quiser\n    result = `55${cleanNumber}`;\n    \n  } else {\n    // Outros casos - usa como está\n    result = `55${cleanNumber}`;\n  }\n  \n  return `${result}@s.whatsapp.net`;\n}\n\nconst contatoNormalizado = normalizeWhatsAppNumber($json.contato);\n\nreturn {\n  ...$json,\n  contato_original: $json.contato,\n  contato_normalizado: contatoNormalizado\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        16
+      ],
+      "id": "4ef1a919-f6ac-4605-a085-a9b2b496dff2",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "SuaInstancia",
+        "remoteJid": "={{ $json.contato_normalizado }}",
+        "messageText": "={{ $('DADOS').item.json.lembrete }}",
+        "options_message": {
+          "delay": "={{ $('DADOS').item.json.lembrete.length * 10 }}"
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        -176
+      ],
+      "id": "ebc9d61b-8d99-42c5-95a6-d5ed2b6dfbec",
+      "name": "Enviar Lembrete",
+      "credentials": {
+        "evolutionApi": {
+          "id": "DEMO_EVOLUTION_CREDENTIAL_ID",
+          "name": "Evo MX3 Dev"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "function normalizeWhatsAppNumber(contato) {\n  if (!contato) {\n    throw new Error('Contato não fornecido');\n  }\n  \n  // Remove tudo que não for número\n  let cleanNumber = contato.toString().replace(/\\D/g, '');\n  \n  // Remove código do país se existir\n  if (cleanNumber.startsWith('55')) {\n    cleanNumber = cleanNumber.substring(2);\n  }\n  \n  let result = '';\n  \n  // Analisa o tamanho para determinar o formato\n  if (cleanNumber.length === 11) {\n    // Formato: DD 9 XXXX-XXXX (11 dígitos)\n    // Pega DDD (2 primeiros) + últimos 8\n    const ddd = cleanNumber.substring(0, 2);\n    const numero = cleanNumber.slice(-8);\n    result = `55${ddd}${numero}`;\n    \n  } else if (cleanNumber.length === 10) {\n    // Formato: DD XXXX-XXXX (10 dígitos - número fixo ou antigo)\n    // Mantém como está\n    result = `55${cleanNumber}`;\n    \n  } else if (cleanNumber.length === 9) {\n    // Provavelmente 9 XXXX-XXXX (falta DDD)\n    console.warn('Número sem DDD - usando DDD padrão ou pedindo ao usuário');\n    // Você pode definir um DDD padrão aqui se quiser\n    result = `55${cleanNumber}`;\n    \n  } else {\n    // Outros casos - usa como está\n    result = `55${cleanNumber}`;\n  }\n  \n  return `${result}@s.whatsapp.net`;\n}\n\nconst contatoNormalizado = normalizeWhatsAppNumber($json.contato);\n\nreturn {\n  ...$json,\n  contato_original: $json.contato,\n  contato_normalizado: contatoNormalizado\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        -176
+      ],
+      "id": "bfa531bb-dc49-4fbe-8db9-040827b0adf3",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "DEMO_DATA_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "lembretes",
+          "cachedResultUrl": "/projects/DdgwZGnmwjkIj2jp/datatables/DEMO_DATA_TABLE_ID"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "status",
+              "keyValue": "PENDENTE"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        -80
+      ],
+      "id": "d7298ba6-96af-4ce4-9e11-4bca127d6792",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "DEMO_DATA_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "lembretes",
+          "cachedResultUrl": "/projects/DdgwZGnmwjkIj2jp/datatables/DEMO_DATA_TABLE_ID"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $('Envia?').item.json.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "ENVIADO"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "data_e_hora_lembrete",
+              "displayName": "data_e_hora_lembrete",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "lembrete",
+              "displayName": "lembrete",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "contato",
+              "displayName": "contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        16
+      ],
+      "id": "dae24a09-4cc8-448d-ad6e-9a3573b78ac0",
+      "name": "Update Externos"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "DEMO_DATA_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "lembretes",
+          "cachedResultUrl": "/projects/DdgwZGnmwjkIj2jp/datatables/DEMO_DATA_TABLE_ID"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $('Envia?').item.json.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "ENVIADO"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "data_e_hora_lembrete",
+              "displayName": "data_e_hora_lembrete",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "lembrete",
+              "displayName": "lembrete",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "contato",
+              "displayName": "contato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        -176
+      ],
+      "id": "ad1863d9-c60a-40d4-9c90-53ec321eabf1",
+      "name": "Update Internos"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Remove aspas duplas extras e normaliza as datas\nlet dataString = $json.data_e_hora_lembrete;\n\n// Remove aspas duplas no início e fim se existirem\nif (typeof dataString === 'string') {\n  dataString = dataString.replace(/^\"(.*)\"$/, '$1');\n}\n\nconst dataLembrete = new Date(dataString).toISOString();\nconst dataAtual = new Date().toISOString();\n\nreturn {\n  ...$json,\n  data_lembrete_utc: dataLembrete,\n  data_atual_utc: dataAtual\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        -80
+      ],
+      "id": "daaaea3f-58a7-4f70-ad1e-591ed93d79b2",
+      "name": "Normaliza Datas"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DADOS": {
+      "main": [
+        [
+          {
+            "node": "Normaliza Datas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia?": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Enviar Erro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Lembrete Externo": {
+      "main": [
+        [
+          {
+            "node": "Update Externos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Enviar Lembrete Externo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Lembrete": {
+      "main": [
+        [
+          {
+            "node": "Update Internos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Enviar Lembrete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "DADOS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Externos": {
+      "main": [
+        []
+      ]
+    },
+    "Normaliza Datas": {
+      "main": [
+        [
+          {
+            "node": "Envia?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "90c37a11-ce08-4b88-a3d8-429486fb2a7d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "be2e85c12d6d5bc51db8ebc43985deb72a4b5b24d5cceacf44565f768e2de1fe"
+  },
+  "id": "LyPNdTgRsO8rJESt",
+  "tags": []
+}

@@ -1,0 +1,293 @@
+{
+  "name": "SQL to PostgreSQL ETL Template",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## n8n Template: SQL to PostgreSQL ETL Template\n\n**Criado por:** Maxwell Melo\n**Contato:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\n**Categorias:** ETL, Database, SQL, PostgreSQL\n\n---\n\n### Sobre este Template\n\nPipeline ETL para sincronização de dados:\n- Extração de SQL Server\n- Carregamento em PostgreSQL\n- Agendamento automático\n- Sincronização incremental\n\n---\n\n### Como Configurar\n\n1. **Importe** este workflow no seu n8n\n2. **Configure** suas credenciais (substitua os placeholders)\n3. **Personalize** para seu caso de uso\n4. **Teste** antes de usar em produção\n\n### Credenciais para Configurar\n\nProcure por nodes com `DEMO_*` ou `SUA_*` e configure:\n- Suas chaves de API\n- Conexões de banco de dados\n- Credenciais de serviços\n\n---\n\n### Precisa de Ajuda?\n\n**Email:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\nOfereço serviços de:\n- Implementação personalizada\n- Customização de workflows\n- Treinamento em n8n\n- Consultoria em automação\n\n---\n*Template por Maxwell Melo*",
+        "height": 650,
+        "width": 400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8500,
+        200
+      ],
+      "id": "template-info-1764872616181",
+      "name": "Template Info - Leia Primeiro"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n\nCASE WHEN FLAN_CODCOLIGADA=1 THEN '[SUA EMPRESA]'\n\tWHEN FLAN_CODCOLIGADA=8 THEN 'TRANSCERRADOS III'\n\tWHEN FLAN_CODCOLIGADA=12 THEN '[EMPRESA] OTIMA'\n\tEND AS [EMPRESA],\nGDEPTO_NOME AS OBRA,\nFCFO_CGCCFO AS CNPJOUCPF,\nFLAN_STATUSLAN,\nFCFO_NOME AS FORNECEDOR,\nFLAN_VALORORIGINAL AS [VALOR ORIGINAL],\nFLAN_VALORBAIXADO AS [VALOR BAIXADO],\nFLAN_DATAEMISSAO AS [DATA DE EMISSAO],\nFLAN_DATABAIXA AS [DATA DO PAGAMENTO],\nFTB1_DESCRICAO AS [NATUREZA FINANCEIRA],\nFLAN_HISTORICO AS DESCRICAO,\nTIPO_OPERACIONAL\n\nFROM OKR1\n\nWHERE FLAN_DATAEMISSAO >= GETDATE()-90"
+      },
+      "type": "n8n-nodes-base.microsoftSql",
+      "typeVersion": 1.1,
+      "position": [
+        -304,
+        -160
+      ],
+      "id": "bff83680-26c2-41b1-ab90-44adb0e0f1f8",
+      "name": "Query FLAN",
+      "credentials": {
+        "microsoftSql": {
+          "id": "DEMO_MSSQL_ID",
+          "name": "Microsoft_SQL_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "delete from flan;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -480,
+        -160
+      ],
+      "id": "61a5ba5d-5cb6-4512-98a0-41e41290dd66",
+      "name": "Postgres Delete FLAN1",
+      "credentials": {
+        "postgres": {
+          "id": "DEMO_POSTGRES_ID",
+          "name": "PostgreSQL_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "flan",
+          "mode": "list",
+          "cachedResultName": "flan"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "empresa": "={{ $json.EMPRESA }}",
+            "obra": "={{ $json.OBRA }}",
+            "fornecedor": "={{ $json.FORNECEDOR }}",
+            "valor_original": "={{ $json[\"VALOR ORIGINAL\"] }}",
+            "valor_baixado": "={{ $json[\"VALOR BAIXADO\"] }}",
+            "data_emissao": "={{ $json[\"DATA DE EMISSAO\"] }}",
+            "data_do_pagamento": "={{ $json[\"DATA DO PAGAMENTO\"] }}",
+            "natureza_financeira": "={{ $json[\"NATUREZA FINANCEIRA\"] }}",
+            "descricao": "={{ $json.DESCRICAO }}",
+            "tipo_operacional": "={{ $json.TIPO_OPERACIONAL }}",
+            "cnpjoucpf": "={{ $json.CNPJOUCPF }}",
+            "status": "={{ $json.FLAN_STATUSLAN }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "empresa",
+              "displayName": "empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "obra",
+              "displayName": "obra",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fornecedor",
+              "displayName": "fornecedor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "valor_original",
+              "displayName": "valor_original",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "valor_baixado",
+              "displayName": "valor_baixado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "data_emissao",
+              "displayName": "data_emissao",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "data_do_pagamento",
+              "displayName": "data_do_pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "natureza_financeira",
+              "displayName": "natureza_financeira",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "descricao",
+              "displayName": "descricao",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tipo_operacional",
+              "displayName": "tipo_operacional",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cnpjoucpf",
+              "displayName": "cnpjoucpf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -96,
+        -160
+      ],
+      "id": "751cdd0f-d238-4fae-b78b-d6bd0db97f70",
+      "name": "Postgres Insere FLAN1",
+      "credentials": {
+        "postgres": {
+          "id": "DEMO_POSTGRES_ID",
+          "name": "PostgreSQL_DEMO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -656,
+        -160
+      ],
+      "id": "5c860777-b792-4be3-b855-7ada1ff3e3f9",
+      "name": "Schedule Trigger1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Query FLAN": {
+      "main": [
+        [
+          {
+            "node": "Postgres Insere FLAN1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Delete FLAN1": {
+      "main": [
+        [
+          {
+            "node": "Query FLAN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Postgres Delete FLAN1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "ad3b60b5-7fc4-465b-bc67-bcbd024c374b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b51b32292d927cd58c4ad95066a64064c94d5e0bb589e40cfa3a14544ef9c49a"
+  },
+  "id": "uaENSC4rjb14hqSF",
+  "tags": []
+}

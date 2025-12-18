@@ -1,0 +1,368 @@
+{
+  "name": "Google Calendar AI Agent Template",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## n8n Template: Google Calendar AI Agent Template\n\n**Criado por:** Maxwell Melo\n**Contato:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\n**Categorias:** Calendar, AI, Google, Productivity\n\n---\n\n### Sobre este Template\n\nAgente de IA para Google Calendar:\n- Criar, ler, atualizar e deletar eventos\n- Verificar disponibilidade\n- Processamento de linguagem natural\n- Gestão de participantes e fusos horários\n\n---\n\n### Como Configurar\n\n1. **Importe** este workflow no seu n8n\n2. **Configure** suas credenciais (substitua os placeholders)\n3. **Personalize** para seu caso de uso\n4. **Teste** antes de usar em produção\n\n### Credenciais para Configurar\n\nProcure por nodes com `DEMO_*` ou `SUA_*` e configure:\n- Suas chaves de API\n- Conexões de banco de dados\n- Credenciais de serviços\n\n---\n\n### Precisa de Ajuda?\n\n**Email:** maxwell.melo0@gmail.com\n**WhatsApp:** +55 86 99409-3040\n\nOfereço serviços de:\n- Implementação personalizada\n- Customização de workflows\n- Treinamento em n8n\n- Consultoria em automação\n\n---\n*Template por Maxwell Melo*",
+        "height": 650,
+        "width": 400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8500,
+        200
+      ],
+      "id": "template-info-1764872616178",
+      "name": "Template Info - Leia Primeiro"
+    },
+    {
+      "parameters": {},
+      "id": "2768c565-a779-4dcc-a43f-cbca91a0637c",
+      "name": "When called by another workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=Você é um assistente especializado em Google Calendar com acesso direto à API. Siga estas regras CRÍTICAS e instruções EXATAMENTE como descritas.\n\n== REGRAS CRÍTICAS (NUNCA VIOLAR) ==\n1. SEMPRE adicionar 'seu-email@exemplo.com' como attendee quando nenhum participante for especificado\n2. NUNCA deixar o campo attendees vazio - isso causa ERRO FATAL no sistema\n3. Se attendees estiver vazio, null, undefined ou [] → SEMPRE definir como ['seu-email@exemplo.com']\n4. Timezone FIXO: America/Fortaleza (GMT-3) em todas as operações\n5. Formato de data/hora: YYYY-MM-DDTHH:MM:SS-03:00 (ISO 8601)\n6. Data agora: {{ $now.toISO() }}\n\n== VALIDAÇÃO DE ATTENDEES (EXECUTAR SEMPRE) ==\nAntes de QUALQUER operação de criar ou atualizar evento:\n- SE não há participantes especificados → attendees = ['seu-email@exemplo.com']\n- SE participantes = [] → attendees = ['seu-email@exemplo.com'] \n- SE participantes = null → attendees = ['seu-email@exemplo.com']\n- SE participantes especificados → usar os especificados\n- SEMPRE ter pelo menos 1 email no array attendees\n\n== OPERAÇÕES DISPONÍVEIS ==\n\n[CRIAR EVENTO]\nCampos obrigatórios:\n- Summary (título): Se não especificado, usar \"Compromisso\"\n- Start: Data/hora início em ISO 8601\n- End: Data/hora fim em ISO 8601 (se não especificado: início + 1 hora)\n- Attendees: NUNCA vazio (usar seu-email@exemplo.com se necessário)\n- Location: Se não especificado, usar \"Google Meet\"\n- Description: Descrição do evento (opcional)\n- Use_Default_Reminders: true\n\n[LISTAR EVENTOS]\n- TimeMin: Se não especificado, usar hoje 00:00\n- TimeMax: Se não especificado, usar hoje 23:59\n- Return_All: false se mais de 50 eventos\nFormato de saída: 🕐 HH:MM - Título (Local)\n\n[ATUALIZAR EVENTO]\n- Event_ID: ID do evento a atualizar (obrigatório)\n- NUNCA remover todos os attendees (manter pelo menos seu-email@exemplo.com)\n- Preservar campos não modificados\n\n[DELETAR EVENTO]\n- Event_ID: ID do evento a deletar (obrigatório)\n- Sempre confirmar antes de deletar\n\n[VERIFICAR DISPONIBILIDADE]\n- Start_Time: Início do período\n- End_Time: Fim do período\n\n== INTERPRETAÇÃO DE LINGUAGEM NATURAL ==\n- hoje = data atual\n- amanhã = data atual + 1 dia\n- segunda/terça/quarta/quinta/sexta = próxima ocorrência\n- fim de semana = sábado e domingo\n- manhã = 09:00\n- tarde = 14:00\n- noite = 19:00\n- almoço = 12:00 às 13:00\n- 30min = duração de 30 minutos\n- 1h = duração de 1 hora\n- 2h = duração de 2 horas\n\n== DURAÇÕES PADRÃO ==\n- reunião: 1 hora\n- call: 30 minutos\n- almoço: 1 hora\n- evento: 2 horas\n- Se não especificado: 1 hora\n\n== PROCESSO DE EXECUÇÃO ==\n1. Interpretar a solicitação do usuário\n2. VALIDAR E ADICIONAR ATTENDEE PADRÃO SE NECESSÁRIO\n3. Converter datas/horários para ISO 8601 com timezone GMT-3\n4. Verificar conflitos se estiver criando evento\n5. Executar a operação solicitada\n6. Confirmar o resultado com detalhes\n\n== EXEMPLOS PRÁTICOS ==\n\nEntrada: \"criar reunião amanhã 10h\"\nProcessamento:\n- Summary: \"Reunião\"\n- Start: \"2025-09-03T10:00:00-03:00\"\n- End: \"2025-09-03T11:00:00-03:00\"\n- Attendees: [\"seu-email@exemplo.com\"] ← AUTOMATICAMENTE ADICIONADO\n- Location: \"Google Meet\"\n\nEntrada: \"agendar call com joao@empresa.com sexta 15h\"\nProcessamento:\n- Summary: \"Call\"\n- Start: \"2025-09-05T15:00:00-03:00\"\n- End: \"2025-09-05T15:30:00-03:00\"\n- Attendees: [\"joao@empresa.com\"] ← participante especificado\n- Location: \"Google Meet\"\n\nEntrada: \"reunião de planejamento segunda\"\nProcessamento:\n- Summary: \"Reunião de planejamento\"\n- Start: \"2025-09-08T09:00:00-03:00\" ← horário padrão manhã\n- End: \"2025-09-08T10:00:00-03:00\"\n- Attendees: [\"seu-email@exemplo.com\"] ← AUTOMATICAMENTE ADICIONADO\n\n== MENSAGENS DE RESPOSTA ==\n\nSucesso ao criar:\n✅ Evento criado com sucesso!\n📅 [título]\n🕐 [data e hora formatada]\n📍 [local]\n👥 Participantes: [lista] \n🔔 Lembrete: 10 minutos antes\n\nLista de eventos:\n📅 Sua agenda para [período]:\n[lista formatada de eventos]\n\nConflito detectado:\n⚠️ Conflito detectado com: [evento existente]\nSugestões de horários alternativos:\n[lista de slots disponíveis]\n\n== CHECKLIST FINAL ==\n✓ Campo attendees NUNCA vazio (sempre tem seu-email@exemplo.com no mínimo)\n✓ Datas sempre em ISO 8601 com timezone -03:00\n✓ Título sempre presente\n✓ Horário fim sempre posterior ao início\n✓ Resposta clara e formatada\n\nLEMBRE-SE: O erro mais crítico é deixar attendees vazio. SEMPRE verifique isso primeiro!",
+          "maxIterations": 20,
+          "returnIntermediateSteps": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "b4b2a140-73ed-4a91-a7f8-4c7c49e6a079",
+      "name": "Calendar Specialist Agent"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "seu-email@exemplo.com",
+          "mode": "list",
+          "cachedResultName": "seu-email@exemplo.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "useDefaultReminders": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Use_Default_Reminders', ``, 'boolean') }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('attendees0_Attendees', ``, 'string') }}"
+          ],
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}",
+          "location": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Location', ``, 'string') }}",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        320,
+        224
+      ],
+      "id": "b6853714-594f-4993-9c2b-c779224f7d0b",
+      "name": "Create an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "DEMO_GOOGLE_CALENDAR_ID",
+          "name": "Google Calendar SuaInstancia.melo0"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "seu-email@exemplo.com",
+          "mode": "list"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        224
+      ],
+      "id": "a844328b-5a8e-4075-83e0-5577601f3965",
+      "name": "Get many events",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "DEMO_GOOGLE_CALENDAR_ID",
+          "name": "Google Calendar SuaInstancia.melo0"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "seu-email@exemplo.com",
+          "mode": "list"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "useDefaultReminders": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Use_Default_Reminders', ``, 'boolean') }}",
+        "updateFields": {
+          "attendeesUi": {
+            "values": {
+              "attendees": [
+                "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('attendees0_Attendees', ``, 'string') }}"
+              ]
+            }
+          },
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}",
+          "location": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Location', ``, 'string') }}",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        576,
+        224
+      ],
+      "id": "b504809a-ac60-4d8c-a9e4-d47774f93aef",
+      "name": "Update an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "DEMO_GOOGLE_CALENDAR_ID",
+          "name": "Google Calendar SuaInstancia.melo0"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "seu-email@exemplo.com",
+          "mode": "list"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        704,
+        224
+      ],
+      "id": "aa1b021f-246e-4443-a5a6-52d639834029",
+      "name": "Delete an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "DEMO_GOOGLE_CALENDAR_ID",
+          "name": "Google Calendar SuaInstancia.melo0"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "value": "seu-email@exemplo.com",
+          "mode": "list"
+        },
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start_Time', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End_Time', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        832,
+        224
+      ],
+      "id": "263efedc-9f20-4232-b4d5-89afe53d77ce",
+      "name": "Get availability",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "DEMO_GOOGLE_CALENDAR_ID",
+          "name": "Google Calendar SuaInstancia.melo0"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        224
+      ],
+      "id": "8f5701ee-b387-4bc3-8e21-c03adaf12e8c",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "DEMO_GOOGLE_CREDENTIAL_ID",
+          "name": "OpenAi SuaInstancia"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        432
+      ],
+      "id": "a4a60562-a1ab-4811-869f-b229d08283be",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "ai-assistant",
+        "remoteJid": "55XXXXXXXXXXX",
+        "messageText": "=Fluxo: {{ $json.workflow.name }}\nNó: {{ $json.execution.lastNodeExecuted }}\nErro: {{ $json.execution.error.message }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        192,
+        432
+      ],
+      "id": "56bc550d-1fc5-47f0-a40b-c11fdf0ade25",
+      "name": "Enviar Erro",
+      "credentials": {
+        "evolutionApi": {
+          "id": "DEMO_EVOLUTION_CREDENTIAL_ID",
+          "name": "Evo MX3 Dev"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When called by another workflow": {
+      "main": [
+        [
+          {
+            "node": "Calendar Specialist Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Calendar Specialist Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Specialist Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Specialist Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update an event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Specialist Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete an event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Specialist Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get availability": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Specialist Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Enviar Erro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d88c4bc5-44e9-459b-aa51-61849cd5b9ae",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "be2e85c12d6d5bc51db8ebc43985deb72a4b5b24d5cceacf44565f768e2de1fe"
+  },
+  "id": "aIx6OvynTxF8ws8t",
+  "tags": []
+}

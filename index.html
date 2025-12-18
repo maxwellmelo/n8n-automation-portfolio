@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfólio de automações n8n profissionais - 16 templates de workflows com IA, WhatsApp, integração de dados e muito mais">
+    <meta name="keywords" content="n8n, automação, workflows, IA, WhatsApp, GPT-4, integração">
+    <meta name="author" content="Maxwell Melo">
+    <title>n8n Automation Portfolio | Maxwell Melo</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-robot"></i>
+                <span>n8n Portfolio</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">Início</a></li>
+                <li><a href="#about" class="nav-link">Sobre</a></li>
+                <li><a href="#workflows" class="nav-link">Workflows</a></li>
+                <li><a href="#technologies" class="nav-link">Tecnologias</a></li>
+                <li><a href="#contact" class="nav-link">Contato</a></li>
+            </ul>
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-particles"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text">Automações Inteligentes</span>
+                    <br>com n8n
+                </h1>
+                <p class="hero-subtitle">
+                    Transformando processos complexos em workflows automatizados de alta performance
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="16">0</div>
+                        <div class="stat-label">Templates</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="500">0</div>
+                        <div class="stat-label">Nós Totais</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="15">0</div>
+                        <div class="stat-label">Integrações</div>
+                    </div>
+                </div>
+                <div class="hero-cta">
+                    <a href="#workflows" class="btn btn-primary">
+                        <i class="fas fa-project-diagram"></i>
+                        Explorar Workflows
+                    </a>
+                    <a href="#contact" class="btn btn-secondary">
+                        <i class="fas fa-envelope"></i>
+                        Entrar em Contato
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title">Sobre o Portfólio</h2>
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="about-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>IA Integrada</h3>
+                    <p>Workflows com GPT-4, processamento de linguagem natural e análise inteligente de dados</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <h3>WhatsApp Automation</h3>
+                    <p>Chatbots multimodais, assistentes pessoais e sistemas de notificação via WhatsApp</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Integração de Dados</h3>
+                    <p>ETL pipelines, sincronização SQL, e análise de dados financeiros em tempo real</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Automação Empresarial</h3>
+                    <p>Soluções para produtividade, agendamento, emails e gestão de tarefas</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workflows Section -->
+    <section id="workflows" class="workflows">
+        <div class="container">
+            <h2 class="section-title">Workflows</h2>
+            <p class="section-subtitle">Explore as categorias de automação</p>
+
+            <!-- Category Tabs -->
+            <div class="category-tabs">
+                <button class="tab-btn active" data-category="all">Todos</button>
+                <button class="tab-btn" data-category="whatsapp">WhatsApp AI</button>
+                <button class="tab-btn" data-category="productivity">Produtividade</button>
+                <button class="tab-btn" data-category="financial">Financeiro</button>
+                <button class="tab-btn" data-category="data">Dados/ETL</button>
+                <button class="tab-btn" data-category="healthcare">Saúde</button>
+            </div>
+
+            <!-- Workflow Cards Grid -->
+            <div class="workflows-grid">
+
+                <!-- WhatsApp AI Category -->
+                <div class="workflow-card" data-category="whatsapp">
+                    <div class="card-header">
+                        <div class="card-icon whatsapp">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <div class="card-badge">40+ Nós</div>
+                    </div>
+                    <h3 class="card-title">WhatsApp Multi-Tool AI Assistant</h3>
+                    <p class="card-description">Assistente completo com GPT-4, integração de calendário, email e sistema de lembretes</p>
+                    <div class="card-tags">
+                        <span class="tag">GPT-4</span>
+                        <span class="tag">Calendar</span>
+                        <span class="tag">Email</span>
+                        <span class="tag">Reminders</span>
+                    </div>
+                    <a href="workflows/whatsapp-multi-tool.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="workflow-card" data-category="whatsapp">
+                    <div class="card-header">
+                        <div class="card-icon whatsapp">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <div class="card-badge">35+ Nós</div>
+                    </div>
+                    <h3 class="card-title">WhatsApp AI Chatbot Template</h3>
+                    <p class="card-description">Chatbot multimodal completo com processamento de imagens, áudio e texto</p>
+                    <div class="card-tags">
+                        <span class="tag">Multimodal</span>
+                        <span class="tag">GPT-4o</span>
+                        <span class="tag">Vision</span>
+                        <span class="tag">Audio</span>
+                    </div>
+                    <a href="workflows/whatsapp-chatbot.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="workflow-card" data-category="whatsapp">
+                    <div class="card-header">
+                        <div class="card-icon whatsapp">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <div class="card-badge">35+ Nós</div>
+                    </div>
+                    <h3 class="card-title">WhatsApp Financial Analysis Assistant</h3>
+                    <p class="card-description">Consultas SQL via WhatsApp com análise inteligente usando GPT-4o</p>
+                    <div class="card-tags">
+                        <span class="tag">SQL</span>
+                        <span class="tag">Analytics</span>
+                        <span class="tag">GPT-4o</span>
+                        <span class="tag">Database</span>
+                    </div>
+                    <a href="workflows/whatsapp-financial.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="workflow-card" data-category="whatsapp">
+                    <div class="card-header">
+                        <div class="card-icon whatsapp">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <div class="card-badge">30+ Nós</div>
+                    </div>
+                    <h3 class="card-title">Personal AI Assistant Template</h3>
+                    <p class="card-description">Assistente pessoal com funcionalidades customizáveis via WhatsApp</p>
+                    <div class="card-tags">
+                        <span class="tag">Personal</span>
+                        <span class="tag">AI</span>
+                        <span class="tag">Custom</span>
+                    </div>
+                    <a href="workflows/personal-assistant.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="workflow-card" data-category="whatsapp">
+                    <div class="card-header">
+                        <div class="card-icon whatsapp">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <div class="card-badge">25+ Nós</div>
+                    </div>
+                    <h3 class="card-title">[DEMO] Chatbot WhatsApp IA</h3>
+                    <p class="card-description">Versão demonstrativa do chatbot de IA para WhatsApp</p>
+                    <div class="card-tags">
+                        <span class="tag">Demo</span>
+                        <span class="tag">Chatbot</span>
+                        <span class="tag">IA</span>
+                    </div>
+                    <a href="workflows/demo-chatbot.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="workflow-card" data-category="whatsapp">
+                    <div class="card-header">
+                        <div class="card-icon whatsapp">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <div class="card-badge">25+ Nós</div>
+                    </div>
+                    <h3 class="card-title">[DEMO] Chatbot WhatsApp IA - Portfolio</h3>
+                    <p class="card-description">Versão portfolio do chatbot demonstrativo</p>
+                    <div class="card-tags">
+                        <span class="tag">Demo</span>
+                        <span class="tag">Portfolio</span>
+                        <span class="tag">IA</span>
+                    </div>
+                    <a href="workflows/demo-portfolio.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Productivity Tools -->
+                <div class="workflow-card" data-category="productivity">
+                    <div class="card-header">
+                        <div class="card-icon productivity">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="card-badge">30+ Nós</div>
+                    </div>
+                    <h3 class="card-title">Google Calendar AI Agent Template</h3>
+                    <p class="card-description">Agente de IA para operações CRUD completas no Google Calendar</p>
+                    <div class="card-tags">
+                        <span class="tag">Calendar</span>
+                        <span class="tag">CRUD</span>
+                        <span class="tag">AI Agent</span>
+                        <span class="tag">Google</span>
+                    </div>
+                    <a href="workflows/calendar-agent.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="workflow-card" data-category="productivity">
+                    <div class="card-header">
+                        <div class="card-icon productivity">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="card-badge">28+ Nós</div>
+                    </div>
+                    <h3 class="card-title">Gmail AI Agent Template</h3>
+                    <p class="card-description">Agente inteligente para gestão completa de emails no Gmail</p>
+                    <div class="card-tags">
+                        <span class="tag">Gmail</span>
+                        <span class="tag">AI Agent</span>
+                        <span class="tag">Email</span>
+                        <span class="tag">Automation</span>
+                    </div>
+                    <a href="workflows/gmail-agent.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="workflow-card" data-category="productivity">
+                    <div class="card-header">
+                        <div class="card-icon productivity">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="card-badge">20+ Nós</div>
+                    </div>
+                    <h3 class="card-title">Automated WhatsApp Reminder System</h3>
+                    <p class="card-description">Sistema de lembretes agendados via WhatsApp</p>
+                    <div class="card-tags">
+                        <span class="tag">Reminders</span>
+                        <span class="tag">Scheduled</span>
+                        <span class="tag">WhatsApp</span>
+                    </div>
+                    <a href="workflows/reminder-system.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="workflow-card" data-category="productivity">
+                    <div class="card-header">
+                        <div class="card-icon productivity">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="card-badge">22+ Nós</div>
+                    </div>
+                    <h3 class="card-title">WhatsApp Reminder System Template</h3>
+                    <p class="card-description">Template alternativo de sistema de lembretes</p>
+                    <div class="card-tags">
+                        <span class="tag">Reminders</span>
+                        <span class="tag">Template</span>
+                        <span class="tag">WhatsApp</span>
+                    </div>
+                    <a href="workflows/reminder-template.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Financial/Business -->
+                <div class="workflow-card" data-category="financial">
+                    <div class="card-header">
+                        <div class="card-icon financial">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="card-badge">32+ Nós</div>
+                    </div>
+                    <h3 class="card-title">Financial AI Assistant Template</h3>
+                    <p class="card-description">Assistente financeiro com consultas e análises inteligentes</p>
+                    <div class="card-tags">
+                        <span class="tag">Finance</span>
+                        <span class="tag">Analytics</span>
+                        <span class="tag">AI</span>
+                        <span class="tag">Reports</span>
+                    </div>
+                    <a href="workflows/financial-assistant.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="workflow-card" data-category="financial">
+                    <div class="card-header">
+                        <div class="card-icon financial">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="card-badge">28+ Nós</div>
+                    </div>
+                    <h3 class="card-title">Assist Fin Hidros Segmentado Template</h3>
+                    <p class="card-description">Assistente financeiro segmentado para análises específicas</p>
+                    <div class="card-tags">
+                        <span class="tag">Segmented</span>
+                        <span class="tag">Finance</span>
+                        <span class="tag">Custom</span>
+                    </div>
+                    <a href="workflows/hidros-financial.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="workflow-card" data-category="financial">
+                    <div class="card-header">
+                        <div class="card-icon financial">
+                            <i class="fab fa-bitcoin"></i>
+                        </div>
+                        <div class="card-badge">26+ Nós</div>
+                    </div>
+                    <h3 class="card-title">Crypto Funding Rate Analyzer Template</h3>
+                    <p class="card-description">Analisador de oportunidades de arbitragem em funding rates</p>
+                    <div class="card-tags">
+                        <span class="tag">Crypto</span>
+                        <span class="tag">Arbitrage</span>
+                        <span class="tag">Analytics</span>
+                        <span class="tag">Trading</span>
+                    </div>
+                    <a href="workflows/crypto-funding.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="workflow-card" data-category="financial">
+                    <div class="card-header">
+                        <div class="card-icon financial">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="card-badge">24+ Nós</div>
+                    </div>
+                    <h3 class="card-title">Crypto Portfolio Analyzer Template</h3>
+                    <p class="card-description">Ferramenta de análise de portfolio de criptomoedas</p>
+                    <div class="card-tags">
+                        <span class="tag">Crypto</span>
+                        <span class="tag">Portfolio</span>
+                        <span class="tag">Analytics</span>
+                    </div>
+                    <a href="workflows/crypto-portfolio.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Data/ETL -->
+                <div class="workflow-card" data-category="data">
+                    <div class="card-header">
+                        <div class="card-icon data">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="card-badge">30+ Nós</div>
+                    </div>
+                    <h3 class="card-title">SQL to PostgreSQL ETL Template</h3>
+                    <p class="card-description">Pipeline ETL para sincronização de dados entre bancos SQL</p>
+                    <div class="card-tags">
+                        <span class="tag">ETL</span>
+                        <span class="tag">PostgreSQL</span>
+                        <span class="tag">Sync</span>
+                        <span class="tag">Pipeline</span>
+                    </div>
+                    <a href="workflows/sql-etl.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="workflow-card" data-category="data">
+                    <div class="card-header">
+                        <div class="card-icon data">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="card-badge">22+ Nós</div>
+                    </div>
+                    <h3 class="card-title">TOTVS RM Report Generator Template</h3>
+                    <p class="card-description">Gerador de relatórios integrado com ERP TOTVS RM</p>
+                    <div class="card-tags">
+                        <span class="tag">TOTVS</span>
+                        <span class="tag">ERP</span>
+                        <span class="tag">Reports</span>
+                        <span class="tag">Integration</span>
+                    </div>
+                    <a href="workflows/totvs-reports.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Healthcare -->
+                <div class="workflow-card" data-category="healthcare">
+                    <div class="card-header">
+                        <div class="card-icon healthcare">
+                            <i class="fas fa-stethoscope"></i>
+                        </div>
+                        <div class="card-badge">28+ Nós</div>
+                    </div>
+                    <h3 class="card-title">Medical Consultation Transcriber Template</h3>
+                    <p class="card-description">Transcrição de consultas médicas com IA e processamento de áudio</p>
+                    <div class="card-tags">
+                        <span class="tag">Healthcare</span>
+                        <span class="tag">Transcription</span>
+                        <span class="tag">AI</span>
+                        <span class="tag">Audio</span>
+                    </div>
+                    <a href="workflows/medical-transcriber.html" class="card-link">
+                        Ver Detalhes <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Technologies Section -->
+    <section id="technologies" class="technologies">
+        <div class="container">
+            <h2 class="section-title">Tecnologias & Integrações</h2>
+            <p class="section-subtitle">Ferramentas e serviços integrados nos workflows</p>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <i class="fas fa-robot tech-icon"></i>
+                    <h3>OpenAI GPT-4</h3>
+                    <p>Modelos de linguagem avançados</p>
+                </div>
+                <div class="tech-card">
+                    <i class="fab fa-whatsapp tech-icon"></i>
+                    <h3>WhatsApp Business</h3>
+                    <p>API oficial do WhatsApp</p>
+                </div>
+                <div class="tech-card">
+                    <i class="fas fa-database tech-icon"></i>
+                    <h3>PostgreSQL</h3>
+                    <p>Banco de dados relacional</p>
+                </div>
+                <div class="tech-card">
+                    <i class="fab fa-google tech-icon"></i>
+                    <h3>Google Workspace</h3>
+                    <p>Calendar, Gmail, Drive</p>
+                </div>
+                <div class="tech-card">
+                    <i class="fab fa-bitcoin tech-icon"></i>
+                    <h3>Crypto APIs</h3>
+                    <p>Binance, exchanges</p>
+                </div>
+                <div class="tech-card">
+                    <i class="fas fa-code tech-icon"></i>
+                    <h3>Custom Code</h3>
+                    <p>JavaScript/Python nodes</p>
+                </div>
+                <div class="tech-card">
+                    <i class="fas fa-project-diagram tech-icon"></i>
+                    <h3>n8n</h3>
+                    <p>Plataforma de automação</p>
+                </div>
+                <div class="tech-card">
+                    <i class="fas fa-server tech-icon"></i>
+                    <h3>REST APIs</h3>
+                    <p>Integrações HTTP</p>
+                </div>
+                <div class="tech-card">
+                    <i class="fas fa-cloud tech-icon"></i>
+                    <h3>Cloud Services</h3>
+                    <p>AWS, Azure, GCP</p>
+                </div>
+                <div class="tech-card">
+                    <i class="fas fa-exchange-alt tech-icon"></i>
+                    <h3>Webhooks</h3>
+                    <p>Triggers em tempo real</p>
+                </div>
+                <div class="tech-card">
+                    <i class="fas fa-file-excel tech-icon"></i>
+                    <h3>Spreadsheets</h3>
+                    <p>Google Sheets, Excel</p>
+                </div>
+                <div class="tech-card">
+                    <i class="fas fa-chart-bar tech-icon"></i>
+                    <h3>Analytics</h3>
+                    <p>Métricas e dashboards</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Entre em Contato</h2>
+            <p class="section-subtitle">Vamos conversar sobre automação e IA</p>
+
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>Email</h3>
+                    <a href="mailto:maxwell.melo0@gmail.com">maxwell.melo0@gmail.com</a>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <h3>WhatsApp</h3>
+                    <a href="https://wa.me/5586994093040">+55 86 99409-3040</a>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <h3>GitHub</h3>
+                    <a href="https://github.com/maxwellmelo" target="_blank">@maxwellmelo</a>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fab fa-linkedin"></i>
+                    </div>
+                    <h3>LinkedIn</h3>
+                    <a href="https://linkedin.com/in/maxwell-melo" target="_blank">Maxwell Melo</a>
+                </div>
+            </div>
+
+            <div class="contact-cta">
+                <h3>Interessado em automações personalizadas?</h3>
+                <p>Desenvolvo soluções sob medida para seu negócio</p>
+                <a href="mailto:maxwell.melo0@gmail.com" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i>
+                    Solicitar Orçamento
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-robot"></i>
+                    <span>n8n Automation Portfolio</span>
+                </div>
+                <p class="footer-text">
+                    Desenvolvido por Maxwell Melo | 2024
+                </p>
+                <div class="footer-links">
+                    <a href="https://github.com/maxwellmelo" target="_blank">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://linkedin.com/in/maxwell-melo" target="_blank">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="mailto:maxwell.melo0@gmail.com">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Custom JavaScript -->
+    <script src="js/main.js"></script>
+</body>
+</html>

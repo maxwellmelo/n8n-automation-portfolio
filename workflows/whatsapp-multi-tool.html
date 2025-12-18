@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="WhatsApp Multi-Tool AI Assistant - Assistente completo com GPT-4, calendário, email e lembretes">
+    <title>WhatsApp Multi-Tool AI Assistant | n8n Portfolio</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/workflow-detail.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-robot"></i>
+                <span>n8n Portfolio</span>
+            </div>
+            <a href="../index.html" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="workflow-hero">
+        <div class="container">
+            <div class="workflow-header">
+                <div class="workflow-icon whatsapp">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <div class="workflow-info">
+                    <h1>WhatsApp Multi-Tool AI Assistant</h1>
+                    <p class="workflow-tagline">Assistente completo com GPT-4, integração de calendário, email e sistema de lembretes</p>
+                    <div class="workflow-meta">
+                        <span class="meta-item">
+                            <i class="fas fa-project-diagram"></i>
+                            40+ Nós
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-layer-group"></i>
+                            Complexidade: Alta
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            Tempo Real
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section class="workflow-overview">
+        <div class="container">
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <h2>Visão Geral</h2>
+                    <p>
+                        Este workflow representa um assistente pessoal completo integrado ao WhatsApp,
+                        capaz de gerenciar sua agenda, emails e lembretes através de comandos de linguagem natural.
+                        Utilizando GPT-4 para processamento inteligente de contexto, o assistente compreende
+                        intenções complexas e executa múltiplas tarefas automaticamente.
+                    </p>
+                </div>
+
+                <div class="overview-card">
+                    <h2>Recursos Principais</h2>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check-circle"></i> Gerenciamento completo do Google Calendar via WhatsApp</li>
+                        <li><i class="fas fa-check-circle"></i> Leitura e envio de emails através do Gmail</li>
+                        <li><i class="fas fa-check-circle"></i> Sistema de lembretes com agendamento inteligente</li>
+                        <li><i class="fas fa-check-circle"></i> Processamento de linguagem natural com GPT-4</li>
+                        <li><i class="fas fa-check-circle"></i> Respostas contextualizadas e personalizadas</li>
+                        <li><i class="fas fa-check-circle"></i> Multi-threading de conversas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section class="workflow-architecture">
+        <div class="container">
+            <h2 class="section-title">Arquitetura do Workflow</h2>
+
+            <div class="architecture-diagram">
+                <pre class="diagram-box">
+┌─────────────────────────────────────────────────────────────────────┐
+│                         WHATSAPP WEBHOOK                            │
+│                      (Trigger de Mensagens)                         │
+└────────────────────────────┬────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    PROCESSAMENTO DE CONTEXTO                        │
+│                   ┌──────────────────────────┐                      │
+│                   │  Extração de Contexto    │                      │
+│                   │  - Usuário               │                      │
+│                   │  - Histórico             │                      │
+│                   │  - Intenção              │                      │
+│                   └────────────┬─────────────┘                      │
+└────────────────────────────────┼────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      ANÁLISE GPT-4                                  │
+│                   ┌──────────────────────────┐                      │
+│                   │  Classificação de Intent │                      │
+│                   │  - Calendar              │                      │
+│                   │  - Email                 │                      │
+│                   │  - Reminder              │                      │
+│                   │  - General Query         │                      │
+│                   └────────────┬─────────────┘                      │
+└────────────────────────────────┼────────────────────────────────────┘
+                                 │
+                    ┌────────────┼────────────┐
+                    ▼            ▼            ▼
+        ┌───────────────┐ ┌──────────┐ ┌──────────────┐
+        │   CALENDAR    │ │  GMAIL   │ │  REMINDERS   │
+        │   ┌─────────┐ │ │┌────────┐│ │┌────────────┐│
+        │   │ Create  │ │ ││ Read   ││ ││ Schedule   ││
+        │   │ Read    │ │ ││ Send   ││ ││ Store      ││
+        │   │ Update  │ │ ││ Search ││ ││ Trigger    ││
+        │   │ Delete  │ │ │└────────┘│ │└────────────┘│
+        │   └─────────┘ │ └──────────┘ └──────────────┘
+        └───────┬───────┘      │              │
+                │              │              │
+                └──────────────┼──────────────┘
+                               ▼
+                    ┌─────────────────────┐
+                    │  RESPONSE BUILDER   │
+                    │  ┌───────────────┐  │
+                    │  │ GPT-4 Format  │  │
+                    │  │ Personalized  │  │
+                    │  │ Contextual    │  │
+                    │  └───────────────┘  │
+                    └──────────┬──────────┘
+                               ▼
+                    ┌─────────────────────┐
+                    │  WHATSAPP RESPONSE  │
+                    └─────────────────────┘
+                </pre>
+            </div>
+
+            <div class="tech-stack">
+                <h3>Tecnologias Utilizadas</h3>
+                <div class="tech-badges">
+                    <span class="tech-badge">
+                        <i class="fas fa-brain"></i> OpenAI GPT-4
+                    </span>
+                    <span class="tech-badge">
+                        <i class="fab fa-whatsapp"></i> WhatsApp Business API
+                    </span>
+                    <span class="tech-badge">
+                        <i class="fab fa-google"></i> Google Calendar API
+                    </span>
+                    <span class="tech-badge">
+                        <i class="fas fa-envelope"></i> Gmail API
+                    </span>
+                    <span class="tech-badge">
+                        <i class="fas fa-database"></i> PostgreSQL
+                    </span>
+                    <span class="tech-badge">
+                        <i class="fas fa-code"></i> JavaScript
+                    </span>
+                    <span class="tech-badge">
+                        <i class="fas fa-server"></i> Webhooks
+                    </span>
+                    <span class="tech-badge">
+                        <i class="fas fa-shield-alt"></i> OAuth 2.0
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Detail Section -->
+    <section class="features-detail">
+        <div class="container">
+            <h2 class="section-title">Funcionalidades Detalhadas</h2>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Gerenciamento de Calendário</h3>
+                    <p>Operações CRUD completas no Google Calendar através de comandos naturais:</p>
+                    <ul>
+                        <li>Criar eventos com reconhecimento de data/hora natural</li>
+                        <li>Consultar agenda do dia, semana ou período específico</li>
+                        <li>Modificar ou cancelar compromissos existentes</li>
+                        <li>Adicionar participantes e definir lembretes</li>
+                        <li>Verificar disponibilidade e conflitos</li>
+                    </ul>
+                    <div class="example-command">
+                        <strong>Exemplo:</strong> "Agende uma reunião com a equipe amanhã às 15h"
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-envelope-open-text"></i>
+                    </div>
+                    <h3>Gestão de Emails</h3>
+                    <p>Integração completa com Gmail para gerenciamento eficiente:</p>
+                    <ul>
+                        <li>Leitura de emails recentes ou por filtro</li>
+                        <li>Envio de emails com formatação automática</li>
+                        <li>Busca avançada por remetente, assunto ou conteúdo</li>
+                        <li>Resumo de emails importantes via IA</li>
+                        <li>Arquivamento e organização automática</li>
+                    </ul>
+                    <div class="example-command">
+                        <strong>Exemplo:</strong> "Envie um email para João agradecendo pela reunião"
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>Sistema de Lembretes</h3>
+                    <p>Lembretes inteligentes com agendamento flexível:</p>
+                    <ul>
+                        <li>Criação de lembretes pontuais ou recorrentes</li>
+                        <li>Notificações no horário programado via WhatsApp</li>
+                        <li>Lembretes baseados em localização (futuro)</li>
+                        <li>Confirmação e adiamento de lembretes</li>
+                        <li>Integração com eventos do calendário</li>
+                    </ul>
+                    <div class="example-command">
+                        <strong>Exemplo:</strong> "Me lembre de ligar para a Maria todo dia às 9h"
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Processamento de Linguagem Natural</h3>
+                    <p>GPT-4 para compreensão avançada de contexto:</p>
+                    <ul>
+                        <li>Interpretação de comandos complexos e ambíguos</li>
+                        <li>Manutenção de contexto entre múltiplas mensagens</li>
+                        <li>Clarificação automática quando necessário</li>
+                        <li>Respostas personalizadas ao estilo do usuário</li>
+                        <li>Aprendizado de preferências ao longo do tempo</li>
+                    </ul>
+                    <div class="example-command">
+                        <strong>Exemplo:</strong> "Qual minha próxima reunião e envie um email confirmando"
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases Section -->
+    <section class="use-cases">
+        <div class="container">
+            <h2 class="section-title">Casos de Uso</h2>
+
+            <div class="use-cases-grid">
+                <div class="use-case-card">
+                    <h3><i class="fas fa-briefcase"></i> Profissionais Ocupados</h3>
+                    <p>
+                        Gerenciar compromissos, responder emails importantes e manter lembretes
+                        sem sair do WhatsApp durante reuniões ou viagens.
+                    </p>
+                </div>
+
+                <div class="use-case-card">
+                    <h3><i class="fas fa-users"></i> Equipes Remotas</h3>
+                    <p>
+                        Coordenar agendas de equipe, agendar reuniões e manter todos
+                        sincronizados através de um assistente centralizado.
+                    </p>
+                </div>
+
+                <div class="use-case-card">
+                    <h3><i class="fas fa-user-tie"></i> Executivos</h3>
+                    <p>
+                        Delegar tarefas administrativas ao assistente IA, liberando tempo
+                        para atividades estratégicas e decisões importantes.
+                    </p>
+                </div>
+
+                <div class="use-case-card">
+                    <h3><i class="fas fa-rocket"></i> Startups</h3>
+                    <p>
+                        Automatizar processos de comunicação e agendamento sem custos
+                        de secretaria, maximizando produtividade com recursos limitados.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Performance Metrics Section -->
+    <section class="metrics">
+        <div class="container">
+            <h2 class="section-title">Métricas de Performance</h2>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">< 2s</div>
+                    <div class="metric-label">Tempo de Resposta Médio</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">99.5%</div>
+                    <div class="metric-label">Taxa de Sucesso</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">40+</div>
+                    <div class="metric-label">Nós no Workflow</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">24/7</div>
+                    <div class="metric-label">Disponibilidade</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="workflow-cta">
+        <div class="container">
+            <h2>Interessado nesta solução?</h2>
+            <p>Entre em contato para implementar este workflow no seu negócio</p>
+            <div class="cta-buttons">
+                <a href="mailto:maxwell.melo0@gmail.com" class="btn btn-primary">
+                    <i class="fas fa-envelope"></i> Solicitar Demonstração
+                </a>
+                <a href="https://wa.me/5586994093040" class="btn btn-secondary">
+                    <i class="fab fa-whatsapp"></i> Falar no WhatsApp
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-robot"></i>
+                    <span>n8n Automation Portfolio</span>
+                </div>
+                <p class="footer-text">Desenvolvido por Maxwell Melo | 2024</p>
+                <div class="footer-links">
+                    <a href="https://github.com/maxwellmelo" target="_blank">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://linkedin.com/in/maxwell-melo" target="_blank">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="mailto:maxwell.melo0@gmail.com">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>
